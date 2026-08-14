@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getProfile } from "@/lib/data";
 import { getDesk, canUseSellerDesk } from "@/lib/desk";
+import { BrandMark } from "@/components/brand-mark";
 import { Button } from "@/components/ui/button";
 import { signOutAction } from "@/actions";
 import { UserAvatar } from "@/components/ui/avatar";
@@ -13,12 +14,7 @@ export async function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-black/5 bg-background/90 backdrop-blur-xl">
       <div className="mx-auto flex h-[4.25rem] max-w-6xl items-center justify-between px-4">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="grid size-8 place-items-center rounded-lg bg-ink text-[11px] font-bold text-accent">
-            iL
-          </span>
-          <span className="font-display text-[1.35rem] leading-none">iLazım</span>
-        </Link>
+        <BrandMark />
         <nav className="hidden items-center gap-8 text-[13px] font-medium md:flex">
           <Link href="/hizmetler" className="transition-opacity hover:opacity-60">
             Hizmetler
