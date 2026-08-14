@@ -29,8 +29,8 @@ export function ChatPanel({
   banner?: ReactNode;
 }) {
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col px-4 py-6">
-      <div className="flex h-[min(78dvh,760px)] min-h-[520px] flex-col overflow-hidden rounded-[1.75rem] border border-border bg-card shadow-[0_20px_50px_-28px_rgba(12,12,12,0.35)]">
+    <div className="mx-auto flex w-full max-w-2xl flex-col md:px-4 md:py-6">
+      <div className="flex h-[calc(100dvh-8.25rem-env(safe-area-inset-bottom,0px))] min-h-[28rem] flex-col overflow-hidden border-y border-border bg-card md:h-[min(78dvh,760px)] md:min-h-[520px] md:rounded-[1.75rem] md:border md:shadow-[0_20px_50px_-28px_rgba(12,12,12,0.35)]">
         <header className="flex items-start gap-3 border-b border-border bg-card px-4 py-3">
           <Link
             href="/mesajlar"

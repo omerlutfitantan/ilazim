@@ -36,7 +36,7 @@ export function SearchHero({ dark = false }: { dark?: boolean }) {
                 type="button"
                 onClick={() => setKind(k)}
                 className={cn(
-                  "flex-1 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors sm:flex-none",
+                  "min-h-11 flex-1 rounded-lg px-4 text-[15px] font-semibold transition-colors sm:flex-none sm:text-sm",
                   kind === k ? "bg-ink text-white" : "text-muted-foreground hover:text-foreground",
                 )}
               >
@@ -54,9 +54,9 @@ export function SearchHero({ dark = false }: { dark?: boolean }) {
                   ? "Temizlik, tadilat, nakliyat…"
                   : "Bisiklet, telefon, mobilya…"
               }
-              className="h-12 min-w-0 flex-1 bg-transparent text-[15px] outline-none placeholder:text-muted-foreground"
+              className="h-12 min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-muted-foreground md:text-[15px]"
             />
-            <Button type="submit" className="h-11 rounded-xl px-6">
+            <Button type="submit" className="h-11 min-w-16 rounded-xl px-5">
               Ara
             </Button>
           </div>

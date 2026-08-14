@@ -29,7 +29,7 @@ function InkPanel({
     <div className="flex flex-col justify-between rounded-[1.75rem] bg-ink p-8 text-white md:p-10">
       <div>
         <p className="text-[13px] font-medium tracking-[0.18em] text-accent uppercase">{kicker}</p>
-        <h1 className="mt-4 font-display text-4xl leading-[0.95] md:text-5xl">{title}</h1>
+        <h1 className="mt-4 font-display text-3xl leading-[0.95] md:text-5xl">{title}</h1>
         <ul className="mt-8 space-y-3">
           {points.map((p) => (
             <li key={p} className="flex gap-3 text-sm leading-6 text-white/75">
@@ -62,8 +62,8 @@ export function AuthScreen({
       : `/giris${next ? `?next=${encodeURIComponent(next)}` : ""}`;
 
   return (
-    <div className="mx-auto grid max-w-6xl gap-6 px-4 py-10 lg:grid-cols-12 lg:py-16">
-      <div className="lg:col-span-5">
+    <div className="mx-auto grid max-w-6xl gap-6 px-4 py-8 lg:grid-cols-12 lg:py-16">
+      <div className="order-2 lg:order-1 lg:col-span-5">
         {mode === "giris" ? (
           <InkPanel
             kicker={adminGate ? "Admin" : "Giriş"}
@@ -86,9 +86,9 @@ export function AuthScreen({
           />
         )}
       </div>
-      <div className="lg:col-span-7">
-        <div className="rounded-[1.75rem] border border-border bg-card p-6 md:p-10">
-          <h2 className="font-display text-3xl">
+      <div className="order-1 lg:order-2 lg:col-span-7">
+        <div className="rounded-[1.5rem] border border-border bg-card p-5 md:rounded-[1.75rem] md:p-10">
+          <h2 className="font-display text-2xl md:text-3xl">
             {adminGate && mode === "giris" ? "Admin girişi" : mode === "giris" ? "Giriş yap" : "Hesap oluştur"}
           </h2>
           <p className="mt-2 mb-8 text-sm text-muted-foreground">

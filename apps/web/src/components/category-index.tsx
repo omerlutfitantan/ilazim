@@ -53,7 +53,7 @@ export async function CategoryIndex({
   const faqs = seo?.faq ?? [];
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-12">
+    <div className="mx-auto max-w-6xl px-4 py-8 md:py-12">
       {cat && (
         <JsonLd
           data={{
@@ -91,7 +91,7 @@ export async function CategoryIndex({
         <Link href={`/${KIND_PATHS[kind]}`}>{KIND_LABELS[kind]}</Link>
         {cat ? ` / ${cat.name}` : null}
       </p>
-      <h1 className="mt-4 max-w-3xl font-display text-4xl md:text-5xl">
+      <h1 className="mt-4 max-w-3xl font-display text-[2rem] leading-[0.95] md:text-5xl">
         {seo?.h1 ?? cat?.h1 ?? `${KIND_LABELS[kind]} talepleri`}
       </h1>
       <p className="mt-4 max-w-2xl text-muted-foreground">
@@ -100,12 +100,12 @@ export async function CategoryIndex({
           `Açık ${KIND_LABELS[kind].toLowerCase()} ilanları. İhtiyacınız yoksa kendi talebinizi oluşturun; satıcılar size gelsin.`}
       </p>
 
-      <div className="mt-8 flex flex-wrap gap-2">
+      <div className="-mx-4 mt-8 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] md:mx-0 md:flex-wrap md:overflow-visible md:px-0 [&::-webkit-scrollbar]:hidden">
         {categories.map((c) => (
           <Link
             key={c.id}
             href={`/${KIND_PATHS[kind]}/${c.slug}`}
-            className="rounded-full border border-border px-3 py-1 text-sm hover:border-primary"
+            className="shrink-0 rounded-full border border-border px-3.5 py-2 text-sm hover:border-primary"
           >
             {c.name}
           </Link>

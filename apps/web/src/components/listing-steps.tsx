@@ -33,7 +33,7 @@ export function StepKind({ initialKind }: { initialKind?: ListingKind }) {
       }}
     >
       <p className="text-sm text-muted-foreground">Ne arıyorsunuz?</p>
-      <h2 className="mt-1 font-display text-3xl">Hizmet mi, ürün mü?</h2>
+      <h2 className="mt-1 font-display text-2xl md:text-3xl">Hizmet mi, ürün mü?</h2>
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         {(
           [
@@ -112,7 +112,7 @@ export function StepCategory({
       <p className="text-sm text-muted-foreground">
         {kind ? KIND_LABELS[kind] : "…"}
       </p>
-      <h2 className="mt-1 font-display text-3xl">Kategori seçin</h2>
+      <h2 className="mt-1 font-display text-2xl md:text-3xl">Kategori seçin</h2>
       {kind === "service" && blocked.size > 0 && (
         <p className="mt-2 text-sm text-muted-foreground">
           Hizmetlerim’e eklediğin kategorilerde talep açamazsın. Başka kategorilerde hizmet alabilirsin.
@@ -172,7 +172,7 @@ export function StepDetail() {
       }}
     >
       <p className="text-sm text-muted-foreground">Talebiniz</p>
-      <h2 className="mt-1 font-display text-3xl">Ne lazım, yazın</h2>
+      <h2 className="mt-1 font-display text-2xl md:text-3xl">Ne lazım, yazın</h2>
       <div>
         <Label htmlFor="title">Başlık</Label>
         <Input
@@ -236,7 +236,7 @@ export function StepLocation({ cities, districts }: { cities: Loc[]; districts: 
       }}
     >
       <p className="text-sm text-muted-foreground">Nerede?</p>
-      <h2 className="mt-1 font-display text-3xl">Şehir ve ilçe</h2>
+      <h2 className="mt-1 font-display text-2xl md:text-3xl">Şehir ve ilçe</h2>
       <div>
         <Label>Şehir</Label>
         <select
@@ -306,7 +306,7 @@ export function StepContact({ authed, defaultPhone }: { authed: boolean; default
       }}
     >
       <p className="text-sm text-muted-foreground">Son bilgiler</p>
-      <h2 className="mt-1 font-display text-3xl">Bütçe ve telefon</h2>
+      <h2 className="mt-1 font-display text-2xl md:text-3xl">Bütçe ve telefon</h2>
       <div className="grid gap-3 md:grid-cols-2">
         <div>
           <Label>Min bütçe (TL)</Label>

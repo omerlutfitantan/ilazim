@@ -47,12 +47,12 @@ export default async function HesabimPage() {
     (convs ?? []).find((c) => c.listing_id === listingId && c.seller_id === sellerId)?.id;
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-12">
+    <div className="mx-auto max-w-4xl px-4 py-8 md:py-12">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="flex items-center gap-4">
           <UserAvatar src={profile.avatar_url} name={profile.display_name} className="size-14 text-base" />
           <div>
-            <h1 className="font-display text-4xl">Hesabım</h1>
+            <h1 className="font-display text-3xl md:text-4xl">Hesabım</h1>
             <p className="mt-1 text-sm text-muted-foreground">
               {profile.display_name} · {desk === "seller" ? "Satıcı hesabı" : "Alıcı hesabı"} ·{" "}
               <Link href="/hesabim/profil" className="underline">

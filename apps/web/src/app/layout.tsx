@@ -4,6 +4,9 @@ import localFont from "next/font/local";
 import { Toaster } from "@/components/ui/sonner";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { MobileTabBar } from "@/components/mobile-tab-bar";
+import { getProfile } from "@/lib/data";
+import { getDesk, canUseSellerDesk } from "@/lib/desk";
 import "./globals.css";
 
 const geist = Geist({
@@ -26,7 +29,7 @@ export const metadata: Metadata = {
     template: "%s | iLazım",
   },
   description:
-    "Hizmet ve ürün taleplerinizi ilan açın. Onaylı satıcılar sabit teklif ücretiyle size teklif versin. Puanları görün, işi bitirin.",
+    "Hizmet ve ürün ihtiyaçlarınızı ilan açın. Onaylı hizmet verenler sabit teklif ücretiyle size gelsin. Puanları görün, işi siz seçin.",
   applicationName: "iLazım",
   appleWebApp: { capable: true, title: "iLazım", statusBarStyle: "default" },
   formatDetection: { telephone: false },
@@ -44,19 +47,25 @@ export const viewport: Viewport = {
   themeColor: "#0C0C0C",
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const profile = await getProfile();
+  const desk = await getDesk(profile);
+  const sellerDesk = Boolean(profile && desk === "seller" && canUseSellerDesk(profile));
+
   return (
     <html
       lang="tr"
       data-scroll-behavior="smooth"
       className={`${geist.variable} ${syne.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground">
+      <body className="flex min-h-full flex-col bg-background text-foreground">
         <SiteHeader />
         <main className="flex-1">{children}</main>
         <SiteFooter />
+        <MobileTabBar authed={Boolean(profile)} sellerDesk={sellerDesk} />
         <Toaster />
       </body>
     </html>

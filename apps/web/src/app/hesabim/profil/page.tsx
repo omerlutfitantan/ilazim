@@ -10,8 +10,8 @@ export default async function ProfilPage() {
   const locs = await getLocations();
 
   return (
-    <div className="mx-auto max-w-xl px-4 py-12">
-      <h1 className="font-display text-4xl">Profil</h1>
+    <div className="mx-auto max-w-xl px-4 py-8 md:py-12">
+      <h1 className="font-display text-3xl md:text-4xl">Profil</h1>
       <p className="mt-1 mb-8 text-sm text-muted-foreground">
         Fotoğraf, iletişim ve konum. Açık işlerdeki şehir / ilçe / km filtreleri buradaki adrese göre çalışır.
       </p>

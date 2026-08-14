@@ -2,7 +2,7 @@ export const metadata = { title: "Nasıl çalışır" };
 
 export default function Page() {
   return (
-    <div className="mx-auto max-w-2xl px-4 py-20">
+    <div className="mx-auto max-w-2xl px-4 py-12 md:py-20">
       <p className="text-[13px] font-medium tracking-[0.18em] text-muted-foreground uppercase">
         iLazım
       </p>

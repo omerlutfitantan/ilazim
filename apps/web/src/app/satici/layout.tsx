@@ -9,7 +9,7 @@ export default async function SellerLayout({ children }: { children: ReactNode }
   const desk = await getDesk(profile);
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-12">
+    <div className="mx-auto max-w-5xl px-4 py-8 md:py-12">
       {profile && (
         <div className="mb-6 flex justify-end">
           <DeskSwitch desk={desk} canSell={canUseSellerDesk(profile)} />

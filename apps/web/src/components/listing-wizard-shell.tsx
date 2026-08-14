@@ -32,33 +32,36 @@ export function ListingWizardShell({
   );
 
   if (pathname === "/ilan-ac/yayinla") {
-    return <div className="mx-auto max-w-lg px-4 py-16">{children}</div>;
+    return <div className="mx-auto max-w-lg px-4 py-10 md:py-16">{children}</div>;
   }
 
   return (
-    <div className="mx-auto grid max-w-6xl gap-10 px-4 py-10 lg:grid-cols-12 lg:py-16">
+    <div className="mx-auto grid max-w-6xl gap-6 px-4 py-6 lg:grid-cols-12 lg:gap-10 lg:py-16">
       <aside className="lg:col-span-4">
-        <p className="text-[13px] font-medium tracking-[0.18em] text-muted-foreground uppercase">
+        <p className="hidden text-[13px] font-medium tracking-[0.18em] text-muted-foreground uppercase lg:block">
           İlan aç
         </p>
-        <h1 className="mt-2 font-display text-4xl leading-none">Adım adım</h1>
-        <ol className="mt-8 space-y-1">
+        <h1 className="mt-2 hidden font-display text-4xl leading-none lg:block">Adım adım</h1>
+        <p className="font-display text-2xl lg:hidden">
+          {steps[current]?.n} · {steps[current]?.label}
+        </p>
+        <ol className="-mx-4 mt-4 flex gap-1 overflow-x-auto px-4 pb-1 [scrollbar-width:none] lg:mx-0 lg:mt-8 lg:block lg:space-y-1 lg:overflow-visible lg:px-0 [&::-webkit-scrollbar]:hidden">
           {steps.map((s, i) => {
             const active = i === current;
             const done = i < current;
             return (
-              <li key={s.href}>
+              <li key={s.href} className="shrink-0">
                 <Link
                   href={s.href}
                   className={cn(
-                    "flex items-baseline gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors",
+                    "flex items-baseline gap-2 rounded-xl px-3 py-2.5 text-sm transition-colors lg:gap-3",
                     active && "bg-ink text-white",
                     done && !active && "text-foreground",
                     !done && !active && "text-muted-foreground",
                   )}
                 >
-                  <span className={cn("font-display text-lg", active && "text-accent")}>{s.n}</span>
-                  <span className="font-medium">{s.label}</span>
+                  <span className={cn("font-display text-base lg:text-lg", active && "text-accent")}>{s.n}</span>
+                  <span className="hidden font-medium lg:inline">{s.label}</span>
                 </Link>
               </li>
             );
@@ -66,7 +69,7 @@ export function ListingWizardShell({
         </ol>
       </aside>
       <div className="lg:col-span-8">
-        <div className="rounded-[1.75rem] border border-border bg-card p-6 md:p-10">{children}</div>
+        <div className="rounded-[1.5rem] border border-border bg-card p-5 md:rounded-[1.75rem] md:p-10">{children}</div>
       </div>
     </div>
   );

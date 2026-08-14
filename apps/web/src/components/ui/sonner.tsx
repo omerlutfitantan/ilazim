@@ -6,7 +6,8 @@ function Toaster() {
   return (
     <Sonner
       theme="light"
-      className="toaster"
+      position="top-center"
+      offset={16}
       toastOptions={{
         classNames: {
           toast: "bg-card border-border text-foreground",

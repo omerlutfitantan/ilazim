@@ -19,8 +19,8 @@ export default async function MessagesPage() {
     .order("updated_at", { ascending: false });
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-12">
-      <h1 className="font-display text-4xl">Mesajlar</h1>
+    <div className="mx-auto max-w-2xl px-4 py-8 md:py-12">
+      <h1 className="font-display text-3xl md:text-4xl">Mesajlar</h1>
       <ul className="mt-8 divide-y divide-border overflow-hidden rounded-[1.75rem] border border-border bg-card">
         {(data ?? []).length === 0 && (
           <li className="p-8 text-sm text-muted-foreground">Sohbet yok. Teklif sonrası sohbet açılır.</li>

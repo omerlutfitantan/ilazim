@@ -144,7 +144,7 @@ export default async function ListingPage({ params }: Props) {
     : maskPersonName(listing.profiles?.full_name || listing.profiles?.display_name);
 
   return (
-    <article className="mx-auto max-w-3xl px-4 py-12">
+    <article className="mx-auto max-w-3xl px-4 py-8 md:py-12">
       <JsonLd
         data={{
           "@context": "https://schema.org",
@@ -163,7 +163,7 @@ export default async function ListingPage({ params }: Props) {
       <Badge className="mt-4" variant={listing.kind === "service" ? "service" : "product"}>
         {KIND_LABELS[listing.kind]}
       </Badge>
-      <h1 className="mt-3 font-display text-4xl">{listing.title}</h1>
+      <h1 className="mt-3 font-display text-[2rem] leading-[0.95] md:text-4xl">{listing.title}</h1>
       <p className="mt-2 text-sm">
         <span className="font-medium">{buyerLabel}</span>
         <span className="text-muted-foreground">
