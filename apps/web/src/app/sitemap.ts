@@ -9,6 +9,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/hizmetler`, changeFrequency: "daily", priority: 0.9 },
     { url: `${base}/urunler`, changeFrequency: "daily", priority: 0.9 },
     { url: `${base}/nasil-calisir`, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${base}/kvkk`, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${base}/sartlar`, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${base}/cerez`, changeFrequency: "yearly", priority: 0.3 },
   ];
   if (!isSupabaseConfigured()) return staticRoutes;
 

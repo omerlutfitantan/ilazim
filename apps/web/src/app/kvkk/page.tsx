@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export const metadata = { title: "KVKK Aydınlatma Metni" };
 
 export default function Page() {
@@ -53,6 +55,16 @@ export default function Page() {
         ve zararın giderilmesini talep etme haklarına sahipsiniz. Başvuru, Veri Sorumlusuna Başvuru Usul ve
         Esasları Hakkında Tebliğ’e uygun olarak yazılı veya kayıtlı e-posta ile yapılır. Yanıt en geç 30 gün
         içinde verilir. Şikâyet için Kişisel Verileri Koruma Kurulu’na başvurabilirsiniz.
+      </p>
+
+      <h2 className="mt-10 font-display text-2xl">7. Çerezler</h2>
+      <p className="mt-3 text-muted-foreground">
+        Oturum ve güvenlik için zorunlu çerezler kullanılır. Tercih çerezleri ancak açık onayınızla yazılır.
+        Kullandığımız çerezler, süreleri ve yönetim hakkı{" "}
+        <Link href="/cerez" className="underline underline-offset-4">
+          çerez politikasında
+        </Link>{" "}
+        yer alır.
       </p>
     </article>
   );

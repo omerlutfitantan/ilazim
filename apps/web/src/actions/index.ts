@@ -25,7 +25,18 @@ import { cookies } from "next/headers";
 import { after } from "next/server";
 import { getProfile } from "@/lib/data";
 import { DESK_COOKIE } from "@/lib/desk";
+import { allowsPreferences, CONSENT_COOKIE, parseConsent } from "@/lib/consent";
 import { sendNewMessageEmail, sendOfferReceivedEmail } from "@/lib/notify-emails";
+
+async function persistDeskCookie(desk: "buyer" | "seller") {
+  const jar = await cookies();
+  if (!allowsPreferences(parseConsent(jar.get(CONSENT_COOKIE)?.value))) return;
+  jar.set(DESK_COOKIE, desk, {
+    path: "/",
+    maxAge: 60 * 60 * 24 * 365,
+    sameSite: "lax",
+  });
+}
 
 export async function signUpAction(_: unknown, formData: FormData) {
   const parsed = signUpSchema.safeParse({
@@ -141,12 +152,7 @@ export async function signOutAction() {
 export async function switchDeskAction(formData: FormData) {
   const desk = String(formData.get("desk") || "");
   if (desk !== "buyer" && desk !== "seller") redirect("/hesabim");
-  const jar = await cookies();
-  jar.set(DESK_COOKIE, desk, {
-    path: "/",
-    maxAge: 60 * 60 * 24 * 365,
-    sameSite: "lax",
-  });
+  await persistDeskCookie(desk);
   revalidatePath("/", "layout");
   if (desk === "seller") {
     const profile = await getProfile();
@@ -356,12 +362,7 @@ export async function sellerOnboardingAction(_: unknown, formData: FormData) {
     p_category_ids: parsed.data.categoryIds,
   });
   if (error) return { error: error.message };
-  const jar = await cookies();
-  jar.set(DESK_COOKIE, "seller", {
-    path: "/",
-    maxAge: 60 * 60 * 24 * 365,
-    sameSite: "lax",
-  });
+  await persistDeskCookie("seller");
   revalidatePath("/", "layout");
   revalidatePath("/satici");
   redirect("/satici");

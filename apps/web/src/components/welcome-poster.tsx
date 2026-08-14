@@ -1,26 +1,67 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Sparkles } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import {
+  allowsPreferences,
+  CONSENT_SAVED_EVENT,
+  readClientConsent,
+  WELCOME_COOKIE,
+  writeClientCookie,
+} from "@/lib/consent";
 
-const COOKIE = "ilazim_welcome";
+function dismissedThisSession() {
+  try {
+    return sessionStorage.getItem(WELCOME_COOKIE) === "1";
+  } catch {
+    return false;
+  }
+}
 
-function dismissCookie() {
-  document.cookie = `${COOKIE}=1; Path=/; Max-Age=31536000; SameSite=Lax`;
+function persistDismiss() {
+  try {
+    sessionStorage.setItem(WELCOME_COOKIE, "1");
+  } catch {
+    /* ignore */
+  }
+  if (allowsPreferences(readClientConsent())) {
+    writeClientCookie(WELCOME_COOKIE, "1");
+  }
 }
 
 export function WelcomePoster({ show }: { show: boolean }) {
   const path = usePathname();
-  const [open, setOpen] = useState(show);
+  const [open, setOpen] = useState(false);
 
-  if (path.startsWith("/admin") || !show) return null;
+  useEffect(() => {
+    if (dismissedThisSession()) return;
+    if (show) setOpen(true);
+  }, [show]);
+
+  useEffect(() => {
+    function onConsent() {
+      if (dismissedThisSession()) return;
+      setOpen(true);
+    }
+    window.addEventListener(CONSENT_SAVED_EVENT, onConsent);
+    return () => window.removeEventListener(CONSENT_SAVED_EVENT, onConsent);
+  }, []);
+
+  if (
+    path.startsWith("/admin") ||
+    path === "/cerez" ||
+    path === "/kvkk" ||
+    path === "/sartlar"
+  ) {
+    return null;
+  }
 
   function close() {
-    dismissCookie();
+    persistDismiss();
     setOpen(false);
   }
 

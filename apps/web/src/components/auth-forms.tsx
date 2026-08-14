@@ -138,6 +138,10 @@ export function SignUpForm({
           <Link href="/kvkk" className="underline underline-offset-4">
             KVKK aydınlatmasını
           </Link>{" "}
+          ve{" "}
+          <Link href="/cerez" className="underline underline-offset-4">
+            çerez politikasını
+          </Link>{" "}
           okudum, kabul ediyorum.
         </span>
       </label>

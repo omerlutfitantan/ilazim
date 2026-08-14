@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export const metadata = { title: "Kullanım koşulları" };
 
 export default function Page() {
@@ -71,6 +73,15 @@ export default function Page() {
       <h2 className="mt-10 font-display text-2xl">9. Değişiklik</h2>
       <p className="mt-3 text-muted-foreground">
         Koşullar Platform’da yayımlanarak güncellenebilir. Kullanıma devam, güncel metnin kabulü anlamına gelir.
+      </p>
+
+      <h2 className="mt-10 font-display text-2xl">10. Çerezler</h2>
+      <p className="mt-3 text-muted-foreground">
+        Çerez kullanımı{" "}
+        <Link href="/cerez" className="underline underline-offset-4">
+          çerez politikasına
+        </Link>{" "}
+        tabidir.
       </p>
     </article>
   );

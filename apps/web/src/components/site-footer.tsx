@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { Mail } from "lucide-react";
 import { BrandMark } from "@/components/brand-mark";
+import { ConsentSettingsButton } from "@/components/cookie-banner";
 
 const SUPPORT_EMAIL = "destek@ilazim.com";
 
@@ -41,6 +42,8 @@ export function SiteFooter() {
             <FooterCol title="Yasal">
               <FooterLink href="/kvkk">KVKK</FooterLink>
               <FooterLink href="/sartlar">Kullanım koşulları</FooterLink>
+              <FooterLink href="/cerez">Çerez politikası</FooterLink>
+              <ConsentSettingsButton className="block text-left text-muted-foreground transition-colors hover:text-foreground" />
             </FooterCol>
           </div>
 

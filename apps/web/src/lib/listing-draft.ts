@@ -1,4 +1,5 @@
 import type { ListingKind } from "@ilazim/shared";
+import { allowsPreferences, readClientConsent } from "@/lib/consent";
 
 export const LISTING_DRAFT_KEY = "ilazim_listing_draft";
 
@@ -37,8 +38,10 @@ export function readDraft(): ListingDraft {
 export function writeDraft(partial: Partial<ListingDraft>) {
   const next = { ...readDraft(), ...partial };
   const raw = JSON.stringify(next);
-  localStorage.setItem(LISTING_DRAFT_KEY, raw);
   sessionStorage.setItem(LISTING_DRAFT_KEY, raw);
+  if (allowsPreferences(readClientConsent())) {
+    localStorage.setItem(LISTING_DRAFT_KEY, raw);
+  }
   return next;
 }
 
