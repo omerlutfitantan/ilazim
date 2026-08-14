@@ -1,10 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
 import localFont from "next/font/local";
+import { cookies } from "next/headers";
 import { Toaster } from "@/components/ui/sonner";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { MobileTabBar } from "@/components/mobile-tab-bar";
+import { WelcomePoster } from "@/components/welcome-poster";
 import { getProfile } from "@/lib/data";
 import { getDesk, canUseSellerDesk } from "@/lib/desk";
 import "./globals.css";
@@ -54,6 +56,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const profile = await getProfile();
   const desk = await getDesk(profile);
   const sellerDesk = Boolean(profile && desk === "seller" && canUseSellerDesk(profile));
+  const welcomeSeen = (await cookies()).get("ilazim_welcome")?.value === "1";
 
   return (
     <html
@@ -66,6 +69,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <main className="flex-1">{children}</main>
         <SiteFooter />
         <MobileTabBar authed={Boolean(profile)} sellerDesk={sellerDesk} />
+        <WelcomePoster show={!welcomeSeen} />
         <Toaster />
       </body>
     </html>
