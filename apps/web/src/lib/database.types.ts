@@ -148,6 +148,12 @@ export type SellerHiddenListingRow = {
   created_at: string;
 };
 
+export type SellerSeenListingRow = {
+  seller_id: string;
+  listing_id: string;
+  seen_at: string;
+};
+
 export type SellerStatsRow = {
   seller_id: string;
   review_count: number;
@@ -255,6 +261,7 @@ export type Database = {
       locations: Table<LocationRow>;
       seller_categories: Table<SellerCategoryRow>;
       seller_hidden_listings: Table<SellerHiddenListingRow>;
+      seller_seen_listings: Table<SellerSeenListingRow>;
       seller_stats: Table<SellerStatsRow>;
       conversations: Table<ConversationRow>;
       messages: Table<MessageRow>;
@@ -355,6 +362,7 @@ export type Database = {
       reveal_listing_phone: { Args: { p_listing_id: string }; Returns: string };
       delete_review: { Args: { p_review_id: string; p_reason?: string }; Returns: undefined };
       hide_listing_for_seller: { Args: { p_listing_id: string }; Returns: undefined };
+      mark_listing_seen_for_seller: { Args: { p_listing_id: string }; Returns: undefined };
       listing_match_recipients: {
         Args: { p_listing_id: string };
         Returns: { user_id: string; email: string; display_name: string | null }[];

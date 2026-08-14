@@ -128,6 +128,10 @@ export default async function ListingPage({ params }: Props) {
     !!profile &&
     profile.role !== "buyer" &&
     (profile.role === "admin" || profile.seller_status === "approved");
+
+  if (supabase && isSellerActor && !isOwner) {
+    await supabase.rpc("mark_listing_seen_for_seller", { p_listing_id: listing.id });
+  }
   const canHide =
     isSellerActor &&
     listing.status === "open" &&

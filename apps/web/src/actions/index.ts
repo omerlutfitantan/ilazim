@@ -251,6 +251,16 @@ export async function hideListingAction(listingId: string) {
   return { ok: true };
 }
 
+export async function markListingSeenAction(listingId: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("mark_listing_seen_for_seller", {
+    p_listing_id: listingId,
+  });
+  if (error) return { error: error.message };
+  revalidatePath("/satici/ilanlar");
+  return { ok: true };
+}
+
 export async function acceptOfferAction(offerId: string) {
   const supabase = await createClient();
   const { error } = await supabase.rpc("accept_offer", { p_offer_id: offerId });

@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { HideListingButton } from "@/components/hide-listing-button";
+import { JobSeenLink } from "@/components/job-seen-link";
 
 type Loc = { lat?: number | null; lng?: number | null; name?: string | null };
 
@@ -40,6 +41,13 @@ export default async function OpenJobsPage({
     .eq("seller_id", profile.id);
   const hiddenIds = new Set((hiddenRows ?? []).map((r) => r.listing_id));
 
+  const [{ data: offeredRows }, { data: seenRows }] = await Promise.all([
+    supabase.from("offers").select("listing_id").eq("seller_id", profile.id).in("status", ["pending", "accepted"]),
+    supabase.from("seller_seen_listings").select("listing_id").eq("seller_id", profile.id),
+  ]);
+  const offeredIds = new Set((offeredRows ?? []).map((r) => r.listing_id));
+  const seenIds = new Set((seenRows ?? []).map((r) => r.listing_id));
+
   const { data: originRow } = profile.district_id
     ? await supabase.from("locations").select("lat, lng, name").eq("id", profile.district_id).maybeSingle()
     : profile.city_id
@@ -59,6 +67,7 @@ export default async function OpenJobsPage({
 
   let jobs = (raw ?? []).filter((l) => {
     if (hiddenIds.has(l.id)) return false;
+    if (offeredIds.has(l.id)) return false;
     if (l.kind === "product") return kind !== "service";
     if (kind === "product") return false;
     return serviceIds.includes(l.category_id);
@@ -82,6 +91,12 @@ export default async function OpenJobsPage({
     radiusKm && origin
       ? withDistance.filter((l) => l.km != null && l.km <= radiusKm)
       : withDistance;
+  visible.sort((a, b) => {
+    const aNew = seenIds.has(a.id) ? 1 : 0;
+    const bNew = seenIds.has(b.id) ? 1 : 0;
+    if (aNew !== bNew) return aNew - bNew;
+    return new Date(b.published_at ?? b.created_at).getTime() - new Date(a.published_at ?? a.created_at).getTime();
+  });
 
   const qs = (next: Record<string, string | undefined>) => {
     const p = new URLSearchParams();
@@ -98,7 +113,8 @@ export default async function OpenJobsPage({
       <div>
         <h1 className="font-display text-4xl">Açık işler</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Hizmet talepleri yalnızca Hizmetlerim’de seçtiklerin. Ürün ilanları herkese açık. Varsayılan: tüm Türkiye.
+          Hizmet talepleri yalnızca Hizmetlerim’de seçtiklerin. Ürün ilanları herkese açık. Varsayılan: tüm
+          Türkiye. Teklif verdiğiniz işler listeden düşer. Açmadığınız yeni işlerde Yeni rozeti durur.
         </p>
       </div>
 
@@ -192,39 +208,46 @@ export default async function OpenJobsPage({
             Bu filtrede açık iş yok.
           </li>
         )}
-        {visible.map((l) => (
-          <li key={l.id} className="flex items-stretch rounded-2xl bg-card">
-            <Link
-              href={`/ilan/${(l.categories as { slug?: string } | null)?.slug}/${l.slug}`}
-              className="group min-w-0 flex-1 p-4 hover:opacity-80"
+        {visible.map((l) => {
+          const href = `/ilan/${(l.categories as { slug?: string } | null)?.slug}/${l.slug}`;
+          const unseen = !seenIds.has(l.id);
+          return (
+            <li
+              key={l.id}
+              className={`flex items-stretch rounded-2xl bg-card ${unseen ? "ring-1 ring-saffron" : ""}`}
             >
-              <Badge variant={l.kind === "service" ? "service" : "product"}>
-                {KIND_LABELS[l.kind as ListingKind]}
-              </Badge>
-              <p className="mt-1 font-medium">{l.title}</p>
-              <p className="text-xs text-muted-foreground">
-                {maskPersonName(
-                  (l.profiles as { full_name?: string | null; display_name?: string | null } | null)?.full_name ||
-                    (l.profiles as { display_name?: string | null } | null)?.display_name,
-                )}
-                {" · "}
-                {(l.city as { name?: string } | null)?.name}
-                {(l.district as { name?: string } | null)?.name
-                  ? ` / ${(l.district as { name?: string }).name}`
-                  : ""}
-                {l.km != null ? ` · ${l.km} km` : ""}
-              </p>
-            </Link>
-            <div className="flex shrink-0 items-center gap-2 pr-3">
-              <Button asChild size="sm">
-                <Link href={`/ilan/${(l.categories as { slug?: string } | null)?.slug}/${l.slug}#teklif`}>
-                  Teklif ver ({feeLabel})
-                </Link>
-              </Button>
-              <HideListingButton listingId={l.id} stayOnPage labeled />
-            </div>
-          </li>
-        ))}
+              <JobSeenLink listingId={l.id} href={href} className="group min-w-0 flex-1 p-4 hover:opacity-80">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge variant={l.kind === "service" ? "service" : "product"}>
+                    {KIND_LABELS[l.kind as ListingKind]}
+                  </Badge>
+                  {unseen && <Badge variant="saffron">Yeni</Badge>}
+                </div>
+                <p className="mt-1 font-medium">{l.title}</p>
+                <p className="text-xs text-muted-foreground">
+                  {maskPersonName(
+                    (l.profiles as { full_name?: string | null; display_name?: string | null } | null)?.full_name ||
+                      (l.profiles as { display_name?: string | null } | null)?.display_name,
+                  )}
+                  {" · "}
+                  {(l.city as { name?: string } | null)?.name}
+                  {(l.district as { name?: string } | null)?.name
+                    ? ` / ${(l.district as { name?: string }).name}`
+                    : ""}
+                  {l.km != null ? ` · ${l.km} km` : ""}
+                </p>
+              </JobSeenLink>
+              <div className="flex shrink-0 items-center gap-2 pr-3">
+                <Button asChild size="sm">
+                  <JobSeenLink listingId={l.id} href={`${href}#teklif`}>
+                    Teklif ver ({feeLabel})
+                  </JobSeenLink>
+                </Button>
+                <HideListingButton listingId={l.id} stayOnPage labeled />
+              </div>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
