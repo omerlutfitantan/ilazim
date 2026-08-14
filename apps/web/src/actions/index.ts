@@ -479,7 +479,6 @@ export async function updateProfileAction(_: unknown, formData: FormData) {
   if (error) return { error: error.message };
   revalidatePath("/hesabim");
   revalidatePath("/hesabim/profil");
-  revalidatePath("/satici/profil");
   revalidatePath("/satici/ilanlar");
   return { ok: true };
 }
@@ -500,7 +499,6 @@ export async function saveAvatarUrlAction(url: string | null) {
   const { data: p } = await supabase.from("profiles").select("slug").eq("id", user.id).maybeSingle();
   revalidatePath("/hesabim");
   revalidatePath("/hesabim/profil");
-  revalidatePath("/satici/profil");
   revalidatePath("/admin/kullanicilar");
   if (p?.slug) revalidatePath(`/usta/${p.slug}`);
   return { ok: true };

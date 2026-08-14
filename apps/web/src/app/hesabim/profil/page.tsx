@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getLocations, getProfile } from "@/lib/data";
 import { AvatarUploader } from "@/components/avatar-uploader";
@@ -26,6 +27,13 @@ export default async function ProfilPage() {
           districts={locs.districts}
         />
       </div>
+      {profile.slug && (profile.role === "seller" || profile.role === "admin") && (
+        <p className="mt-8 text-sm">
+          <Link href={`/usta/${profile.slug}`} className="underline underline-offset-4">
+            Herkese açık profilimi gör
+          </Link>
+        </p>
+      )}
     </div>
   );
 }

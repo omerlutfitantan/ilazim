@@ -70,7 +70,7 @@ export default async function SellerProfilePage({ params }: Props) {
       </div>
       {isOwn && (
         <p className="mt-4 text-sm">
-          <Link href="/satici/profil" className="underline">
+          <Link href="/hesabim/profil" className="underline">
             Profilimi düzenle
           </Link>
           {" · "}

@@ -9,7 +9,6 @@ const LINKS = [
   { href: "/satici/ilanlar", label: "Açık işler", match: (p: string) => p.startsWith("/satici/ilanlar") },
   { href: "/satici/hizmetlerim", label: "Hizmetlerim", match: (p: string) => p.startsWith("/satici/hizmetlerim") },
   { href: "/satici", label: "Özet", match: (p: string) => p === "/satici" },
-  { href: "/satici/profil", label: "Profil", match: (p: string) => p.startsWith("/satici/profil") },
   { href: "/satici/cuzdan", label: "Cüzdan", match: (p: string) => p.startsWith("/satici/cuzdan") },
 ];
 
