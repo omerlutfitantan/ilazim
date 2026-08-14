@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { formatTry, KIND_LABELS, maskPersonName } from "@ilazim/shared";
 import { getListingBySlug, getMyServiceCategoryIds, getProfile, getSellerStatsMap, getSettings } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
@@ -37,11 +37,10 @@ type ListingView = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const listing = (await getListingBySlug(slug)) as ListingView | null;
-  if (!listing) return { title: "İlan bulunamadı" };
+  if (!listing) return { title: "İlan bulunamadı", robots: { index: false, follow: false } };
   return {
     title: listing.title,
-    description: listing.description.slice(0, 155),
-    alternates: { canonical: `/ilan/${listing.categories?.slug}/${listing.slug}` },
+    robots: { index: false, follow: false },
   };
 }
 
@@ -50,6 +49,15 @@ export default async function ListingPage({ params }: Props) {
   const listing = (await getListingBySlug(slug)) as ListingView | null;
   if (!listing) notFound();
   const profile = await getProfile();
+  if (!profile) {
+    redirect(`/giris?next=/ilan/${listing.categories?.slug ?? "ilan"}/${listing.slug}`);
+  }
+  const isOwner = profile.id === listing.user_id;
+  const isSellerActor =
+    profile.role !== "buyer" && (profile.role === "admin" || profile.seller_status === "approved");
+  if (!isOwner && !isSellerActor) {
+    redirect("/");
+  }
   const settings = await getSettings();
   const supabase = isSupabaseConfigured() ? await createClient() : null;
 
@@ -64,7 +72,6 @@ export default async function ListingPage({ params }: Props) {
     profiles: { display_name: string | null; slug: string | null } | null;
   }> = [];
 
-  const isOwner = profile?.id === listing.user_id;
   let myOffer: { id: string; status: string } | null = null;
 
   if (supabase && (isOwner || profile?.role === "admin")) {
@@ -123,11 +130,6 @@ export default async function ListingPage({ params }: Props) {
     const ids = await getMyServiceCategoryIds(profile.id);
     inServiceArea = ids.includes(listing.category_id);
   }
-
-  const isSellerActor =
-    !!profile &&
-    profile.role !== "buyer" &&
-    (profile.role === "admin" || profile.seller_status === "approved");
 
   if (supabase && isSellerActor && !isOwner) {
     await supabase.rpc("mark_listing_seen_for_seller", { p_listing_id: listing.id });

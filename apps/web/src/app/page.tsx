@@ -19,9 +19,8 @@ import {
   Wrench,
 } from "lucide-react";
 import { KIND_PATHS, type ListingKind } from "@ilazim/shared";
-import { getCategories, getOpenListings } from "@/lib/data";
+import { getCategories } from "@/lib/data";
 import { SearchHero } from "@/components/search-hero";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 export const revalidate = 300;
@@ -56,10 +55,9 @@ const FALLBACK: Record<
 };
 
 export default async function HomePage() {
-  const [serviceCats, productCats, listings] = await Promise.all([
+  const [serviceCats, productCats] = await Promise.all([
     getCategories("service", true),
     getCategories("product", true),
-    getOpenListings({ limit: 6 }),
   ]);
 
   const services =
@@ -93,7 +91,7 @@ export default async function HomePage() {
           className="pointer-events-none absolute -bottom-32 left-[-10%] size-[22rem] rounded-full bg-white/5 blur-3xl"
         />
         <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 pt-10 pb-14 md:pt-20 md:pb-24 lg:grid-cols-12">
-          <div className="lg:col-span-7">
+          <div className="min-w-0 lg:col-span-7">
             <p className="text-[12px] font-medium tracking-[0.2em] text-accent uppercase md:text-[13px]">
               Hizmet ve ürün talepleri
             </p>
@@ -106,7 +104,7 @@ export default async function HomePage() {
               İhtiyacınızı ilan olarak açın. Onaylı hizmet verenler fiyat ve süreyle gelsin; puanları
               ve yorumları görün, işi siz seçin.
             </p>
-            <div className="mt-8 max-w-2xl text-left text-ink">
+            <div className="mt-8 w-full min-w-0 max-w-2xl text-left text-ink">
               <SearchHero dark />
             </div>
             <div className="-mx-4 mt-5 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] md:mx-0 md:flex-wrap md:overflow-visible md:px-0 [&::-webkit-scrollbar]:hidden">
@@ -187,40 +185,6 @@ export default async function HomePage() {
           ))}
         </ol>
       </section>
-
-      {listings.length > 0 && (
-        <section className="mx-auto max-w-6xl px-4 pb-16 md:pb-20">
-          <div className="flex items-end justify-between gap-4">
-            <div>
-              <p className="text-[12px] font-medium tracking-[0.2em] text-muted-foreground uppercase">
-                Şimdi açık
-              </p>
-              <h2 className="mt-2 font-display text-[2rem] leading-none md:text-4xl">Açık talepler</h2>
-            </div>
-            <Link href="/hizmetler" className="shrink-0 text-sm font-medium underline underline-offset-4">
-              Tümü
-            </Link>
-          </div>
-          <ul className="mt-8 grid gap-3 md:grid-cols-2">
-            {listings.map((l) => (
-              <li key={l.id}>
-                <Link
-                  href={`/ilan/${(l.categories as { slug: string } | null)?.slug ?? "ilan"}/${l.slug}`}
-                  className="block rounded-2xl bg-card p-5 transition-transform active:scale-[0.99] md:hover:-translate-y-0.5"
-                >
-                  <Badge variant={l.kind === "service" ? "service" : "product"}>
-                    {l.kind === "service" ? "Hizmet" : "Ürün"}
-                  </Badge>
-                  <p className="mt-3 font-display text-xl leading-tight">{l.title}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {(l.locations as { name: string } | null)?.name} · {l.offer_count} teklif
-                  </p>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
 
       <section className="px-4 pb-16 md:pb-20">
         <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 rounded-[2rem] bg-ink px-6 py-10 text-white md:flex-row md:items-center md:px-12 md:py-14">

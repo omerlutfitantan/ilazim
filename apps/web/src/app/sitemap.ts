@@ -13,9 +13,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (!isSupabaseConfigured()) return staticRoutes;
 
   const supabase = await createClient();
-  const [{ data: cats }, { data: listings }, { data: sellers }] = await Promise.all([
+  const [{ data: cats }, { data: sellers }] = await Promise.all([
     supabase.from("categories").select("kind, slug"),
-    supabase.from("listings").select("slug, updated_at, categories(slug)").eq("status", "open"),
     supabase.from("profiles").select("slug, updated_at").in("role", ["seller", "admin"]).not("slug", "is", null),
   ]);
 
@@ -26,14 +25,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.85,
     })) ?? [];
 
-  const listingUrls =
-    listings?.map((l) => ({
-      url: `${base}/ilan/${(l.categories as { slug?: string } | null)?.slug}/${l.slug}`,
-      lastModified: l.updated_at,
-      changeFrequency: "hourly" as const,
-      priority: 0.7,
-    })) ?? [];
-
   const sellerUrls =
     sellers?.map((s) => ({
       url: `${base}/usta/${s.slug}`,
@@ -42,5 +33,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     })) ?? [];
 
-  return [...staticRoutes, ...catUrls, ...listingUrls, ...sellerUrls];
+  return [...staticRoutes, ...catUrls, ...sellerUrls];
 }

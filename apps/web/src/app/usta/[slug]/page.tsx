@@ -103,42 +103,20 @@ export default async function SellerProfilePage({ params }: Props) {
         {(profile.locations as { name?: string } | null)?.name} · {stats?.completed_jobs ?? 0} tamamlanan iş
       </p>
 
-      {services.length > 0 && (
+      {(services.length > 0 || products.length > 0) && (
         <section className="mt-10">
-          <h2 className="font-display text-2xl">Tamamlanan hizmet işleri</h2>
+          <h2 className="font-display text-2xl">Teklifler</h2>
           <ul className="mt-4 space-y-2">
-            {services.map((j) => {
+            {[...services, ...products].map((j) => {
               const l = j.listings as {
-                title?: string;
-                slug?: string;
-                categories?: { name?: string; slug?: string } | null;
-              } | null;
-              return (
-                <li key={j.id} className="rounded-xl bg-card px-4 py-3 text-sm">
-                  <span className="text-muted-foreground">{KIND_LABELS.service} · </span>
-                  {l?.categories?.name ? `${l.categories.name} — ` : ""}
-                  {l?.title}
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-      )}
-
-      {products.length > 0 && (
-        <section className="mt-10">
-          <h2 className="font-display text-2xl">Sattığı ürünler</h2>
-          <ul className="mt-4 space-y-2">
-            {products.map((j) => {
-              const l = j.listings as {
-                title?: string;
+                kind?: string;
                 categories?: { name?: string } | null;
               } | null;
+              const kind = l?.kind === "product" ? "product" : "service";
               return (
                 <li key={j.id} className="rounded-xl bg-card px-4 py-3 text-sm">
-                  <span className="text-muted-foreground">{KIND_LABELS.product} · </span>
-                  {l?.categories?.name ? `${l.categories.name} — ` : ""}
-                  {l?.title}
+                  <span className="text-muted-foreground">{KIND_LABELS[kind]} · </span>
+                  {l?.categories?.name ?? "Tamamlanan iş"}
                 </li>
               );
             })}
@@ -159,8 +137,7 @@ export default async function SellerProfilePage({ params }: Props) {
                 <StarRating value={r.rating} size="sm" />
                 <p className="mt-2 text-sm">{r.comment}</p>
                 <p className="mt-2 text-xs text-muted-foreground">
-                  {maskPersonName(reviewer?.full_name || reviewer?.display_name)} ·{" "}
-                  {(r.listings as { title?: string } | null)?.title}
+                  {maskPersonName(reviewer?.full_name || reviewer?.display_name)}
                 </p>
               </li>
             );

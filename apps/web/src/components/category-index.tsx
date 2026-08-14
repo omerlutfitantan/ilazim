@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { buildCategorySeo, KIND_LABELS, KIND_PATHS, type ListingKind } from "@ilazim/shared";
-import { getCategories, getCategoryBySlug, getOpenListings } from "@/lib/data";
-import { Badge } from "@/components/ui/badge";
+import { getCategories, getCategoryBySlug } from "@/lib/data";
 import { JsonLd } from "@/components/json-ld";
 
 export const revalidate = 300;
@@ -44,12 +43,10 @@ export async function CategoryIndex({
   const cat = kategori ? await getCategoryBySlug(kind, kategori) : null;
   const seo = cat ? buildCategorySeo(cat.name, kind) : null;
   const categories = await getCategories(kind);
-  const listings = await getOpenListings({
-    kind,
-    categoryId: cat?.id,
-    q,
-    limit: 40,
-  });
+  const qn = q?.trim().toLocaleLowerCase("tr");
+  const shown = qn
+    ? categories.filter((c) => c.name.toLocaleLowerCase("tr").includes(qn))
+    : categories;
   const faqs = seo?.faq ?? [];
 
   return (
@@ -101,7 +98,7 @@ export async function CategoryIndex({
       </p>
 
       <div className="-mx-4 mt-8 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] md:mx-0 md:flex-wrap md:overflow-visible md:px-0 [&::-webkit-scrollbar]:hidden">
-        {categories.map((c) => (
+        {shown.map((c) => (
           <Link
             key={c.id}
             href={`/${KIND_PATHS[kind]}/${c.slug}`}
@@ -112,32 +109,13 @@ export async function CategoryIndex({
         ))}
       </div>
 
-      <ul className="mt-10 grid gap-4">
-        {listings.length === 0 && (
-          <li className="rounded-2xl border border-dashed border-border p-8 text-muted-foreground">
-            Bu kategoride açık ilan yok.{" "}
-            <Link href={`/ilan-ac?kind=${kind}`} className="underline">
-              İlk ilanı siz açın
-            </Link>
-            .
-          </li>
-        )}
-        {listings.map((l) => (
-          <li key={l.id}>
-            <Link
-              href={`/ilan/${(l.categories as { slug: string } | null)?.slug ?? cat?.slug ?? "ilan"}/${l.slug}`}
-              className="block rounded-2xl border border-border bg-card p-5 hover:border-primary"
-            >
-              <Badge variant={kind === "service" ? "service" : "product"}>{KIND_LABELS[kind]}</Badge>
-              <p className="mt-2 font-display text-2xl">{l.title}</p>
-              <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{l.description}</p>
-              <p className="mt-3 text-xs text-muted-foreground">
-                {(l.locations as { name: string } | null)?.name} · {l.offer_count} teklif
-              </p>
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <div className="mt-10 rounded-2xl border border-dashed border-border p-8 text-sm text-muted-foreground">
+        Açık talepler yalnızca onaylı hizmet verenlere gösterilir. İhtiyacınız varsa{" "}
+        <Link href={`/ilan-ac?kind=${kind}`} className="underline">
+          ilan açın
+        </Link>
+        ; teklifler size gelsin.
+      </div>
 
       {faqs.length > 0 && (
         <section className="mt-16">
