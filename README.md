@@ -25,7 +25,7 @@ Vercel kök dizini: `apps/web`.
 
 1. SQL Editor’da sırayla: `00001_init.sql` … `00005_offer_vs_request.sql`
 2. `seed.sql` — iller, kategoriler, ilk satıcı kampanyası
-3. Authentication → Confirm email açık. Redirect: `https://SENIN_DOMAIN/auth/callback`
+3. Authentication → Confirm email açık. Site URL: `https://ilazim.online`. Redirect: `https://ilazim.online/auth/callback`, `https://ilazim.vercel.app/auth/callback`
 4. Kendi hesabınla kayıt ol, doğrula, `promote-admin.sql` içinde e-postanı yazıp çalıştır
 
 Aynı hesap hem talep açar hem teklif verir. Hizmetlerim’deki kategoride kendi talebi açılamaz.
