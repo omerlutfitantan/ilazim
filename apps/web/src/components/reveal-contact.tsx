@@ -4,18 +4,21 @@ import { useState, useTransition } from "react";
 import { Phone } from "lucide-react";
 import { telHref } from "@ilazim/shared";
 import { revealContactAction } from "@/actions";
-import { Button } from "@/components/ui/button";
 
-export function RevealContact({ listingId }: { listingId: string }) {
+export function RevealContact({ listingId, shared }: { listingId: string; shared: boolean }) {
   const [phone, setPhone] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
+
+  if (!shared) {
+    return <p className="text-sm text-muted-foreground">İletişim bilgileri gizli</p>;
+  }
 
   if (phone) {
     return (
       <a
         href={telHref(phone)}
-        className="inline-flex h-11 items-center gap-2 rounded-xl bg-accent px-5 text-sm font-semibold text-ink"
+        className="inline-flex items-center gap-2 text-sm font-semibold text-primary"
       >
         <Phone className="size-4" />
         {phone}
@@ -25,10 +28,10 @@ export function RevealContact({ listingId }: { listingId: string }) {
 
   return (
     <div>
-      <Button
+      <button
         type="button"
-        variant="saffron"
         disabled={pending}
+        className="text-sm font-medium text-primary underline underline-offset-4 disabled:opacity-50"
         onClick={() =>
           start(async () => {
             const r = await revealContactAction(listingId);
@@ -37,8 +40,8 @@ export function RevealContact({ listingId }: { listingId: string }) {
           })
         }
       >
-        {pending ? "Açılıyor…" : "İletişimi gör"}
-      </Button>
+        {pending ? "Açılıyor…" : "İletişim bilgilerini gör"}
+      </button>
       {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
     </div>
   );

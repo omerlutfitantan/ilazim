@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { formatTry, KIND_LABELS } from "@ilazim/shared";
+import { formatTry, KIND_LABELS, maskPersonName } from "@ilazim/shared";
 import { getListingBySlug, getMyServiceCategoryIds, getProfile, getSellerStatsMap, getSettings } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/utils";
@@ -33,7 +33,7 @@ type ListingView = {
   categories: { name: string; slug: string } | null;
   locations: { name: string } | null;
   district: { name: string } | null;
-  profiles?: { display_name: string | null; slug: string | null } | null;
+  profiles?: { full_name: string | null; display_name: string | null } | null;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -118,13 +118,9 @@ export default async function ListingPage({ params }: Props) {
     !hidden;
   const canOffer = canHide && !myOffer && inServiceArea;
 
-  let buyerLabel = isOwner ? "Sizin ilanınız" : "İlan sahibi";
-  if (supabase && myOffer) {
-    const { data: masked } = await supabase.rpc("buyer_display_name", {
-      p_user_id: listing.user_id,
-    });
-    if (masked) buyerLabel = String(masked);
-  }
+  let buyerLabel = isOwner
+    ? "Sizin ilanınız"
+    : maskPersonName(listing.profiles?.full_name || listing.profiles?.display_name);
 
   return (
     <article className="mx-auto max-w-3xl px-4 py-12">
@@ -147,11 +143,13 @@ export default async function ListingPage({ params }: Props) {
         {KIND_LABELS[listing.kind]}
       </Badge>
       <h1 className="mt-3 font-display text-4xl">{listing.title}</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        {listing.locations?.name}
-        {listing.district?.name ? ` / ${listing.district.name}` : ""} · {listing.offer_count} teklif
-        {" · "}
-        {buyerLabel}
+      <p className="mt-2 text-sm">
+        <span className="font-medium">{buyerLabel}</span>
+        <span className="text-muted-foreground">
+          {" · "}
+          {listing.locations?.name}
+          {listing.district?.name ? ` / ${listing.district.name}` : ""} · {listing.offer_count} teklif
+        </span>
       </p>
       {canHide && (
         <div className="mt-6 flex flex-wrap items-center gap-2">
@@ -222,10 +220,9 @@ export default async function ListingPage({ params }: Props) {
       {myOffer && (
         <div className="mt-10 rounded-2xl border border-border bg-card p-6">
           <h2 className="font-display text-2xl">Teklifiniz alındı</h2>
-          <p className="mt-1 mb-4 text-sm text-muted-foreground">
-            İlan sahibinin numarası, paylaşmayı seçtiyse burada açılır.
-          </p>
-          <RevealContact listingId={listing.id} />
+          <div className="mt-3">
+            <RevealContact listingId={listing.id} shared={Boolean(listing.show_phone)} />
+          </div>
         </div>
       )}
 

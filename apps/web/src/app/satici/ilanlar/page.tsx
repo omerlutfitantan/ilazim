@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { JOB_RADIUS_KM, KIND_LABELS, formatTry, haversineKm, type ListingKind } from "@ilazim/shared";
+import { JOB_RADIUS_KM, KIND_LABELS, formatTry, haversineKm, maskPersonName, type ListingKind } from "@ilazim/shared";
 import { getCategories, getProfile, getSettings, getMyServiceCategoryIds } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 import { Badge } from "@/components/ui/badge";
@@ -50,7 +50,7 @@ export default async function OpenJobsPage({
   const { data: raw } = await supabase
     .from("listings")
     .select(
-      "*, categories(name, slug), city:city_id(name, lat, lng), district:district_id(name, lat, lng)",
+      "*, categories(name, slug), city:city_id(name, lat, lng), district:district_id(name, lat, lng), profiles:user_id(full_name, display_name)",
     )
     .eq("status", "open")
     .neq("user_id", profile.id)
@@ -203,6 +203,11 @@ export default async function OpenJobsPage({
               </Badge>
               <p className="mt-1 font-medium">{l.title}</p>
               <p className="text-xs text-muted-foreground">
+                {maskPersonName(
+                  (l.profiles as { full_name?: string | null; display_name?: string | null } | null)?.full_name ||
+                    (l.profiles as { display_name?: string | null } | null)?.display_name,
+                )}
+                {" · "}
                 {(l.city as { name?: string } | null)?.name}
                 {(l.district as { name?: string } | null)?.name
                   ? ` / ${(l.district as { name?: string }).name}`

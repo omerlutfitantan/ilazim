@@ -119,7 +119,7 @@ export async function getListingBySlug(slug: string) {
   const { data } = await supabase
     .from("listings")
     .select(
-      "*, categories(name, slug, kind, h1), locations:city_id(name), district:district_id(name), profiles:user_id(display_name, slug)",
+      "*, categories(name, slug, kind, h1), locations:city_id(name), district:district_id(name), profiles:user_id(full_name, display_name)",
     )
     .eq("slug", slug)
     .maybeSingle();

@@ -18,6 +18,7 @@ export function ChatBox({
   listingStatus,
   isBuyer,
   canRevealPhone,
+  phoneShared,
 }: {
   conversationId: string;
   userId: string;
@@ -27,6 +28,7 @@ export function ChatBox({
   listingStatus: string;
   isBuyer: boolean;
   canRevealPhone: boolean;
+  phoneShared: boolean;
 }) {
   const [messages, setMessages] = useState(initial);
   const [state, action, pending] = useActionState(sendMessageAction, null);
@@ -72,7 +74,7 @@ export function ChatBox({
             Teklifi seç
           </Button>
         )}
-        {canRevealPhone && <RevealContact listingId={listingId} />}
+        {canRevealPhone && <RevealContact listingId={listingId} shared={phoneShared} />}
       </div>
       <ul className="space-y-2">
         {messages.map((m) => (

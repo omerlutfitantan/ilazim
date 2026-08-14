@@ -39,7 +39,7 @@ export function maskPersonName(name: string | null | undefined): string {
   const parts = clean.split(" ");
   if (parts.length === 1) return parts[0];
   const last = parts[parts.length - 1];
-  return `${parts[0]} ${last.charAt(0).toUpperCase()}.`;
+  return `${parts[0]} ${last.charAt(0).toLocaleUpperCase("tr-TR")}.`;
 }
 
 export function telHref(phone: string): string {

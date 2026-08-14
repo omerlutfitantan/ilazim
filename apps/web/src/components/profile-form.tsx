@@ -9,12 +9,10 @@ import { Textarea } from "@/components/ui/textarea";
 
 export function ProfileForm({
   fullName,
-  displayName,
   phone,
   bio,
 }: {
   fullName: string | null;
-  displayName: string | null;
   phone: string | null;
   bio: string | null;
 }) {
@@ -24,17 +22,9 @@ export function ProfileForm({
       <div>
         <Label htmlFor="fullName">Ad soyad</Label>
         <Input id="fullName" name="fullName" defaultValue={fullName ?? ""} required minLength={2} className="mt-1" />
-      </div>
-      <div>
-        <Label htmlFor="displayName">Görünen ad</Label>
-        <Input
-          id="displayName"
-          name="displayName"
-          defaultValue={displayName ?? ""}
-          required
-          minLength={2}
-          className="mt-1"
-        />
+        <p className="mt-1 text-xs text-muted-foreground">
+          Tekliflerde yalnızca adınız ve soyadınızın baş harfi görünür.
+        </p>
       </div>
       <div>
         <Label htmlFor="phone">Telefon</Label>

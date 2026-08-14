@@ -91,6 +91,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         listingStatus={listing?.status ?? "open"}
         isBuyer={isBuyer}
         canRevealPhone={!isBuyer}
+        phoneShared={Boolean(listing?.show_phone)}
       />
       {isBuyer && listing?.status && ["awarded", "completed"].includes(listing.status) && !existingReview && (
         <ReviewForm listingId={listing.id} />

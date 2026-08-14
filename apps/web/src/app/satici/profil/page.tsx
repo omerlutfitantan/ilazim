@@ -15,12 +15,11 @@ export default async function Page() {
       <h1 className="font-display text-4xl">Satıcı profili</h1>
       <p className="mt-2 text-sm text-muted-foreground">Fotoğraf, ad ve herkese açık bilgilerin.</p>
       <div className="mt-8">
-        <AvatarUploader userId={profile.id} avatarUrl={profile.avatar_url} name={profile.display_name} />
+        <AvatarUploader userId={profile.id} avatarUrl={profile.avatar_url} name={profile.full_name} />
       </div>
       <div className="mt-10 max-w-xl">
         <ProfileForm
           fullName={profile.full_name}
-          displayName={profile.display_name}
           phone={profile.phone}
           bio={profile.bio}
         />

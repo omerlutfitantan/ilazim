@@ -117,7 +117,6 @@ const emptyToNull = (v: unknown) => (typeof v === "string" && v.trim() === "" ? 
 
 export const profileUpdateSchema = z.object({
   fullName: z.string().trim().min(2, "Ad soyad en az 2 karakter").max(80),
-  displayName: z.string().trim().min(2, "Görünen ad en az 2 karakter").max(80),
   phone: z.preprocess(emptyToNull, z.string().trim().max(20).nullable().optional()),
   bio: z.preprocess(emptyToNull, z.string().trim().max(2000).nullable().optional()),
 });

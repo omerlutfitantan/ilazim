@@ -370,7 +370,6 @@ export async function grantBalanceAction(_: unknown, formData: FormData) {
 export async function updateProfileAction(_: unknown, formData: FormData) {
   const parsed = profileUpdateSchema.safeParse({
     fullName: formData.get("fullName"),
-    displayName: formData.get("displayName"),
     phone: formData.get("phone"),
     bio: formData.get("bio"),
   });
@@ -384,7 +383,7 @@ export async function updateProfileAction(_: unknown, formData: FormData) {
     .from("profiles")
     .update({
       full_name: parsed.data.fullName,
-      display_name: parsed.data.displayName,
+      display_name: parsed.data.fullName,
       phone: parsed.data.phone ?? null,
       bio: parsed.data.bio ?? null,
     })
