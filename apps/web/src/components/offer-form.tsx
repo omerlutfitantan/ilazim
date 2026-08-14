@@ -39,7 +39,7 @@ export function OfferForm({
         <Button type="submit" disabled={pending}>
           {pending ? "Gönderiliyor…" : `Teklif ver (${feeLabel})`}
         </Button>
-        <HideListingButton listingId={listingId} />
+        <HideListingButton listingId={listingId} labeled />
       </div>
     </form>
   );

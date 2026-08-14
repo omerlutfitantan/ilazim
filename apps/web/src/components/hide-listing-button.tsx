@@ -11,9 +11,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 export function HideListingButton({
   listingId,
   stayOnPage = false,
+  labeled = false,
 }: {
   listingId: string;
   stayOnPage?: boolean;
+  labeled?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [pending, start] = useTransition();
@@ -24,11 +26,12 @@ export function HideListingButton({
       <Button
         type="button"
         variant="outline"
-        size="icon"
+        size={labeled ? (stayOnPage ? "sm" : "default") : "icon"}
         aria-label="İlanı sil"
         onClick={() => setOpen(true)}
       >
         <Trash2 />
+        {labeled ? "Sil" : null}
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>

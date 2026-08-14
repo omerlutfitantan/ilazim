@@ -11,6 +11,8 @@ import { StarRating } from "@/components/star-rating";
 import { OfferForm } from "@/components/offer-form";
 import { RevealContact } from "@/components/reveal-contact";
 import { ListingActions } from "@/components/listing-actions";
+import { HideListingButton } from "@/components/hide-listing-button";
+import { Button } from "@/components/ui/button";
 import type { ListingKind, ListingStatus } from "@/lib/database.types";
 
 type Props = { params: Promise<{ kategori: string; slug: string }> };
@@ -105,14 +107,16 @@ export default async function ListingPage({ params }: Props) {
     inServiceArea = ids.includes(listing.category_id);
   }
 
-  const canOffer =
-    profile?.role === "seller" &&
-    profile.seller_status === "approved" &&
+  const isSellerActor =
+    !!profile &&
+    profile.role !== "buyer" &&
+    (profile.role === "admin" || profile.seller_status === "approved");
+  const canHide =
+    isSellerActor &&
     listing.status === "open" &&
-    listing.user_id !== profile.id &&
-    !myOffer &&
-    inServiceArea &&
+    listing.user_id !== profile?.id &&
     !hidden;
+  const canOffer = canHide && !myOffer && inServiceArea;
 
   let buyerLabel = isOwner ? "Sizin ilanınız" : "İlan sahibi";
   if (supabase && myOffer) {
@@ -149,6 +153,16 @@ export default async function ListingPage({ params }: Props) {
         {" · "}
         {buyerLabel}
       </p>
+      {canHide && (
+        <div className="mt-6 flex flex-wrap items-center gap-2">
+          {canOffer && (
+            <Button asChild>
+              <a href="#teklif">Teklif ver ({formatTry(Number(settings?.bid_fee_amount ?? 29.9))})</a>
+            </Button>
+          )}
+          <HideListingButton listingId={listing.id} labeled />
+        </div>
+      )}
       {listing.status !== "open" && (
         <p className="mt-4 rounded-xl bg-muted px-4 py-3 text-sm">
           Bu talep yeni tekliflere kapalıdır.
@@ -163,7 +177,7 @@ export default async function ListingPage({ params }: Props) {
       )}
 
       {canOffer && (
-        <div className="mt-10 rounded-2xl border border-border bg-card p-6">
+        <div id="teklif" className="mt-10 scroll-mt-28 rounded-2xl border border-border bg-card p-6">
           <h2 className="font-display text-2xl">Teklif ver</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             Teklif ücreti {formatTry(Number(settings?.bid_fee_amount ?? 29.9))} (iade edilmez). Ücret
@@ -182,11 +196,10 @@ export default async function ListingPage({ params }: Props) {
         </div>
       )}
 
-      {profile?.role === "seller" &&
-        profile.seller_status === "approved" &&
+      {isSellerActor &&
         listing.status === "open" &&
         listing.kind === "service" &&
-        listing.user_id !== profile.id &&
+        listing.user_id !== profile?.id &&
         !myOffer &&
         !hidden &&
         !inServiceArea && (

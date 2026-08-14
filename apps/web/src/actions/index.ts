@@ -206,6 +206,7 @@ export async function hideListingAction(listingId: string) {
   if (error) return { error: error.message };
   revalidatePath("/satici/ilanlar");
   revalidatePath("/satici");
+  revalidatePath("/");
   return { ok: true };
 }
 

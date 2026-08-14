@@ -212,11 +212,11 @@ export default async function OpenJobsPage({
             </Link>
             <div className="flex shrink-0 items-center gap-2 pr-3">
               <Button asChild size="sm">
-                <Link href={`/ilan/${(l.categories as { slug?: string } | null)?.slug}/${l.slug}`}>
+                <Link href={`/ilan/${(l.categories as { slug?: string } | null)?.slug}/${l.slug}#teklif`}>
                   Teklif ver ({feeLabel})
                 </Link>
               </Button>
-              <HideListingButton listingId={l.id} stayOnPage />
+              <HideListingButton listingId={l.id} stayOnPage labeled />
             </div>
           </li>
         ))}
