@@ -351,6 +351,7 @@ export type Database = {
         Args: { p_conversation_id: string; p_body: string };
         Returns: string;
       };
+      mark_conversation_read: { Args: { p_conversation_id: string }; Returns: undefined };
       reveal_listing_phone: { Args: { p_listing_id: string }; Returns: string };
       delete_review: { Args: { p_review_id: string; p_reason?: string }; Returns: undefined };
       hide_listing_for_seller: { Args: { p_listing_id: string }; Returns: undefined };

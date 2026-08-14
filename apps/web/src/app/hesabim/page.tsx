@@ -109,7 +109,7 @@ export default async function HesabimPage() {
                               <>
                                 {" · "}
                                 <Link href={`/mesajlar/${convKey(l.id, o.seller_id)}`} className="underline">
-                                  Mesaj / teklifi seç
+                                  İletişimi gör
                                 </Link>
                               </>
                             )}

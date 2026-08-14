@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { Phone } from "lucide-react";
 import { telHref } from "@ilazim/shared";
 import { revealContactAction } from "@/actions";
+import { Button } from "@/components/ui/button";
 
 export function RevealContact({ listingId, shared }: { listingId: string; shared: boolean }) {
   const [phone, setPhone] = useState<string | null>(null);
@@ -18,7 +19,7 @@ export function RevealContact({ listingId, shared }: { listingId: string; shared
     return (
       <a
         href={telHref(phone)}
-        className="inline-flex items-center gap-2 text-sm font-semibold text-primary"
+        className="inline-flex h-11 items-center gap-2 rounded-xl bg-accent px-5 text-sm font-semibold text-ink"
       >
         <Phone className="size-4" />
         {phone}
@@ -28,10 +29,10 @@ export function RevealContact({ listingId, shared }: { listingId: string; shared
 
   return (
     <div>
-      <button
+      <Button
         type="button"
+        variant="saffron"
         disabled={pending}
-        className="text-sm font-medium text-primary underline underline-offset-4 disabled:opacity-50"
         onClick={() =>
           start(async () => {
             const r = await revealContactAction(listingId);
@@ -40,8 +41,8 @@ export function RevealContact({ listingId, shared }: { listingId: string; shared
           })
         }
       >
-        {pending ? "Açılıyor…" : "İletişim bilgilerini gör"}
-      </button>
+        {pending ? "Açılıyor…" : "İletişimi gör"}
+      </Button>
       {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
     </div>
   );

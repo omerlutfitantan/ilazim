@@ -1,11 +1,12 @@
 "use client";
 
-import { useActionState, useEffect, useState, useTransition } from "react";
-import { sendMessageAction, acceptOfferAction } from "@/actions";
+import { useActionState, useEffect, useRef, useState, useTransition } from "react";
+import { Check, CheckCheck } from "lucide-react";
+import { sendMessageAction, acceptOfferAction, markConversationReadAction } from "@/actions";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { RevealContact } from "@/components/reveal-contact";
+import { cn } from "@/lib/utils";
 import type { MessageRow } from "@/lib/database.types";
 import { toast } from "sonner";
 
@@ -13,26 +14,33 @@ export function ChatBox({
   conversationId,
   userId,
   initial,
-  listingId,
   offerId,
   listingStatus,
   isBuyer,
-  canRevealPhone,
-  phoneShared,
 }: {
   conversationId: string;
   userId: string;
   initial: MessageRow[];
-  listingId: string;
   offerId?: string | null;
   listingStatus: string;
   isBuyer: boolean;
-  canRevealPhone: boolean;
-  phoneShared: boolean;
 }) {
   const [messages, setMessages] = useState(initial);
   const [state, action, pending] = useActionState(sendMessageAction, null);
   const [selecting, start] = useTransition();
+  const bottom = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMessages(initial);
+  }, [initial]);
+
+  useEffect(() => {
+    void markConversationReadAction(conversationId);
+  }, [conversationId]);
+
+  useEffect(() => {
+    bottom.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages.length]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -47,19 +55,34 @@ export function ChatBox({
           filter: `conversation_id=eq.${conversationId}`,
         },
         (payload) => {
-          setMessages((prev) => [...prev, payload.new as MessageRow]);
+          const row = payload.new as MessageRow;
+          setMessages((prev) => (prev.some((m) => m.id === row.id) ? prev : [...prev, row]));
+          if (row.sender_id !== userId) void markConversationReadAction(conversationId);
+        },
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "messages",
+          filter: `conversation_id=eq.${conversationId}`,
+        },
+        (payload) => {
+          const row = payload.new as MessageRow;
+          setMessages((prev) => prev.map((m) => (m.id === row.id ? { ...m, read_at: row.read_at } : m)));
         },
       )
       .subscribe();
     return () => {
       void supabase.removeChannel(channel);
     };
-  }, [conversationId]);
+  }, [conversationId, userId]);
 
   return (
     <div className="mt-6">
-      <div className="mb-4 flex flex-wrap gap-2">
-        {isBuyer && listingStatus === "open" && offerId && (
+      {isBuyer && listingStatus === "open" && offerId && (
+        <div className="mb-4">
           <Button
             type="button"
             disabled={selecting}
@@ -73,21 +96,34 @@ export function ChatBox({
           >
             Teklifi seç
           </Button>
-        )}
-        {canRevealPhone && <RevealContact listingId={listingId} shared={phoneShared} />}
-      </div>
+        </div>
+      )}
       <ul className="space-y-2">
-        {messages.map((m) => (
-          <li
-            key={m.id}
-            className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm ${
-              m.sender_id === userId ? "ml-auto bg-primary text-primary-foreground" : "bg-card border border-border"
-            }`}
-          >
-            {m.body}
-          </li>
-        ))}
+        {messages.map((m) => {
+          const mine = m.sender_id === userId;
+          return (
+            <li
+              key={m.id}
+              className={cn(
+                "max-w-[80%] rounded-2xl px-4 py-2 text-sm whitespace-pre-wrap",
+                mine ? "ml-auto bg-primary text-primary-foreground" : "bg-card border border-border",
+              )}
+            >
+              {m.body}
+              {mine && (
+                <span className="mt-1 flex justify-end" title={m.read_at ? "Görüldü" : "İletildi"}>
+                  {m.read_at ? (
+                    <CheckCheck className="size-3.5 text-sky-300" />
+                  ) : (
+                    <Check className="size-3.5 opacity-60" />
+                  )}
+                </span>
+              )}
+            </li>
+          );
+        })}
       </ul>
+      <div ref={bottom} />
       <form action={action} className="mt-4 flex gap-2">
         <input type="hidden" name="conversationId" value={conversationId} />
         <Input name="body" required placeholder="Mesaj yazın" />

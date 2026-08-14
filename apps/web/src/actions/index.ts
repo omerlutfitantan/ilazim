@@ -194,6 +194,8 @@ export async function placeOfferAction(_: unknown, formData: FormData) {
   });
   if (error) return { error: error.message };
   revalidatePath("/satici/tekliflerim");
+  revalidatePath("/mesajlar");
+  revalidatePath("/ilan", "layout");
   revalidatePath("/");
   return { ok: true };
 }
@@ -331,6 +333,15 @@ export async function sendMessageAction(_: unknown, formData: FormData) {
   });
   if (error) return { error: error.message };
   revalidatePath(`/mesajlar/${parsed.data.conversationId}`);
+  return { ok: true };
+}
+
+export async function markConversationReadAction(conversationId: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("mark_conversation_read", {
+    p_conversation_id: conversationId,
+  });
+  if (error) return { error: error.message };
   return { ok: true };
 }
 

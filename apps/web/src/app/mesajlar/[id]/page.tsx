@@ -1,10 +1,11 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { maskPersonName } from "@ilazim/shared";
+import { formatTry, maskPersonName } from "@ilazim/shared";
 import { getProfile } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 import { ChatBox } from "@/components/chat-box";
 import { ReviewForm } from "@/components/review-form";
+import { RevealContact } from "@/components/reveal-contact";
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -28,7 +29,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
   const { data: offer } = await supabase
     .from("offers")
-    .select("id, status, seller_id")
+    .select("id, status, seller_id, amount, fee_charged")
     .eq("listing_id", conv.listing_id)
     .eq("seller_id", conv.seller_id)
     .maybeSingle();
@@ -65,18 +66,28 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-12">
-      <h1 className="font-display text-3xl">{listing?.title}</h1>
-      <p className="mt-1 text-sm text-muted-foreground">
-        {otherLabel}
-        {seller?.slug && isBuyer && (
-          <>
-            {" · "}
-            <Link href={`/usta/${seller.slug}`} className="underline">
-              Profili incele
-            </Link>
-          </>
-        )}
-      </p>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="font-display text-3xl">{listing?.title}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {otherLabel}
+            {seller?.slug && isBuyer && (
+              <>
+                {" · "}
+                <Link href={`/usta/${seller.slug}`} className="underline">
+                  Profili incele
+                </Link>
+              </>
+            )}
+          </p>
+        </div>
+        <div className="flex flex-col items-end gap-2">
+          {offer && (
+            <p className="text-sm font-semibold">Teklif ücreti {formatTry(Number(offer.amount))}</p>
+          )}
+          <RevealContact listingId={conv.listing_id} shared={Boolean(listing?.show_phone)} />
+        </div>
+      </div>
       {listing?.status === "awarded" && (
         <p className="mt-3 rounded-xl bg-accent/40 px-3 py-2 text-sm">
           Teklif seçildi. Bu ilan yeni tekliflere kapalı.
@@ -86,12 +97,9 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         conversationId={id}
         userId={profile.id}
         initial={messages ?? []}
-        listingId={conv.listing_id}
         offerId={offer?.id}
         listingStatus={listing?.status ?? "open"}
         isBuyer={isBuyer}
-        canRevealPhone={!isBuyer}
-        phoneShared={Boolean(listing?.show_phone)}
       />
       {isBuyer && listing?.status && ["awarded", "completed"].includes(listing.status) && !existingReview && (
         <ReviewForm listingId={listing.id} />

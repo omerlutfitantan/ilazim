@@ -9,7 +9,6 @@ import { Badge } from "@/components/ui/badge";
 import { JsonLd } from "@/components/json-ld";
 import { StarRating } from "@/components/star-rating";
 import { OfferForm } from "@/components/offer-form";
-import { RevealContact } from "@/components/reveal-contact";
 import { ListingActions } from "@/components/listing-actions";
 import { HideListingButton } from "@/components/hide-listing-button";
 import { Button } from "@/components/ui/button";
@@ -78,6 +77,7 @@ export default async function ListingPage({ params }: Props) {
     offers = (data as unknown as typeof offers) ?? [];
   }
 
+  let myConversationId: string | null = null;
   if (supabase && profile && !isOwner) {
     const { data } = await supabase
       .from("offers")
@@ -86,6 +86,24 @@ export default async function ListingPage({ params }: Props) {
       .eq("seller_id", profile.id)
       .maybeSingle();
     myOffer = data;
+    if (data) {
+      const { data: conv } = await supabase
+        .from("conversations")
+        .select("id")
+        .eq("listing_id", listing.id)
+        .eq("seller_id", profile.id)
+        .maybeSingle();
+      myConversationId = conv?.id ?? null;
+    }
+  }
+
+  const convBySeller = new Map<string, string>();
+  if (supabase && isOwner) {
+    const { data: convs } = await supabase
+      .from("conversations")
+      .select("id, seller_id")
+      .eq("listing_id", listing.id);
+    for (const c of convs ?? []) convBySeller.set(c.seller_id, c.id);
   }
 
   let hidden = false;
@@ -220,9 +238,12 @@ export default async function ListingPage({ params }: Props) {
       {myOffer && (
         <div className="mt-10 rounded-2xl border border-border bg-card p-6">
           <h2 className="font-display text-2xl">Teklifiniz alındı</h2>
-          <div className="mt-3">
-            <RevealContact listingId={listing.id} shared={Boolean(listing.show_phone)} />
-          </div>
+          <p className="mt-1 text-sm text-muted-foreground">İlan sahibiyle sohbete geçebilirsiniz.</p>
+          {myConversationId && (
+            <Button asChild variant="saffron" className="mt-4">
+              <Link href={`/mesajlar/${myConversationId}`}>İletişimi gör</Link>
+            </Button>
+          )}
         </div>
       )}
 
@@ -249,6 +270,11 @@ export default async function ListingPage({ params }: Props) {
                           Profili incele
                         </Link>
                       </p>
+                      {convBySeller.get(o.seller_id) && (
+                        <Button asChild variant="saffron" size="sm" className="mt-3">
+                          <Link href={`/mesajlar/${convBySeller.get(o.seller_id)}`}>İletişimi gör</Link>
+                        </Button>
+                      )}
                       <p className="mt-2 text-sm">{o.message}</p>
                       {o.eta_text && <p className="mt-1 text-xs text-muted-foreground">{o.eta_text}</p>}
                     </div>
