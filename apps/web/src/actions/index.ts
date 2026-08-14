@@ -22,8 +22,10 @@ import {
 } from "@ilazim/shared";
 import { createClient } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
+import { after } from "next/server";
 import { getProfile } from "@/lib/data";
 import { DESK_COOKIE } from "@/lib/desk";
+import { sendNewMessageEmail, sendOfferReceivedEmail } from "@/lib/notify-emails";
 
 export async function signUpAction(_: unknown, formData: FormData) {
   const parsed = signUpSchema.safeParse({
@@ -217,6 +219,19 @@ export async function placeOfferAction(_: unknown, formData: FormData) {
     p_image_urls: parsed.data.imageUrls,
   });
   if (error) return { error: error.message };
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (user) {
+    after(() =>
+      sendOfferReceivedEmail({
+        listingId: parsed.data.listingId,
+        amount: parsed.data.amount,
+        message: parsed.data.message,
+        sellerId: user.id,
+      }),
+    );
+  }
   revalidatePath("/satici/tekliflerim");
   revalidatePath("/mesajlar");
   revalidatePath("/ilan", "layout");
@@ -364,6 +379,18 @@ export async function sendMessageAction(_: unknown, formData: FormData) {
     p_body: parsed.data.body,
   });
   if (error) return { error: error.message };
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (user) {
+    after(() =>
+      sendNewMessageEmail({
+        conversationId: parsed.data.conversationId,
+        senderId: user.id,
+        body: parsed.data.body,
+      }),
+    );
+  }
   revalidatePath(`/mesajlar/${parsed.data.conversationId}`);
   return { ok: true };
 }
