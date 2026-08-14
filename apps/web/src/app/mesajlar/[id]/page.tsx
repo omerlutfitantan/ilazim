@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { ChatBox } from "@/components/chat-box";
 import { ReviewForm } from "@/components/review-form";
 import { RevealContact } from "@/components/reveal-contact";
+import { AcceptOfferButton } from "@/components/listing-actions";
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -83,24 +84,25 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         </div>
         <div className="flex flex-col items-end gap-2">
           {offer && (
-            <p className="text-sm font-semibold">Teklif ücreti {formatTry(Number(offer.amount))}</p>
+            <p className="text-sm font-semibold">Teklif {formatTry(Number(offer.amount))}</p>
           )}
-          <RevealContact listingId={conv.listing_id} shared={Boolean(listing?.show_phone)} />
+          <div className="flex flex-wrap justify-end gap-2">
+            {isBuyer && listing?.status === "open" && offer?.status === "pending" && offer.id && (
+              <AcceptOfferButton offerId={offer.id} />
+            )}
+            <RevealContact listingId={conv.listing_id} shared={Boolean(listing?.show_phone)} />
+          </div>
         </div>
       </div>
-      {listing?.status === "awarded" && (
-        <p className="mt-3 rounded-xl bg-accent/40 px-3 py-2 text-sm">
-          Teklif seçildi. Bu ilan yeni tekliflere kapalı.
+      {listing?.status === "awarded" && offer?.id && listing.awarded_offer_id === offer.id && (
+        <p className="mt-3 rounded-xl bg-accent/40 px-3 py-2 text-sm">Bu teklifi seçtiniz.</p>
+      )}
+      {listing?.status === "awarded" && offer?.id && listing.awarded_offer_id !== offer.id && (
+        <p className="mt-3 rounded-xl bg-muted px-3 py-2 text-sm">
+          Başka bir teklif seçildi. İlan yeni tekliflere kapalı.
         </p>
       )}
-      <ChatBox
-        conversationId={id}
-        userId={profile.id}
-        initial={messages ?? []}
-        offerId={offer?.id}
-        listingStatus={listing?.status ?? "open"}
-        isBuyer={isBuyer}
-      />
+      <ChatBox conversationId={id} userId={profile.id} initial={messages ?? []} />
       {isBuyer && listing?.status && ["awarded", "completed"].includes(listing.status) && !existingReview && (
         <ReviewForm listingId={listing.id} />
       )}

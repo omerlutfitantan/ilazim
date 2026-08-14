@@ -2,38 +2,49 @@
 
 import { acceptOfferAction, cancelListingAction, completeListingAction } from "@/actions";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "sonner";
+
+export function AcceptOfferButton({
+  offerId,
+  size = "default",
+}: {
+  offerId: string;
+  size?: "default" | "sm";
+}) {
+  const [pending, start] = useTransition();
+  const router = useRouter();
+
+  return (
+    <Button
+      type="button"
+      size={size}
+      disabled={pending}
+      onClick={() =>
+        start(async () => {
+          const r = await acceptOfferAction(offerId);
+          if (r.error) toast.error(r.error);
+          else {
+            toast.success("Teklif seçildi. İlan yeni tekliflere kapandı.");
+            router.refresh();
+          }
+        })
+      }
+    >
+      {pending ? "Seçiliyor…" : "Teklifi seç"}
+    </Button>
+  );
+}
 
 export function ListingActions({
   listingId,
   status,
-  acceptOfferId,
 }: {
   listingId: string;
   status: string;
-  acceptOfferId?: string;
 }) {
   const [pending, start] = useTransition();
-
-  if (acceptOfferId) {
-    return (
-      <Button
-        size="sm"
-        className="mt-2"
-        disabled={pending}
-        onClick={() =>
-          start(async () => {
-            const r = await acceptOfferAction(acceptOfferId);
-            if (r.error) toast.error(r.error);
-            else toast.success("Teklif seçildi. İlan yeni tekliflere kapandı.");
-          })
-        }
-      >
-        Teklifi seç
-      </Button>
-    );
-  }
 
   return (
     <div className="flex gap-2">

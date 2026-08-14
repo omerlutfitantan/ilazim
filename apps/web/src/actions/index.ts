@@ -217,8 +217,9 @@ export async function acceptOfferAction(offerId: string) {
   const { error } = await supabase.rpc("accept_offer", { p_offer_id: offerId });
   if (error) return { error: error.message };
   revalidatePath("/hesabim");
-  revalidatePath("/mesajlar");
+  revalidatePath("/mesajlar", "layout");
   revalidatePath("/satici");
+  revalidatePath("/ilan", "layout");
   return { ok: true };
 }
 

@@ -9,7 +9,6 @@ import { Badge } from "@/components/ui/badge";
 import { JsonLd } from "@/components/json-ld";
 import { StarRating } from "@/components/star-rating";
 import { OfferForm } from "@/components/offer-form";
-import { ListingActions } from "@/components/listing-actions";
 import { HideListingButton } from "@/components/hide-listing-button";
 import { Button } from "@/components/ui/button";
 import type { ListingKind, ListingStatus } from "@/lib/database.types";
@@ -272,7 +271,7 @@ export default async function ListingPage({ params }: Props) {
                       </p>
                       {convBySeller.get(o.seller_id) && (
                         <Button asChild variant="saffron" size="sm" className="mt-3">
-                          <Link href={`/mesajlar/${convBySeller.get(o.seller_id)}`}>İletişimi gör</Link>
+                          <Link href={`/mesajlar/${convBySeller.get(o.seller_id)}`}>Sohbet</Link>
                         </Button>
                       )}
                       <p className="mt-2 text-sm">{o.message}</p>
@@ -280,9 +279,6 @@ export default async function ListingPage({ params }: Props) {
                     </div>
                     <div className="text-right">
                       <p className="font-display text-xl">{formatTry(Number(o.amount))}</p>
-                      {listing.status === "open" && o.status === "pending" && (
-                        <ListingActions listingId={listing.id} status={listing.status} acceptOfferId={o.id} />
-                      )}
                     </div>
                   </div>
                 </li>

@@ -84,8 +84,11 @@ export default async function HesabimPage() {
                     </Link>
                   </h2>
                   <p className="text-xs text-muted-foreground">
-                    {labelOf(listingStatusLabel, l.status as ListingStatus)}
-                    {l.status === "awarded" ? " — yeni teklife kapalı" : ""}
+                    {l.status === "open"
+                      ? mine.length
+                        ? `${mine.length} teklif · sohbet edip teklifi seçin`
+                        : "Teklif bekleniyor"
+                      : labelOf(listingStatusLabel, l.status as ListingStatus)}
                   </p>
                 </div>
                 <ListingActions listingId={l.id} status={l.status} />
@@ -105,15 +108,12 @@ export default async function HesabimPage() {
                             <Link href={`/usta/${seller?.slug}`} className="underline">
                               Profili incele
                             </Link>
-                            {convKey(l.id, o.seller_id) && (
-                              <>
-                                {" · "}
-                                <Link href={`/mesajlar/${convKey(l.id, o.seller_id)}`} className="underline">
-                                  İletişimi gör
-                                </Link>
-                              </>
-                            )}
                           </p>
+                          {convKey(l.id, o.seller_id) && (
+                            <Button asChild variant="saffron" size="sm" className="mt-2">
+                              <Link href={`/mesajlar/${convKey(l.id, o.seller_id)}`}>Sohbet</Link>
+                            </Button>
+                          )}
                           {st && (
                             <p className="text-xs text-muted-foreground">
                               {Number(st.rating_avg).toFixed(1)} ★ ({st.review_count} yorum)
@@ -123,9 +123,6 @@ export default async function HesabimPage() {
                         </div>
                         <div className="text-right">
                           <p className="font-display text-lg">{formatTry(Number(o.amount))}</p>
-                          {l.status === "open" && o.status === "pending" && (
-                            <ListingActions listingId={l.id} status={l.status} acceptOfferId={o.id} />
-                          )}
                         </div>
                       </div>
                     </li>

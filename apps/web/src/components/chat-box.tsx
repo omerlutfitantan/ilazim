@@ -1,33 +1,25 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState, useTransition } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { Check, CheckCheck } from "lucide-react";
-import { sendMessageAction, acceptOfferAction, markConversationReadAction } from "@/actions";
+import { sendMessageAction, markConversationReadAction } from "@/actions";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import type { MessageRow } from "@/lib/database.types";
-import { toast } from "sonner";
 
 export function ChatBox({
   conversationId,
   userId,
   initial,
-  offerId,
-  listingStatus,
-  isBuyer,
 }: {
   conversationId: string;
   userId: string;
   initial: MessageRow[];
-  offerId?: string | null;
-  listingStatus: string;
-  isBuyer: boolean;
 }) {
   const [messages, setMessages] = useState(initial);
   const [state, action, pending] = useActionState(sendMessageAction, null);
-  const [selecting, start] = useTransition();
   const bottom = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -81,23 +73,6 @@ export function ChatBox({
 
   return (
     <div className="mt-6">
-      {isBuyer && listingStatus === "open" && offerId && (
-        <div className="mb-4">
-          <Button
-            type="button"
-            disabled={selecting}
-            onClick={() =>
-              start(async () => {
-                const r = await acceptOfferAction(offerId);
-                if (r.error) toast.error(r.error);
-                else toast.success("Teklif seçildi. İlan yeni tekliflere kapandı.");
-              })
-            }
-          >
-            Teklifi seç
-          </Button>
-        </div>
-      )}
       <ul className="space-y-2">
         {messages.map((m) => {
           const mine = m.sender_id === userId;
