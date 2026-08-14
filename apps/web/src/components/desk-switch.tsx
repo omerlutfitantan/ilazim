@@ -15,7 +15,7 @@ export function DeskSwitch({
     desk === "seller"
       ? "Hizmet alıcı hesabına geç"
       : canSell
-        ? "Satıcı hesabına geç"
+        ? "Hizmet veren hesabına geç"
         : "Satıcı ol";
 
   return (
