@@ -1,5 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
-  "installCommand": "npm install --prefix=../.. --include=optional"
+  "installCommand": "npm install --prefix=../.. --include=optional && npm install lightningcss-linux-x64-gnu@1.32.0 --no-save --os=linux --cpu=x64 --libc=glibc && node ../../scripts/ensure-lightningcss.cjs"
 }
