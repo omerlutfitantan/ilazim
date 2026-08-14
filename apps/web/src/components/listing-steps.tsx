@@ -257,11 +257,12 @@ export function StepLocation({ cities, districts }: { cities: Loc[]; districts: 
       <div>
         <Label>İlçe</Label>
         <select
+          required
           value={districtId}
           onChange={(e) => setDistrictId(e.target.value)}
           className="mt-1 h-11 w-full rounded-xl border border-border bg-card px-3 text-sm"
         >
-          <option value="">Opsiyonel</option>
+          <option value="">Seçin</option>
           {cityDistricts.map((d) => (
             <option key={d.id} value={d.id}>
               {d.name}
@@ -283,7 +284,7 @@ export function StepContact({ authed, defaultPhone }: { authed: boolean; default
 
   useEffect(() => {
     const d = readDraft();
-    if (!d.cityId) {
+    if (!d.cityId || !d.districtId) {
       router.replace("/ilan-ac/konum");
       return;
     }

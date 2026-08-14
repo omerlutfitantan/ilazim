@@ -1,4 +1,5 @@
 import { AuthScreen } from "@/components/auth-screen";
+import { getLocations } from "@/lib/data";
 
 export default async function Page({
   searchParams,
@@ -6,5 +7,6 @@ export default async function Page({
   searchParams: Promise<{ next?: string }>;
 }) {
   const { next } = await searchParams;
-  return <AuthScreen mode="kayit" next={next} />;
+  const locs = await getLocations();
+  return <AuthScreen mode="kayit" next={next} cities={locs.cities} districts={locs.districts} />;
 }

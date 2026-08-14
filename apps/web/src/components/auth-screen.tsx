@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Check } from "lucide-react";
 import { SignInForm, SignUpForm } from "@/components/auth-forms";
 import { DraftSummary } from "@/components/listing-steps";
+import type { LocOption } from "@/components/city-district-fields";
 
 const LOGIN_POINTS = [
   "Doğrulanmış hesapla teklif ve mesaj",
@@ -46,9 +47,13 @@ function InkPanel({
 export function AuthScreen({
   mode,
   next,
+  cities = [],
+  districts = [],
 }: {
   mode: "giris" | "kayit";
   next?: string;
+  cities?: LocOption[];
+  districts?: LocOption[];
 }) {
   const adminGate = Boolean(next?.startsWith("/admin"));
   const otherHref =
@@ -98,7 +103,7 @@ export function AuthScreen({
               <DraftSummary />
             </div>
           )}
-          {mode === "giris" ? <SignInForm next={next} /> : <SignUpForm next={next} />}
+          {mode === "giris" ? <SignInForm next={next} /> : <SignUpForm next={next} cities={cities} districts={districts} />}
         </div>
         {!adminGate && (
           <Link

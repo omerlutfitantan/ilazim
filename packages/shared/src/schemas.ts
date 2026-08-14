@@ -10,6 +10,8 @@ export const signUpSchema = z
     password: z.string().min(8, "Şifre en az 8 karakter"),
     passwordConfirm: z.string().min(8, "Şifreyi tekrar girin"),
     phone: z.string().trim().max(20).optional().nullable(),
+    cityId: z.string().uuid("Şehir seçin"),
+    districtId: z.string().uuid("İlçe seçin"),
     acceptTerms: z.boolean().refine((v) => v === true, "Şartları kabul etmelisiniz"),
   })
   .refine((d) => d.password === d.passwordConfirm, {
@@ -42,7 +44,7 @@ export const listingCreateSchema = z.object({
   title: z.string().trim().min(8, "Başlık en az 8 karakter").max(120),
   description: z.string().trim().min(20, "Açıklama en az 20 karakter").max(5000),
   cityId: z.string().uuid("Şehir seçin"),
-  districtId: z.string().uuid().optional().nullable(),
+  districtId: z.string().uuid("İlçe seçin"),
   budgetMin: z.coerce.number().min(0).optional().nullable(),
   budgetMax: z.coerce.number().min(0).optional().nullable(),
   imageUrls: z.array(z.string().url()).max(8).default([]),
@@ -69,7 +71,7 @@ export const sellerOnboardingSchema = z.object({
   headline: z.string().trim().min(8, "Başlık en az 8 karakter").max(120),
   bio: z.string().trim().min(20, "Hakkında en az 20 karakter").max(2000),
   cityId: z.string().uuid("Şehir seçin"),
-  districtId: z.string().uuid().optional().nullable(),
+  districtId: z.string().uuid("İlçe seçin"),
   phone: z.string().trim().min(10).max(20).optional().nullable(),
   categoryIds: z.array(z.string().uuid()).default([]),
 });
@@ -119,6 +121,8 @@ export const profileUpdateSchema = z.object({
   fullName: z.string().trim().min(2, "Ad soyad en az 2 karakter").max(80),
   phone: z.preprocess(emptyToNull, z.string().trim().max(20).nullable().optional()),
   bio: z.preprocess(emptyToNull, z.string().trim().max(2000).nullable().optional()),
+  cityId: z.string().uuid("Şehir seçin"),
+  districtId: z.string().uuid("İlçe seçin"),
 });
 
 export const adminUserUpdateSchema = z.object({

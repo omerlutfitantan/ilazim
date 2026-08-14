@@ -34,6 +34,8 @@ export async function signUpAction(_: unknown, formData: FormData) {
     password: formData.get("password"),
     passwordConfirm: formData.get("passwordConfirm"),
     phone: formData.get("phone") || null,
+    cityId: formData.get("cityId"),
+    districtId: formData.get("districtId"),
     acceptTerms: formData.get("acceptTerms") === "on",
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Geçersiz form" };
@@ -48,6 +50,8 @@ export async function signUpAction(_: unknown, formData: FormData) {
       data: {
         full_name: parsed.data.fullName,
         phone: parsed.data.phone ?? "",
+        city_id: parsed.data.cityId,
+        district_id: parsed.data.districtId,
       },
       emailRedirectTo: `${site}/auth/callback?next=${encodeURIComponent(next)}`,
     },
@@ -452,6 +456,8 @@ export async function updateProfileAction(_: unknown, formData: FormData) {
     fullName: formData.get("fullName"),
     phone: formData.get("phone"),
     bio: formData.get("bio"),
+    cityId: formData.get("cityId"),
+    districtId: formData.get("districtId"),
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Geçersiz form" };
   const supabase = await createClient();
@@ -466,12 +472,15 @@ export async function updateProfileAction(_: unknown, formData: FormData) {
       display_name: parsed.data.fullName,
       phone: parsed.data.phone ?? null,
       bio: parsed.data.bio ?? null,
+      city_id: parsed.data.cityId,
+      district_id: parsed.data.districtId,
     })
     .eq("id", user.id);
   if (error) return { error: error.message };
   revalidatePath("/hesabim");
   revalidatePath("/hesabim/profil");
   revalidatePath("/satici/profil");
+  revalidatePath("/satici/ilanlar");
   return { ok: true };
 }
 

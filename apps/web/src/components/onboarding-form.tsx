@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 import { ServiceCategoryPicker } from "@/components/service-category-picker";
+import { CityDistrictFields } from "@/components/city-district-fields";
 
 type Loc = { id: string; name: string; parent_id: string | null; type: string };
 type Cat = { id: string; name: string };
@@ -23,10 +24,8 @@ export function OnboardingForm({
   serviceCategories: Cat[];
   blockedIds?: string[];
 }) {
-  const [cityId, setCityId] = useState("");
   const [sellerType, setSellerType] = useState("service");
   const [state, action, pending] = useActionState(sellerOnboardingAction, null);
-  const cityDistricts = districts.filter((d) => d.parent_id === cityId);
 
   return (
     <form action={action} className="space-y-4">
@@ -59,33 +58,7 @@ export function OnboardingForm({
         <Label htmlFor="phone">Telefon</Label>
         <Input id="phone" name="phone" className="mt-1" />
       </div>
-      <div>
-        <Label>Şehir</Label>
-        <select
-          name="cityId"
-          required
-          className="mt-1 h-11 w-full rounded-xl border border-border bg-card px-3 text-sm"
-          onChange={(e) => setCityId(e.target.value)}
-        >
-          <option value="">Seçin</option>
-          {cities.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div>
-        <Label>İlçe</Label>
-        <select name="districtId" className="mt-1 h-11 w-full rounded-xl border border-border bg-card px-3 text-sm">
-          <option value="">Opsiyonel</option>
-          {cityDistricts.map((d) => (
-            <option key={d.id} value={d.id}>
-              {d.name}
-            </option>
-          ))}
-        </select>
-      </div>
+      <CityDistrictFields cities={cities} districts={districts} />
       {state && "error" in state && state.error && (
         <p className="text-sm text-destructive">{state.error}</p>
       )}

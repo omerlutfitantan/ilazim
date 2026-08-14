@@ -1,12 +1,13 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { getProfile } from "@/lib/data";
+import { getLocations, getProfile } from "@/lib/data";
 import { DraftSummary } from "@/components/listing-steps";
 import { SignUpForm } from "@/components/auth-forms";
 
 export default async function Page() {
   const profile = await getProfile();
   if (profile) redirect("/ilan-ac/yayinla");
+  const locs = await getLocations();
 
   return (
     <div>
@@ -19,7 +20,7 @@ export default async function Page() {
         <DraftSummary />
       </div>
       <div className="mt-8">
-        <SignUpForm next="/ilan-ac/yayinla" />
+        <SignUpForm next="/ilan-ac/yayinla" cities={locs.cities} districts={locs.districts} />
       </div>
       <Link
         href="/ilan-ac/hesap"

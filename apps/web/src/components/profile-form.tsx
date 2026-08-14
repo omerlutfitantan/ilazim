@@ -6,15 +6,24 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { CityDistrictFields, type LocOption } from "@/components/city-district-fields";
 
 export function ProfileForm({
   fullName,
   phone,
   bio,
+  cityId,
+  districtId,
+  cities,
+  districts,
 }: {
   fullName: string | null;
   phone: string | null;
   bio: string | null;
+  cityId: string | null;
+  districtId: string | null;
+  cities: LocOption[];
+  districts: LocOption[];
 }) {
   const [state, action, pending] = useActionState(updateProfileAction, null);
   return (
@@ -30,6 +39,12 @@ export function ProfileForm({
         <Label htmlFor="phone">Telefon</Label>
         <Input id="phone" name="phone" defaultValue={phone ?? ""} className="mt-1" />
       </div>
+      <CityDistrictFields
+        cities={cities}
+        districts={districts}
+        defaultCityId={cityId}
+        defaultDistrictId={districtId}
+      />
       <div>
         <Label htmlFor="bio">Hakkında</Label>
         <Textarea id="bio" name="bio" defaultValue={bio ?? ""} className="mt-1 min-h-24" />

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getProfile } from "@/lib/data";
+import { getLocations, getProfile } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { AvatarUploader } from "@/components/avatar-uploader";
 import { ProfileForm } from "@/components/profile-form";
@@ -9,11 +9,14 @@ export default async function Page() {
   const profile = await getProfile();
   if (!profile) redirect("/giris");
   if (profile.role === "buyer") redirect("/satici/onboarding");
+  const locs = await getLocations();
 
   return (
     <div>
       <h1 className="font-display text-4xl">Satıcı profili</h1>
-      <p className="mt-2 text-sm text-muted-foreground">Fotoğraf, ad ve herkese açık bilgilerin.</p>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Fotoğraf, konum ve herkese açık bilgilerin. Açık iş filtreleri buradaki şehre/ilçeye göre çalışır.
+      </p>
       <div className="mt-8">
         <AvatarUploader userId={profile.id} avatarUrl={profile.avatar_url} name={profile.full_name} />
       </div>
@@ -22,6 +25,10 @@ export default async function Page() {
           fullName={profile.full_name}
           phone={profile.phone}
           bio={profile.bio}
+          cityId={profile.city_id}
+          districtId={profile.district_id}
+          cities={locs.cities}
+          districts={locs.districts}
         />
       </div>
       <div className="mt-8 flex flex-col gap-3">

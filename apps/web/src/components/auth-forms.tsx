@@ -7,6 +7,7 @@ import { signInAction, signUpAction } from "@/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { CityDistrictFields, type LocOption } from "@/components/city-district-fields";
 
 function PasswordField({
   id,
@@ -89,7 +90,15 @@ export function SignInForm({ next, compact }: { next?: string; compact?: boolean
   );
 }
 
-export function SignUpForm({ next }: { next?: string }) {
+export function SignUpForm({
+  next,
+  cities,
+  districts,
+}: {
+  next?: string;
+  cities: LocOption[];
+  districts: LocOption[];
+}) {
   const [state, action, pending] = useActionState(signUpAction, null);
 
   return (
@@ -110,6 +119,7 @@ export function SignUpForm({ next }: { next?: string }) {
         <Label htmlFor="phone-up">Telefon</Label>
         <Input id="phone-up" name="phone" type="tel" autoComplete="tel" placeholder="05xx xxx xx xx" className="mt-1" />
       </div>
+      <CityDistrictFields cities={cities} districts={districts} />
       <PasswordField id="password-up" name="password" label="Şifre (en az 8 karakter)" autoComplete="new-password" />
       <PasswordField
         id="passwordConfirm"
