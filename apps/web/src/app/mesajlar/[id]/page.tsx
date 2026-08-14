@@ -96,7 +96,9 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
               {isBuyer && listing?.status === "open" && offer?.status === "pending" && offer.id && (
                 <AcceptOfferButton offerId={offer.id} size="sm" />
               )}
-              <RevealContact listingId={conv.listing_id} shared={Boolean(listing?.show_phone)} />
+              {!isBuyer && (
+                <RevealContact listingId={conv.listing_id} shared={Boolean(listing?.show_phone)} />
+              )}
             </div>
           </>
         }
