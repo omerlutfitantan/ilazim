@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Syne } from "next/font/google";
+import { Geist } from "next/font/google";
+import localFont from "next/font/local";
 import { Toaster } from "@/components/ui/sonner";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -8,12 +9,14 @@ import "./globals.css";
 const geist = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin", "latin-ext"],
+  display: "swap",
 });
 
-const syne = Syne({
+const syne = localFont({
+  src: "../fonts/Syne-wght.ttf",
   variable: "--font-syne",
-  subsets: ["latin", "latin-ext"],
-  weight: ["600", "700", "800"],
+  weight: "600 800",
+  display: "swap",
 });
 
 export const metadata: Metadata = {

@@ -181,7 +181,7 @@ insert into public.categories (
   'Bisiklet arıyorum ilanı açın, satıcılar teklif versin',
   'Bisiklet İlanı | İkinci El ve Sıfır Teklif | iLazım',
   'Aradığınız bisikleti tarif edin. Elinde olan satıcılar size fiyat ve fotoğrafla teklif versin.',
-  "Aradığınız bisikleti tarif edin. Elinde olan satıcılar size fiyat ve fotoğrafla teklif versin. Alıcılar satıcının yıldızlarını görür; satıcılar her teklifte sabit bir platform ücreti öder.",
+  'Aradığınız bisikleti tarif edin. Elinde olan satıcılar size fiyat ve fotoğrafla teklif versin. Alıcılar satıcının yıldızlarını görür; satıcılar her teklifte sabit bir platform ücreti öder.',
   '[{"q":"Neden ilan açıyorum, klasik ilan sitesi değil mi?","a":"Siz talep yayınlarsınız; ürünü olan size gelir. Tersine pazar yeri."},{"q":"Kargo kimde?","a":"Teklif mesajında teslimat yöntemi belirtilir."}]'::jsonb,
   true, 1
 ),
