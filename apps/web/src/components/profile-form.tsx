@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { CityDistrictFields, type LocOption } from "@/components/city-district-fields";
+import { PhoneInput } from "@/components/phone-input";
 
 export function ProfileForm({
   fullName,
@@ -37,7 +38,7 @@ export function ProfileForm({
       </div>
       <div>
         <Label htmlFor="phone">Telefon</Label>
-        <Input id="phone" name="phone" defaultValue={phone ?? ""} className="mt-1" />
+        <PhoneInput id="phone" defaultValue={phone} className="mt-1" />
       </div>
       <CityDistrictFields
         cities={cities}

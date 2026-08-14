@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { PhoneInput } from "@/components/phone-input";
 import type { ProfileRow } from "@/lib/database.types";
 
 export function AdminUserForm({ profile }: { profile: ProfileRow }) {
@@ -23,7 +24,7 @@ export function AdminUserForm({ profile }: { profile: ProfileRow }) {
       </div>
       <div>
         <Label>Telefon</Label>
-        <Input name="phone" defaultValue={profile.phone ?? ""} className="mt-1" />
+        <PhoneInput defaultValue={profile.phone} className="mt-1" />
       </div>
       <div>
         <Label>Rol</Label>

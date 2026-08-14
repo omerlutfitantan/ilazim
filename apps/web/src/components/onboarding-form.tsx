@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { ServiceCategoryPicker } from "@/components/service-category-picker";
 import { CityDistrictFields } from "@/components/city-district-fields";
+import { PhoneInput } from "@/components/phone-input";
 
 type Loc = { id: string; name: string; parent_id: string | null; type: string };
 type Cat = { id: string; name: string };
@@ -56,7 +57,7 @@ export function OnboardingForm({
       </div>
       <div>
         <Label htmlFor="phone">Telefon</Label>
-        <Input id="phone" name="phone" className="mt-1" />
+        <PhoneInput id="phone" className="mt-1" />
       </div>
       <CityDistrictFields cities={cities} districts={districts} />
       {state && "error" in state && state.error && (

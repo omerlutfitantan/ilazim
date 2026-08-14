@@ -5,6 +5,7 @@ import { updateSettingsAction } from "@/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { MoneyInput } from "@/components/money-input";
 
 export function SettingsForm({
   settings,
@@ -21,23 +22,11 @@ export function SettingsForm({
     <form action={action} className="grid max-w-lg gap-4">
       <div>
         <Label>Sabit teklif ücreti (TL)</Label>
-        <Input
-          name="bidFeeAmount"
-          type="number"
-          step="0.01"
-          defaultValue={settings.bid_fee_amount}
-          className="mt-1"
-        />
+        <MoneyInput name="bidFeeAmount" defaultValue={settings.bid_fee_amount} className="mt-1" />
       </div>
       <div>
         <Label>Yeni satıcı kredisi (TL)</Label>
-        <Input
-          name="newSellerCreditAmount"
-          type="number"
-          step="0.01"
-          defaultValue={settings.new_seller_credit_amount}
-          className="mt-1"
-        />
+        <MoneyInput name="newSellerCreditAmount" defaultValue={settings.new_seller_credit_amount} className="mt-1" />
       </div>
       <div>
         <Label>Yeni satıcı teklif indirimi %</Label>

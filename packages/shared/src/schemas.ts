@@ -1,4 +1,8 @@
 import { z } from "zod";
+import { preprocessPhone } from "./phone";
+
+const emptyToNull = (v: unknown) => (typeof v === "string" && v.trim() === "" ? null : v);
+const phoneField = z.preprocess(preprocessPhone, z.string().max(16).nullable().optional());
 
 export const listingKindSchema = z.enum(["service", "product"]);
 export const sellerTypeSchema = z.enum(["service", "product", "both"]);
@@ -9,7 +13,7 @@ export const signUpSchema = z
     email: z.string().email("Geçerli bir e-posta girin"),
     password: z.string().min(8, "Şifre en az 8 karakter"),
     passwordConfirm: z.string().min(8, "Şifreyi tekrar girin"),
-    phone: z.string().trim().max(20).optional().nullable(),
+    phone: phoneField,
     cityId: z.string().uuid("Şehir seçin"),
     districtId: z.string().uuid("İlçe seçin"),
     acceptTerms: z.boolean().refine((v) => v === true, "Şartları kabul etmelisiniz"),
@@ -49,7 +53,7 @@ export const listingCreateSchema = z.object({
   budgetMax: z.coerce.number().min(0).optional().nullable(),
   imageUrls: z.array(z.string().url()).max(8).default([]),
   showPhone: z.boolean().default(false),
-  phone: z.string().trim().max(20).optional().nullable(),
+  phone: phoneField,
 });
 
 export const offerCreateSchema = z.object({
@@ -72,7 +76,7 @@ export const sellerOnboardingSchema = z.object({
   bio: z.string().trim().min(20, "Hakkında en az 20 karakter").max(2000),
   cityId: z.string().uuid("Şehir seçin"),
   districtId: z.string().uuid("İlçe seçin"),
-  phone: z.string().trim().min(10).max(20).optional().nullable(),
+  phone: phoneField,
   categoryIds: z.array(z.string().uuid()).default([]),
 });
 
@@ -115,11 +119,9 @@ export const topupSchema = z.object({
   amount: z.coerce.number().min(50, "En az 50 TL yükleyebilirsiniz"),
 });
 
-const emptyToNull = (v: unknown) => (typeof v === "string" && v.trim() === "" ? null : v);
-
 export const profileUpdateSchema = z.object({
   fullName: z.string().trim().min(2, "Ad soyad en az 2 karakter").max(80),
-  phone: z.preprocess(emptyToNull, z.string().trim().max(20).nullable().optional()),
+  phone: phoneField,
   bio: z.preprocess(emptyToNull, z.string().trim().max(2000).nullable().optional()),
   cityId: z.string().uuid("Şehir seçin"),
   districtId: z.string().uuid("İlçe seçin"),
@@ -135,7 +137,7 @@ export const adminUserUpdateSchema = z.object({
   sellerType: z.preprocess(emptyToNull, z.enum(["service", "product", "both"]).nullable().optional()),
   fullName: z.string().trim().min(2).max(80).optional(),
   displayName: z.string().trim().min(2).max(80).optional(),
-  phone: z.preprocess(emptyToNull, z.string().trim().max(20).nullable().optional()),
+  phone: phoneField,
   bio: z.preprocess(emptyToNull, z.string().trim().max(2000).nullable().optional()),
   sellerHeadline: z.preprocess(emptyToNull, z.string().trim().max(120).nullable().optional()),
 });

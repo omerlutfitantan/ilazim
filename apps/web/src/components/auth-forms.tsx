@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CityDistrictFields, type LocOption } from "@/components/city-district-fields";
+import { PhoneInput } from "@/components/phone-input";
 
 function PasswordField({
   id,
@@ -117,7 +118,7 @@ export function SignUpForm({
       </div>
       <div>
         <Label htmlFor="phone-up">Telefon</Label>
-        <Input id="phone-up" name="phone" type="tel" autoComplete="tel" placeholder="05xx xxx xx xx" className="mt-1" />
+        <PhoneInput id="phone-up" className="mt-1" />
       </div>
       <CityDistrictFields cities={cities} districts={districts} />
       <PasswordField id="password-up" name="password" label="Şifre (en az 8 karakter)" autoComplete="new-password" />

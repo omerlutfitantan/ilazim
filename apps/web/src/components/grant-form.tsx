@@ -5,6 +5,7 @@ import { grantBalanceAction } from "@/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { MoneyInput } from "@/components/money-input";
 
 export function GrantForm({ userId }: { userId?: string }) {
   const [state, action, pending] = useActionState(grantBalanceAction, null);
@@ -20,7 +21,7 @@ export function GrantForm({ userId }: { userId?: string }) {
       )}
       <div>
         <Label>Tutar</Label>
-        <Input name="amount" type="number" min="1" step="0.01" required className="mt-1" />
+        <MoneyInput name="amount" required className="mt-1" />
       </div>
       <div>
         <Label>Tür</Label>

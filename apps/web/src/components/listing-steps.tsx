@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Hammer, ShoppingBag } from "lucide-react";
-import { KIND_LABELS, type ListingKind } from "@ilazim/shared";
+import { KIND_LABELS, normalizeTrPhone, type ListingKind } from "@ilazim/shared";
 import { isDraftPublishable, readDraft, writeDraft } from "@/lib/listing-draft";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { MoneyInput } from "@/components/money-input";
+import { PhoneInput } from "@/components/phone-input";
 import { cn } from "@/lib/utils";
 
 type Cat = { id: string; name: string; kind: ListingKind };
@@ -280,7 +282,7 @@ export function StepContact({ authed, defaultPhone }: { authed: boolean; default
   const [budgetMin, setBudgetMin] = useState("");
   const [budgetMax, setBudgetMax] = useState("");
   const [showPhone, setShowPhone] = useState(false);
-  const [phone, setPhone] = useState(defaultPhone ?? "");
+  const [phone, setPhone] = useState(() => normalizeTrPhone(defaultPhone) ?? "");
 
   useEffect(() => {
     const d = readDraft();
@@ -291,7 +293,7 @@ export function StepContact({ authed, defaultPhone }: { authed: boolean; default
     setBudgetMin(d.budgetMin ?? "");
     setBudgetMax(d.budgetMax ?? "");
     setShowPhone(Boolean(d.showPhone));
-    setPhone(d.phone ?? defaultPhone ?? "");
+    setPhone(normalizeTrPhone(d.phone ?? defaultPhone) ?? "");
   }, [router, defaultPhone]);
 
   return (
@@ -299,7 +301,7 @@ export function StepContact({ authed, defaultPhone }: { authed: boolean; default
       className="space-y-4"
       onSubmit={(e) => {
         e.preventDefault();
-        writeDraft({ budgetMin, budgetMax, showPhone, phone });
+        writeDraft({ budgetMin, budgetMax, showPhone, phone: normalizeTrPhone(phone) ?? "" });
         router.push(authed ? "/ilan-ac/yayinla" : "/ilan-ac/hesap");
       }}
     >
@@ -308,23 +310,11 @@ export function StepContact({ authed, defaultPhone }: { authed: boolean; default
       <div className="grid gap-3 md:grid-cols-2">
         <div>
           <Label>Min bütçe (TL)</Label>
-          <Input
-            type="number"
-            min="0"
-            value={budgetMin}
-            onChange={(e) => setBudgetMin(e.target.value)}
-            className="mt-1"
-          />
+          <MoneyInput optional className="mt-1" value={budgetMin} onValueChange={setBudgetMin} />
         </div>
         <div>
           <Label>Max bütçe (TL)</Label>
-          <Input
-            type="number"
-            min="0"
-            value={budgetMax}
-            onChange={(e) => setBudgetMax(e.target.value)}
-            className="mt-1"
-          />
+          <MoneyInput optional className="mt-1" value={budgetMax} onValueChange={setBudgetMax} />
         </div>
       </div>
       <label className="flex items-start gap-3 rounded-2xl border border-border bg-background p-4 text-sm">
@@ -343,14 +333,7 @@ export function StepContact({ authed, defaultPhone }: { authed: boolean; default
       </label>
       <div>
         <Label htmlFor="phone">Telefon</Label>
-        <Input
-          id="phone"
-          type="tel"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          placeholder="05xx xxx xx xx"
-          className="mt-1"
-        />
+        <PhoneInput id="phone" value={phone} onValueChange={setPhone} className="mt-1" />
       </div>
       <Button type="submit">{authed ? "İlanı yayınla" : "Giriş yap"}</Button>
     </form>

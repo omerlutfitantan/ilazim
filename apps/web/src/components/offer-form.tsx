@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { MoneyInput } from "@/components/money-input";
 
 export function OfferForm({
   listingId,
@@ -21,7 +22,7 @@ export function OfferForm({
       <input type="hidden" name="listingId" value={listingId} />
       <div>
         <Label htmlFor="amount">Teklif tutarı (TL)</Label>
-        <Input id="amount" name="amount" type="number" min="1" step="0.01" required className="mt-1" />
+        <MoneyInput id="amount" name="amount" required className="mt-1" />
       </div>
       <div>
         <Label htmlFor="etaText">Süre / teslim</Label>

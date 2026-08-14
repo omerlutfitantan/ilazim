@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { formatTry } from "@ilazim/shared";
+import { formatTrPhone, formatTry } from "@ilazim/shared";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminUserForm } from "@/components/admin-user-form";
@@ -113,7 +113,7 @@ export default async function AdminUserDetail({ params }: { params: Promise<{ id
         </div>
         <div>
           <dt className="text-xs text-muted-foreground">Telefon</dt>
-          <dd className="mt-1">{profile.phone ?? "—"}</dd>
+          <dd className="mt-1">{profile.phone ? formatTrPhone(profile.phone) : "—"}</dd>
         </div>
         <div>
           <dt className="text-xs text-muted-foreground">Slug</dt>

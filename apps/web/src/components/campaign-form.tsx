@@ -5,6 +5,7 @@ import { createCampaignAction } from "@/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { MoneyInput } from "@/components/money-input";
 
 export function CampaignForm() {
   const [state, action, pending] = useActionState(createCampaignAction, null);
@@ -16,7 +17,7 @@ export function CampaignForm() {
       </div>
       <div>
         <Label>Ek kredi (TL)</Label>
-        <Input name="creditAmount" type="number" defaultValue={50} className="mt-1" />
+        <MoneyInput name="creditAmount" defaultValue={50} className="mt-1" />
       </div>
       <div>
         <Label>Teklif indirimi %</Label>

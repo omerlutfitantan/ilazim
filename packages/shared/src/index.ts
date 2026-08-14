@@ -42,11 +42,6 @@ export function maskPersonName(name: string | null | undefined): string {
   return `${parts[0]} ${last.charAt(0).toLocaleUpperCase("tr-TR")}.`;
 }
 
-export function telHref(phone: string): string {
-  const digits = phone.replace(/[^\d+]/g, "");
-  return `tel:${digits}`;
-}
-
 export function slugify(input: string): string {
   return input
     .trim()
@@ -162,3 +157,4 @@ export function availableBalance(credit: number, cash: number): number {
 
 export * from "./constants";
 export * from "./schemas";
+export * from "./phone";

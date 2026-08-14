@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { Phone } from "lucide-react";
-import { telHref } from "@ilazim/shared";
+import { formatTrPhone, telHref } from "@ilazim/shared";
 import { revealContactAction } from "@/actions";
 import { Button } from "@/components/ui/button";
 
@@ -22,7 +22,7 @@ export function RevealContact({ listingId, shared }: { listingId: string; shared
         className="inline-flex h-11 items-center gap-2 rounded-xl bg-accent px-5 text-sm font-semibold text-ink"
       >
         <Phone className="size-4" />
-        {phone}
+        {formatTrPhone(phone)}
       </a>
     );
   }
