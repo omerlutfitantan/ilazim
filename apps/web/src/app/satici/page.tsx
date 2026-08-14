@@ -73,12 +73,17 @@ export default async function SaticiHome() {
 
       <h2 className="mt-12 font-display text-2xl">Son teklifleriniz</h2>
       <ul className="mt-4 space-y-2 text-sm">
+        {(myOffers ?? []).length === 0 && (
+          <li className="text-muted-foreground">Henüz teklif yok.</li>
+        )}
         {(myOffers ?? []).map((o) => (
-          <li key={o.id} className="flex justify-between border-b border-border py-3">
-            <span>{(o.listings as { title?: string } | null)?.title}</span>
-            <span>
-              {formatTry(Number(o.amount))} · {labelOf(offerStatusLabel, o.status as OfferStatus)}
-            </span>
+          <li key={o.id}>
+            <Link href="/satici/tekliflerim" className="flex justify-between border-b border-border py-3 hover:opacity-70">
+              <span>{(o.listings as { title?: string } | null)?.title}</span>
+              <span>
+                {formatTry(Number(o.amount))} · {labelOf(offerStatusLabel, o.status as OfferStatus)}
+              </span>
+            </Link>
           </li>
         ))}
       </ul>

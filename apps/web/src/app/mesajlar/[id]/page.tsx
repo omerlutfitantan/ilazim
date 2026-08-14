@@ -3,7 +3,7 @@ import Link from "next/link";
 import { formatTry, maskPersonName } from "@ilazim/shared";
 import { getProfile } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
-import { ChatBox } from "@/components/chat-box";
+import { ChatPanel } from "@/components/chat-panel";
 import { ReviewForm } from "@/components/review-form";
 import { RevealContact } from "@/components/reveal-contact";
 import { AcceptOfferButton } from "@/components/listing-actions";
@@ -37,12 +37,12 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
   const { data: buyer } = await supabase
     .from("profiles")
-    .select("full_name, display_name, slug")
+    .select("full_name, display_name, slug, avatar_url")
     .eq("id", conv.buyer_id)
     .maybeSingle();
   const { data: seller } = await supabase
     .from("profiles")
-    .select("display_name, slug")
+    .select("display_name, slug, avatar_url")
     .eq("id", conv.seller_id)
     .maybeSingle();
 
@@ -60,52 +60,63 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   const otherLabel = isBuyer
     ? seller?.display_name
     : maskPersonName(buyer?.full_name || buyer?.display_name);
+  const listingHref = listing?.slug
+    ? `/ilan/${listing.categories?.slug}/${listing.slug}`
+    : null;
 
   const { data: existingReview } = listing?.id
     ? await supabase.from("reviews").select("id").eq("listing_id", listing.id).maybeSingle()
     : { data: null };
 
+  const awardedThis = listing?.status === "awarded" && offer?.id && listing.awarded_offer_id === offer.id;
+  const awardedOther = listing?.status === "awarded" && offer?.id && listing.awarded_offer_id !== offer.id;
+
   return (
-    <div className="mx-auto max-w-2xl px-4 py-12">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="font-display text-3xl">{listing?.title}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {otherLabel}
-            {seller?.slug && isBuyer && (
-              <>
-                {" · "}
-                <Link href={`/usta/${seller.slug}`} className="underline">
-                  Profili incele
-                </Link>
-              </>
+    <>
+      <ChatPanel
+        conversationId={id}
+        userId={profile.id}
+        initial={messages ?? []}
+        title={listing?.title ?? "İlan"}
+        subtitle={otherLabel ?? "Karşı taraf"}
+        listingHref={listingHref}
+        avatarSrc={isBuyer ? seller?.avatar_url : buyer?.avatar_url}
+        avatarName={otherLabel}
+        actions={
+          <>
+            {offer && (
+              <p className="font-display text-lg leading-none">{formatTry(Number(offer.amount))}</p>
             )}
-          </p>
-        </div>
-        <div className="flex flex-col items-end gap-2">
-          {offer && (
-            <p className="text-sm font-semibold">Teklif {formatTry(Number(offer.amount))}</p>
-          )}
-          <div className="flex flex-wrap justify-end gap-2">
-            {isBuyer && listing?.status === "open" && offer?.status === "pending" && offer.id && (
-              <AcceptOfferButton offerId={offer.id} />
+            {isBuyer && seller?.slug && (
+              <Link href={`/usta/${seller.slug}`} className="text-[11px] text-muted-foreground underline">
+                Profili incele
+              </Link>
             )}
-            <RevealContact listingId={conv.listing_id} shared={Boolean(listing?.show_phone)} />
-          </div>
-        </div>
-      </div>
-      {listing?.status === "awarded" && offer?.id && listing.awarded_offer_id === offer.id && (
-        <p className="mt-3 rounded-xl bg-accent/40 px-3 py-2 text-sm">Bu teklifi seçtiniz.</p>
-      )}
-      {listing?.status === "awarded" && offer?.id && listing.awarded_offer_id !== offer.id && (
-        <p className="mt-3 rounded-xl bg-muted px-3 py-2 text-sm">
-          Başka bir teklif seçildi. İlan yeni tekliflere kapalı.
-        </p>
-      )}
-      <ChatBox conversationId={id} userId={profile.id} initial={messages ?? []} />
+            <div className="flex flex-wrap justify-end gap-2">
+              {isBuyer && listing?.status === "open" && offer?.status === "pending" && offer.id && (
+                <AcceptOfferButton offerId={offer.id} size="sm" />
+              )}
+              <RevealContact listingId={conv.listing_id} shared={Boolean(listing?.show_phone)} />
+            </div>
+          </>
+        }
+        banner={
+          awardedThis ? (
+            <p className="border-b border-accent/40 bg-accent/30 px-4 py-2 text-center text-sm">
+              Bu teklifi seçtiniz.
+            </p>
+          ) : awardedOther ? (
+            <p className="border-b border-border bg-muted px-4 py-2 text-center text-sm">
+              Başka bir teklif seçildi. İlan yeni tekliflere kapalı.
+            </p>
+          ) : null
+        }
+      />
       {isBuyer && listing?.status && ["awarded", "completed"].includes(listing.status) && !existingReview && (
-        <ReviewForm listingId={listing.id} />
+        <div className="mx-auto max-w-2xl px-4 pb-12">
+          <ReviewForm listingId={listing.id} />
+        </div>
       )}
-    </div>
+    </>
   );
 }

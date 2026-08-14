@@ -2,18 +2,21 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { formatTry } from "@ilazim/shared";
 import { getProfile } from "@/lib/data";
+import { getDesk, canUseSellerDesk } from "@/lib/desk";
 import { createClient } from "@/lib/supabase/server";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ListingActions } from "@/components/listing-actions";
 import { ReviewForm } from "@/components/review-form";
 import { UserAvatar } from "@/components/ui/avatar";
+import { DeskSwitch } from "@/components/desk-switch";
 import { labelOf, listingStatusLabel } from "@/lib/labels";
 import type { ListingStatus } from "@ilazim/shared";
 
 export default async function HesabimPage() {
   const profile = await getProfile();
   if (!profile) redirect("/giris");
+  const desk = await getDesk(profile);
   const supabase = await createClient();
   const { data: listings } = await supabase
     .from("listings")
@@ -51,16 +54,19 @@ export default async function HesabimPage() {
           <div>
             <h1 className="font-display text-4xl">Hesabım</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              {profile.display_name} ·{" "}
+              {profile.display_name} · {desk === "seller" ? "Satıcı hesabı" : "Alıcı hesabı"} ·{" "}
               <Link href="/hesabim/profil" className="underline">
                 Profili düzenle
               </Link>
             </p>
           </div>
         </div>
-        <Button asChild>
-          <Link href="/ilan-ac">Yeni ilan</Link>
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <DeskSwitch desk={desk} canSell={canUseSellerDesk(profile)} />
+          <Button asChild>
+            <Link href="/ilan-ac">Yeni ilan</Link>
+          </Button>
+        </div>
       </div>
 
       <ul className="mt-10 space-y-6">
@@ -97,34 +103,33 @@ export default async function HesabimPage() {
                 {mine.map((o) => {
                   const st = statsMap.get(o.seller_id);
                   const seller = o.profiles as { display_name?: string; slug?: string } | null;
-                  return (
-                    <li key={o.id} className="rounded-xl bg-muted/50 p-4">
-                      <div className="flex justify-between gap-3">
-                        <div>
-                          <Link href={`/usta/${seller?.slug}`} className="font-medium underline">
-                            {seller?.display_name}
-                          </Link>
-                          <p className="text-xs">
-                            <Link href={`/usta/${seller?.slug}`} className="underline">
-                              Profili incele
-                            </Link>
+                  const chatId = convKey(l.id, o.seller_id);
+                  const body = (
+                    <div className="flex justify-between gap-3">
+                      <div>
+                        <p className="font-medium">{seller?.display_name}</p>
+                        {st && (
+                          <p className="text-xs text-muted-foreground">
+                            {Number(st.rating_avg).toFixed(1)} ★ ({st.review_count} yorum)
                           </p>
-                          {convKey(l.id, o.seller_id) && (
-                            <Button asChild variant="saffron" size="sm" className="mt-2">
-                              <Link href={`/mesajlar/${convKey(l.id, o.seller_id)}`}>Sohbet</Link>
-                            </Button>
-                          )}
-                          {st && (
-                            <p className="text-xs text-muted-foreground">
-                              {Number(st.rating_avg).toFixed(1)} ★ ({st.review_count} yorum)
-                            </p>
-                          )}
-                          <p className="mt-1 text-sm">{o.message}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-display text-lg">{formatTry(Number(o.amount))}</p>
-                        </div>
+                        )}
+                        <p className="mt-1 text-sm">{o.message}</p>
+                        {chatId && <p className="mt-2 text-xs font-medium">Sohbeti aç →</p>}
                       </div>
+                      <div className="text-right">
+                        <p className="font-display text-lg">{formatTry(Number(o.amount))}</p>
+                      </div>
+                    </div>
+                  );
+                  return (
+                    <li key={o.id}>
+                      {chatId ? (
+                        <Link href={`/mesajlar/${chatId}`} className="block rounded-xl bg-muted/50 p-4 hover:bg-muted">
+                          {body}
+                        </Link>
+                      ) : (
+                        <div className="rounded-xl bg-muted/50 p-4">{body}</div>
+                      )}
                     </li>
                   );
                 })}

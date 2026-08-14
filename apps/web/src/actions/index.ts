@@ -21,6 +21,9 @@ import {
   adminUserUpdateSchema,
 } from "@ilazim/shared";
 import { createClient } from "@/lib/supabase/server";
+import { cookies } from "next/headers";
+import { getProfile } from "@/lib/data";
+import { DESK_COOKIE } from "@/lib/desk";
 
 export async function signUpAction(_: unknown, formData: FormData) {
   const parsed = signUpSchema.safeParse({
@@ -124,7 +127,28 @@ export async function updatePasswordAction(_: unknown, formData: FormData) {
 export async function signOutAction() {
   const supabase = await createClient();
   await supabase.auth.signOut();
+  const jar = await cookies();
+  jar.delete(DESK_COOKIE);
   redirect("/");
+}
+
+export async function switchDeskAction(formData: FormData) {
+  const desk = String(formData.get("desk") || "");
+  if (desk !== "buyer" && desk !== "seller") redirect("/hesabim");
+  const jar = await cookies();
+  jar.set(DESK_COOKIE, desk, {
+    path: "/",
+    maxAge: 60 * 60 * 24 * 365,
+    sameSite: "lax",
+  });
+  revalidatePath("/", "layout");
+  if (desk === "seller") {
+    const profile = await getProfile();
+    if (!profile) redirect("/giris");
+    if (profile.role === "buyer") redirect("/satici/onboarding");
+    redirect("/satici/tekliflerim");
+  }
+  redirect("/hesabim");
 }
 
 export async function publishListingAction(_: unknown, formData: FormData) {
@@ -303,6 +327,13 @@ export async function sellerOnboardingAction(_: unknown, formData: FormData) {
     p_category_ids: parsed.data.categoryIds,
   });
   if (error) return { error: error.message };
+  const jar = await cookies();
+  jar.set(DESK_COOKIE, "seller", {
+    path: "/",
+    maxAge: 60 * 60 * 24 * 365,
+    sameSite: "lax",
+  });
+  revalidatePath("/", "layout");
   revalidatePath("/satici");
   redirect("/satici");
 }
