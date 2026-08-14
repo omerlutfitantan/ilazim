@@ -1,0 +1,30 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { getProfile } from "@/lib/data";
+import { Button } from "@/components/ui/button";
+
+export default async function Page() {
+  const profile = await getProfile();
+  if (!profile) redirect("/giris");
+  if (profile.role === "buyer") redirect("/satici/onboarding");
+
+  return (
+    <div>
+      <h1 className="font-display text-4xl">Satıcı profili</h1>
+      <p className="mt-2 text-sm text-muted-foreground">{profile.display_name}</p>
+      <div className="mt-8 flex flex-col gap-3">
+        {profile.slug && (
+          <Button asChild>
+            <Link href={`/usta/${profile.slug}`}>Herkese açık profil</Link>
+          </Button>
+        )}
+        <Button asChild variant="outline">
+          <Link href="/satici/hizmetlerim">Hizmetlerimi düzenle</Link>
+        </Button>
+        <Button asChild variant="outline">
+          <Link href="/satici/ilanlar">Açık işler</Link>
+        </Button>
+      </div>
+    </div>
+  );
+}

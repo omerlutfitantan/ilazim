@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f3f3ef;
+  --foreground: #0c0c0c;
+  --card: #ffffff;
+  --card-foreground: #0c0c0c;
+  --popover: #ffffff;
+  --popover-foreground: #0c0c0c;
+  --primary: #0c0c0c;
+  --primary-foreground: #f3f3ef;
+  --secondary: #e8e8e2;
+  --secondary-foreground: #0c0c0c;
+  --muted: #e8e8e2;
+  --muted-foreground: #5b5b55;
+  --accent: #c8f04b;
+  --accent-foreground: #0c0c0c;
+  --destructive: #e11d2e;
+  --border: #dcdcd4;
+  --input: #dcdcd4;
+  --ring: #0c0c0c;
+  --saffron: #c8f04b;
+  --ink: #0c0c0c;
+  --teal-soft: #eef6c9;
+  --radius: 1rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-saffron: var(--saffron);
+  --color-ink: var(--ink);
+  --color-teal-soft: var(--teal-soft);
+  --font-sans: var(--font-geist-sans);
+  --font-display: var(--font-syne);
+  --radius-sm: calc(var(--radius) - 8px);
+  --radius-md: calc(var(--radius) - 4px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 6px);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-syne), var(--font-geist-sans), sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.045em;
+}
+
+::selection {
+  background: #c8f04b;
+  color: #0c0c0c;
+}
