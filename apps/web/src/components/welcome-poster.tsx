@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Sparkles } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
@@ -37,11 +38,15 @@ export function WelcomePoster({ show }: { show: boolean }) {
         <div className="relative overflow-hidden px-6 pt-8 pb-7 md:px-9 md:pt-10 md:pb-9">
           <div
             aria-hidden
-            className="pointer-events-none absolute -top-16 right-[-20%] size-56 rounded-full bg-accent/20 blur-3xl"
+            className="pointer-events-none absolute -top-20 right-[-12%] size-64 rounded-full bg-accent/35 blur-3xl"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -bottom-16 left-[-20%] size-48 rounded-full bg-accent/15 blur-3xl"
           />
           <p
             aria-hidden
-            className="pointer-events-none absolute -right-3 -bottom-10 font-display text-[11rem] leading-none text-accent/15"
+            className="pointer-events-none absolute -right-2 -bottom-8 font-display text-[11rem] leading-none text-accent/25"
           >
             3
           </p>
@@ -52,26 +57,21 @@ export function WelcomePoster({ show }: { show: boolean }) {
               </span>
               <span className="font-display text-xl leading-none">iLazım</span>
             </p>
-            <p className="mt-6 text-[11px] font-medium tracking-[0.2em] text-accent uppercase">
+            <p className="mt-6 inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1 text-[11px] font-semibold tracking-wide text-ink uppercase">
+              <Sparkles className="size-3.5" strokeWidth={2.2} />
               Yeni hizmet verenlere
             </p>
-            <DialogTitle className="mt-3 max-w-[16rem] font-display text-[2.15rem] leading-[0.92] md:max-w-none md:text-4xl">
+            <DialogTitle className="mt-4 max-w-[17rem] font-display text-[2.25rem] leading-[0.9] md:max-w-none md:text-[2.75rem]">
               İlk 3 teklif tamamen ücretsiz.
             </DialogTitle>
-            <p className="mt-4 max-w-sm text-sm leading-6 text-white/65">
-              Yeni kayıt olan hizmet verenlerin ilk üç teklifi ücretsizdir. Sonrasında teklif ücreti
-              sabittir; yüzde yoktur.
+            <p className="mt-4 max-w-sm text-[15px] leading-7 text-white/80">
+              Kaydol, onaylan, ilk üç işe bedava teklif at. Cüzdanına dokunulmaz — iş senin olsun.
             </p>
-            <div className="mt-8 flex flex-col gap-2">
-              <Button type="button" variant="saffron" className="h-12 w-full rounded-2xl" onClick={close}>
-                Anladım, devam et
-              </Button>
-              <Button asChild variant="outline" className="h-12 w-full rounded-2xl border-white/20 bg-transparent text-white hover:bg-white/10">
-                <Link href="/kayit?next=/satici/onboarding" onClick={close}>
-                  Hizmet vermeye başla
-                </Link>
-              </Button>
-            </div>
+            <Button asChild variant="saffron" size="lg" className="mt-8 w-full rounded-2xl">
+              <Link href="/kayit?next=/satici/onboarding" onClick={close}>
+                Hizmet vermeye başla
+              </Link>
+            </Button>
           </div>
         </div>
       </DialogContent>
