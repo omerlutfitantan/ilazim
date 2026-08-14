@@ -93,7 +93,8 @@ export function AvatarUploader({
           )}
         </div>
         <p className="max-w-xs text-xs text-muted-foreground">
-          Kare kırpılır, 256 px WebP’ye düşürülür. Sunucuda birkaç on kilobayt yer kaplar.
+          Yüzünüzün net göründüğü kare bir fotoğraf seçin. En az 256×256 piksel olsun; JPG veya PNG yeter.
+          Kare değilse ortadan kesilir, büyükse otomatik küçültülür.
         </p>
       </div>
     </div>
