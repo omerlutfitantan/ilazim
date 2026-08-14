@@ -7,6 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ListingActions } from "@/components/listing-actions";
 import { ReviewForm } from "@/components/review-form";
+import { UserAvatar } from "@/components/ui/avatar";
+import { labelOf, listingStatusLabel } from "@/lib/labels";
+import type { ListingStatus } from "@ilazim/shared";
 
 export default async function HesabimPage() {
   const profile = await getProfile();
@@ -42,10 +45,18 @@ export default async function HesabimPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12">
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <h1 className="font-display text-4xl">Hesabım</h1>
-          <p className="mt-1 text-sm text-muted-foreground">{profile.display_name} · alıcı paneli</p>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <UserAvatar src={profile.avatar_url} name={profile.display_name} className="size-14 text-base" />
+          <div>
+            <h1 className="font-display text-4xl">Hesabım</h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {profile.display_name} ·{" "}
+              <Link href="/hesabim/profil" className="underline">
+                Profili düzenle
+              </Link>
+            </p>
+          </div>
         </div>
         <Button asChild>
           <Link href="/ilan-ac">Yeni ilan</Link>
@@ -73,11 +84,8 @@ export default async function HesabimPage() {
                     </Link>
                   </h2>
                   <p className="text-xs text-muted-foreground">
-                    {l.status === "open"
-                      ? "Açık"
-                      : l.status === "awarded"
-                        ? "Teklif seçildi — yeni teklife kapalı"
-                        : l.status}
+                    {labelOf(listingStatusLabel, l.status as ListingStatus)}
+                    {l.status === "awarded" ? " — yeni teklife kapalı" : ""}
                   </p>
                 </div>
                 <ListingActions listingId={l.id} status={l.status} />

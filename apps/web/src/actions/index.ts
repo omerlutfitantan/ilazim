@@ -17,6 +17,8 @@ import {
   promoCampaignSchema,
   categorySchema,
   buildCategorySeo,
+  profileUpdateSchema,
+  adminUserUpdateSchema,
 } from "@ilazim/shared";
 import { createClient } from "@/lib/supabase/server";
 
@@ -339,6 +341,7 @@ export async function reviewSellerAction(userId: string, approve: boolean) {
   });
   if (error) return { error: error.message };
   revalidatePath("/admin/kullanicilar");
+  revalidatePath(`/admin/kullanicilar/${userId}`);
   return { ok: true };
 }
 
@@ -359,6 +362,97 @@ export async function grantBalanceAction(_: unknown, formData: FormData) {
   });
   if (error) return { error: error.message };
   revalidatePath("/admin/cuzdan");
+  revalidatePath(`/admin/kullanicilar/${parsed.data.userId}`);
+  return { ok: true };
+}
+
+export async function updateProfileAction(_: unknown, formData: FormData) {
+  const parsed = profileUpdateSchema.safeParse({
+    fullName: formData.get("fullName"),
+    displayName: formData.get("displayName"),
+    phone: formData.get("phone"),
+    bio: formData.get("bio"),
+  });
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Geçersiz form" };
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Oturum gerekli" };
+  const { error } = await supabase
+    .from("profiles")
+    .update({
+      full_name: parsed.data.fullName,
+      display_name: parsed.data.displayName,
+      phone: parsed.data.phone ?? null,
+      bio: parsed.data.bio ?? null,
+    })
+    .eq("id", user.id);
+  if (error) return { error: error.message };
+  revalidatePath("/hesabim");
+  revalidatePath("/hesabim/profil");
+  revalidatePath("/satici/profil");
+  return { ok: true };
+}
+
+export async function saveAvatarUrlAction(url: string | null) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Oturum gerekli" };
+  if (url) {
+    const base = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+    const allowed = `${base}/storage/v1/object/public/avatars/${user.id}/`;
+    if (!url.split("?")[0].startsWith(allowed)) return { error: "Geçersiz görsel" };
+  }
+  const { error } = await supabase.from("profiles").update({ avatar_url: url }).eq("id", user.id);
+  if (error) return { error: error.message };
+  const { data: p } = await supabase.from("profiles").select("slug").eq("id", user.id).maybeSingle();
+  revalidatePath("/hesabim");
+  revalidatePath("/hesabim/profil");
+  revalidatePath("/satici/profil");
+  revalidatePath("/admin/kullanicilar");
+  if (p?.slug) revalidatePath(`/usta/${p.slug}`);
+  return { ok: true };
+}
+
+export async function adminUpdateUserAction(_: unknown, formData: FormData) {
+  const parsed = adminUserUpdateSchema.safeParse({
+    userId: formData.get("userId"),
+    role: formData.get("role"),
+    sellerStatus: formData.get("sellerStatus"),
+    sellerType: formData.get("sellerType"),
+    fullName: formData.get("fullName"),
+    displayName: formData.get("displayName"),
+    phone: formData.get("phone"),
+    bio: formData.get("bio"),
+    sellerHeadline: formData.get("sellerHeadline"),
+  });
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Geçersiz form" };
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Oturum gerekli" };
+  const { data: me } = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();
+  if (me?.role !== "admin") return { error: "Yetkisiz" };
+  const { error } = await supabase
+    .from("profiles")
+    .update({
+      role: parsed.data.role,
+      seller_status: parsed.data.sellerStatus ?? null,
+      seller_type: parsed.data.sellerType ?? null,
+      full_name: parsed.data.fullName,
+      display_name: parsed.data.displayName,
+      phone: parsed.data.phone ?? null,
+      bio: parsed.data.bio ?? null,
+      seller_headline: parsed.data.sellerHeadline ?? null,
+    })
+    .eq("id", parsed.data.userId);
+  if (error) return { error: error.message };
+  revalidatePath("/admin/kullanicilar");
+  revalidatePath(`/admin/kullanicilar/${parsed.data.userId}`);
   return { ok: true };
 }
 

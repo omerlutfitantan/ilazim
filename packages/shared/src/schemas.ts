@@ -112,3 +112,27 @@ export const promoCampaignSchema = z.object({
 export const topupSchema = z.object({
   amount: z.coerce.number().min(50, "En az 50 TL yükleyebilirsiniz"),
 });
+
+const emptyToNull = (v: unknown) => (typeof v === "string" && v.trim() === "" ? null : v);
+
+export const profileUpdateSchema = z.object({
+  fullName: z.string().trim().min(2, "Ad soyad en az 2 karakter").max(80),
+  displayName: z.string().trim().min(2, "Görünen ad en az 2 karakter").max(80),
+  phone: z.preprocess(emptyToNull, z.string().trim().max(20).nullable().optional()),
+  bio: z.preprocess(emptyToNull, z.string().trim().max(2000).nullable().optional()),
+});
+
+export const adminUserUpdateSchema = z.object({
+  userId: z.string().uuid(),
+  role: z.enum(["buyer", "seller", "admin"]),
+  sellerStatus: z.preprocess(
+    emptyToNull,
+    z.enum(["pending", "approved", "rejected", "suspended"]).nullable().optional(),
+  ),
+  sellerType: z.preprocess(emptyToNull, z.enum(["service", "product", "both"]).nullable().optional()),
+  fullName: z.string().trim().min(2).max(80).optional(),
+  displayName: z.string().trim().min(2).max(80).optional(),
+  phone: z.preprocess(emptyToNull, z.string().trim().max(20).nullable().optional()),
+  bio: z.preprocess(emptyToNull, z.string().trim().max(2000).nullable().optional()),
+  sellerHeadline: z.preprocess(emptyToNull, z.string().trim().max(120).nullable().optional()),
+});

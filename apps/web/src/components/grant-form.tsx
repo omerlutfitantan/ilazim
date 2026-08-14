@@ -6,14 +6,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export function GrantForm() {
+export function GrantForm({ userId }: { userId?: string }) {
   const [state, action, pending] = useActionState(grantBalanceAction, null);
   return (
     <form action={action} className="grid gap-3 rounded-2xl border border-border bg-card p-4 md:grid-cols-2">
-      <div className="md:col-span-2">
-        <Label>Kullanıcı UUID</Label>
-        <Input name="userId" required className="mt-1" />
-      </div>
+      {userId ? (
+        <input type="hidden" name="userId" value={userId} />
+      ) : (
+        <div className="md:col-span-2">
+          <Label>Kullanıcı UUID</Label>
+          <Input name="userId" required className="mt-1" />
+        </div>
+      )}
       <div>
         <Label>Tutar</Label>
         <Input name="amount" type="number" min="1" step="0.01" required className="mt-1" />

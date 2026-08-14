@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import Link from "next/link";
+import { labelOf, listingKindLabel, listingStatusLabel } from "@/lib/labels";
+import type { ListingKind, ListingStatus } from "@ilazim/shared";
 
 export default async function Page() {
   const supabase = await createClient();
@@ -32,8 +34,8 @@ export default async function Page() {
                   {l.title}
                 </Link>
               </TableCell>
-              <TableCell>{l.kind}</TableCell>
-              <TableCell>{l.status}</TableCell>
+              <TableCell>{labelOf(listingKindLabel, l.kind as ListingKind)}</TableCell>
+              <TableCell>{labelOf(listingStatusLabel, l.status as ListingStatus)}</TableCell>
               <TableCell>{l.offer_count}</TableCell>
             </TableRow>
           ))}

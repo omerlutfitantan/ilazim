@@ -1,0 +1,54 @@
+"use client";
+
+import { useActionState } from "react";
+import { updateProfileAction } from "@/actions";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+
+export function ProfileForm({
+  fullName,
+  displayName,
+  phone,
+  bio,
+}: {
+  fullName: string | null;
+  displayName: string | null;
+  phone: string | null;
+  bio: string | null;
+}) {
+  const [state, action, pending] = useActionState(updateProfileAction, null);
+  return (
+    <form action={action} className="grid gap-4">
+      <div>
+        <Label htmlFor="fullName">Ad soyad</Label>
+        <Input id="fullName" name="fullName" defaultValue={fullName ?? ""} required minLength={2} className="mt-1" />
+      </div>
+      <div>
+        <Label htmlFor="displayName">Görünen ad</Label>
+        <Input
+          id="displayName"
+          name="displayName"
+          defaultValue={displayName ?? ""}
+          required
+          minLength={2}
+          className="mt-1"
+        />
+      </div>
+      <div>
+        <Label htmlFor="phone">Telefon</Label>
+        <Input id="phone" name="phone" defaultValue={phone ?? ""} className="mt-1" />
+      </div>
+      <div>
+        <Label htmlFor="bio">Hakkında</Label>
+        <Textarea id="bio" name="bio" defaultValue={bio ?? ""} className="mt-1 min-h-24" />
+      </div>
+      {state && "error" in state && state.error && <p className="text-sm text-destructive">{state.error}</p>}
+      {state && "ok" in state && <p className="text-sm text-primary">Kaydedildi.</p>}
+      <Button type="submit" disabled={pending}>
+        {pending ? "Kaydediliyor…" : "Kaydet"}
+      </Button>
+    </form>
+  );
+}

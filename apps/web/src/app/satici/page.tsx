@@ -4,6 +4,8 @@ import { formatTry } from "@ilazim/shared";
 import { getProfile, getSettings } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
+import { labelOf, offerStatusLabel, sellerStatusLabel } from "@/lib/labels";
+import type { OfferStatus, SellerStatus } from "@ilazim/shared";
 
 export default async function SaticiHome() {
   const profile = await getProfile();
@@ -30,7 +32,8 @@ export default async function SaticiHome() {
         <div>
           <h1 className="font-display text-4xl">Satıcı paneli</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Durum: {profile.seller_status ?? "—"} · Teklif ücreti {formatTry(Number(settings?.bid_fee_amount ?? 29.9))}
+            Durum: {labelOf(sellerStatusLabel, profile.seller_status as SellerStatus)} · Teklif ücreti{" "}
+            {formatTry(Number(settings?.bid_fee_amount ?? 29.9))}
           </p>
         </div>
       </div>
@@ -74,7 +77,7 @@ export default async function SaticiHome() {
           <li key={o.id} className="flex justify-between border-b border-border py-3">
             <span>{(o.listings as { title?: string } | null)?.title}</span>
             <span>
-              {formatTry(Number(o.amount))} · {o.status}
+              {formatTry(Number(o.amount))} · {labelOf(offerStatusLabel, o.status as OfferStatus)}
             </span>
           </li>
         ))}

@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { formatTry } from "@ilazim/shared";
 import { getProfile } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
+import { labelOf, listingStatusLabel, offerStatusLabel } from "@/lib/labels";
+import type { ListingStatus, OfferStatus } from "@ilazim/shared";
 
 export default async function Page() {
   const profile = await getProfile();
@@ -31,7 +33,8 @@ export default async function Page() {
                 {listing?.title}
               </Link>
               <p className="mt-1 text-sm">
-                {formatTry(Number(o.amount))} · teklif {o.status} · ilan {listing?.status}
+                {formatTry(Number(o.amount))} · teklif {labelOf(offerStatusLabel, o.status as OfferStatus)} · ilan{" "}
+                {labelOf(listingStatusLabel, listing?.status as ListingStatus)}
               </p>
               <p className="text-xs text-muted-foreground">Kesilen ücret: {formatTry(Number(o.fee_charged))}</p>
             </li>

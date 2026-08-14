@@ -6,6 +6,7 @@ import { getProfile, getSellerBySlug } from "@/lib/data";
 import { StarRating } from "@/components/star-rating";
 import { JsonLd } from "@/components/json-ld";
 import { Badge } from "@/components/ui/badge";
+import { UserAvatar } from "@/components/ui/avatar";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -57,13 +58,22 @@ export default async function SellerProfilePage({ params }: Props) {
             ? "Hizmet ve ürün"
             : "Hizmet veren"}
       </Badge>
-      <h1 className="mt-3 font-display text-4xl">{profile.display_name}</h1>
-      <p className="mt-2 text-muted-foreground">{profile.seller_headline}</p>
+      <div className="mt-5 flex items-start gap-4">
+        <UserAvatar src={profile.avatar_url} name={profile.display_name} className="size-20 text-lg" />
+        <div>
+          <h1 className="font-display text-4xl">{profile.display_name}</h1>
+          <p className="mt-2 text-muted-foreground">{profile.seller_headline}</p>
+        </div>
+      </div>
       <div className="mt-4">
         <StarRating value={avg} count={stats?.review_count ?? 0} />
       </div>
       {isOwn && (
         <p className="mt-4 text-sm">
+          <Link href="/satici/profil" className="underline">
+            Profilimi düzenle
+          </Link>
+          {" · "}
           <Link href="/satici/hizmetlerim" className="underline">
             Hizmetlerimi düzenle
           </Link>

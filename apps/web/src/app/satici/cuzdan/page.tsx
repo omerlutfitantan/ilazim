@@ -75,7 +75,7 @@ export default async function WalletPage() {
             <div>
               <p>{labels[t.type] ?? t.type}</p>
               <p className="text-xs text-muted-foreground">
-                {new Date(t.created_at).toLocaleString("tr-TR")} · {t.balance_kind}
+                {new Date(t.created_at).toLocaleString("tr-TR")} · {t.balance_kind === "credit" ? "Kredi" : "Nakit"}
                 {t.note ? ` · ${t.note}` : ""}
               </p>
             </div>

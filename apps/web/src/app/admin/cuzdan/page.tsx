@@ -1,6 +1,9 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { GrantForm } from "@/components/grant-form";
 import { formatTry } from "@ilazim/shared";
+import { labelOf, paymentStatusLabel } from "@/lib/labels";
+import type { PaymentStatus } from "@ilazim/shared";
 
 export default async function Page() {
   const supabase = await createClient();
@@ -22,7 +25,9 @@ export default async function Page() {
       <ul className="mt-3 space-y-2 text-sm">
         {(wallets ?? []).map((w) => (
           <li key={w.id} className="flex justify-between rounded-xl border border-border bg-card px-4 py-3">
-            <span>{(w.profiles as { display_name?: string } | null)?.display_name}</span>
+            <Link href={`/admin/kullanicilar/${w.user_id}`} className="underline">
+              {(w.profiles as { display_name?: string } | null)?.display_name}
+            </Link>
             <span>
               nakit {formatTry(Number(w.cash_balance))} · kredi {formatTry(Number(w.credit_balance))}
             </span>
@@ -34,7 +39,10 @@ export default async function Page() {
         {(payments ?? []).map((p) => (
           <li key={p.id} className="flex justify-between rounded-xl border border-border px-4 py-3">
             <span>
-              {(p.profiles as { display_name?: string } | null)?.display_name} · {p.status}
+              <Link href={`/admin/kullanicilar/${p.user_id}`} className="underline">
+                {(p.profiles as { display_name?: string } | null)?.display_name}
+              </Link>{" "}
+              · {labelOf(paymentStatusLabel, p.status as PaymentStatus)}
             </span>
             <span>{formatTry(Number(p.amount))}</span>
           </li>

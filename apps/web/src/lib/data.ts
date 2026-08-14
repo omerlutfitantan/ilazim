@@ -131,7 +131,7 @@ export async function getSellerBySlug(slug: string) {
   const supabase = await createClient();
   const { data: profile } = await supabase
     .from("profiles")
-    .select("id, role, display_name, slug, bio, seller_headline, seller_type, city_id, locations:city_id(name)")
+    .select("id, role, display_name, slug, bio, seller_headline, seller_type, city_id, avatar_url, locations:city_id(name)")
     .eq("slug", slug)
     .maybeSingle();
   if (!profile || profile.role === "buyer") return null;

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getProfile } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { signOutAction } from "@/actions";
+import { UserAvatar } from "@/components/ui/avatar";
 
 export async function SiteHeader() {
   const profile = await getProfile();
@@ -52,7 +53,10 @@ export async function SiteHeader() {
                 </>
               )}
               <Button asChild variant="ghost" size="sm">
-                <Link href="/hesabim">Hesabım</Link>
+                <Link href="/hesabim" className="flex items-center gap-2">
+                  <UserAvatar src={profile.avatar_url} name={profile.display_name} className="size-7 text-[10px]" />
+                  Hesabım
+                </Link>
               </Button>
               <Button asChild size="sm">
                 <Link href="/ilan-ac">İlan aç</Link>
