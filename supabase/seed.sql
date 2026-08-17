@@ -1,4 +1,5 @@
--- Referans veri: 81 il, örnek ilçeler, kategoriler, ilk satıcı kampanyası.
+-- Referans veri: 81 il, kategoriler, ilk satıcı kampanyası.
+-- Tüm ilçeler 00009_turkey_districts.sql migration'ında.
 -- Admin için üye olduktan sonra promote-admin.sql çalıştır.
 
 -- 81 il (plaka kodu UUID son segmentinde)
@@ -84,21 +85,6 @@ insert into public.locations (id, name, slug, type) values
   ('30000000-0000-4000-a000-000000000079', 'Kilis', 'kilis', 'city'),
   ('30000000-0000-4000-a000-000000000080', 'Osmaniye', 'osmaniye', 'city'),
   ('30000000-0000-4000-a000-000000000081', 'Düzce', 'duzce', 'city')
-on conflict do nothing;
-
-insert into public.locations (id, parent_id, name, slug, type) values
-  ('31000000-0000-4000-a000-000000000001', '30000000-0000-4000-a000-000000000034', 'Kadıköy', 'kadikoy', 'district'),
-  ('31000000-0000-4000-a000-000000000002', '30000000-0000-4000-a000-000000000034', 'Beşiktaş', 'besiktas', 'district'),
-  ('31000000-0000-4000-a000-000000000003', '30000000-0000-4000-a000-000000000034', 'Şişli', 'sisli', 'district'),
-  ('31000000-0000-4000-a000-000000000004', '30000000-0000-4000-a000-000000000034', 'Üsküdar', 'uskudar', 'district'),
-  ('31000000-0000-4000-a000-000000000005', '30000000-0000-4000-a000-000000000034', 'Bakırköy', 'bakirkoy', 'district'),
-  ('31000000-0000-4000-a000-000000000006', '30000000-0000-4000-a000-000000000034', 'Ümraniye', 'umraniye', 'district'),
-  ('31000000-0000-4000-a000-000000000007', '30000000-0000-4000-a000-000000000006', 'Çankaya', 'cankaya', 'district'),
-  ('31000000-0000-4000-a000-000000000008', '30000000-0000-4000-a000-000000000006', 'Keçiören', 'kecioren', 'district'),
-  ('31000000-0000-4000-a000-000000000009', '30000000-0000-4000-a000-000000000006', 'Yenimahalle', 'yenimahalle', 'district'),
-  ('31000000-0000-4000-a000-000000000010', '30000000-0000-4000-a000-000000000035', 'Konak', 'konak', 'district'),
-  ('31000000-0000-4000-a000-000000000011', '30000000-0000-4000-a000-000000000035', 'Bornova', 'bornova', 'district'),
-  ('31000000-0000-4000-a000-000000000012', '30000000-0000-4000-a000-000000000035', 'Karşıyaka', 'karsiyaka', 'district')
 on conflict do nothing;
 
 insert into public.categories (

@@ -55,11 +55,13 @@ export async function getCategoryBySlug(kind: ListingKind, slug: string) {
 export async function getLocations() {
   if (!isSupabaseConfigured()) return { cities: [], districts: [] };
   const supabase = await createClient();
-  const { data } = await supabase.from("locations").select("*").order("name");
-  const rows = data ?? [];
+  const [{ data: cities }, { data: districts }] = await Promise.all([
+    supabase.from("locations").select("*").eq("type", "city").order("name").limit(100),
+    supabase.from("locations").select("*").eq("type", "district").order("name").limit(1200),
+  ]);
   return {
-    cities: rows.filter((r) => r.type === "city"),
-    districts: rows.filter((r) => r.type === "district"),
+    cities: cities ?? [],
+    districts: districts ?? [],
   };
 }
 
