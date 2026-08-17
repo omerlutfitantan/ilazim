@@ -247,5 +247,5 @@ insert into public.promo_campaigns (
   10,
   100,
   'seller_approval',
-  true
+  false
 ) on conflict do nothing;

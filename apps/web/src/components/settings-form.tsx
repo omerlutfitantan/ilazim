@@ -42,9 +42,13 @@ export function SettingsForm({
         <Input
           name="newSellerDiscountedOfferCount"
           type="number"
+          min={0}
           defaultValue={settings.new_seller_discounted_offer_count}
           className="mt-1"
         />
+        <p className="mt-1 text-xs text-muted-foreground">
+          0 ise yüzde indirimi de 0 yapın; yalnızca kredi modeli kullanılır, kampanya indirimi devreye girmez.
+        </p>
       </div>
       {state && "error" in state && state.error && (
         <p className="text-sm text-destructive">{state.error}</p>

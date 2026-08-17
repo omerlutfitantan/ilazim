@@ -561,6 +561,17 @@ export async function updateSettingsAction(_: unknown, formData: FormData) {
   });
   if (error) return { error: error.message };
   revalidatePath("/admin/ayarlar");
+  revalidatePath("/admin");
+  revalidatePath("/satici");
+  return { ok: true };
+}
+
+export async function toggleCampaignAction(campaignId: string, active: boolean) {
+  const supabase = await createClient();
+  const { error } = await supabase.from("promo_campaigns").update({ is_active: active }).eq("id", campaignId);
+  if (error) return { error: error.message };
+  revalidatePath("/admin/kampanyalar");
+  revalidatePath("/admin/ayarlar");
   return { ok: true };
 }
 
