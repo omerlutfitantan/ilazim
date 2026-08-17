@@ -72,6 +72,7 @@ export default async function Page() {
               ? `/ilan/${cat?.slug}/${listing.slug}`
               : "/satici/tekliflerim";
           const accepted = o.status === "accepted";
+          const pending = o.status === "pending";
           return (
             <li key={o.id}>
               <Link
@@ -80,7 +81,9 @@ export default async function Page() {
                   "block rounded-2xl border p-5 transition-colors",
                   accepted
                     ? "border-emerald-500/70 bg-emerald-50/80 shadow-[inset_0_0_0_1px_rgba(16,185,129,0.15)] hover:border-emerald-600"
-                    : "border-border bg-card hover:border-ink/30",
+                    : pending
+                      ? "border-amber-400/70 bg-amber-50/80 shadow-[inset_0_0_0_1px_rgba(245,158,11,0.15)] hover:border-amber-500"
+                      : "border-border bg-card hover:border-ink/30",
                 )}
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
@@ -101,8 +104,13 @@ export default async function Page() {
                     Teklif kabul edildi
                   </p>
                 )}
-                <p className={cn("text-xs text-muted-foreground", accepted ? "mt-2" : "mt-3")}>
-                  {!accepted && (
+                {pending && (
+                  <p className="mt-3 inline-flex items-center rounded-full bg-amber-500 px-2.5 py-1 text-[11px] font-semibold tracking-wide text-white uppercase">
+                    Bekliyor
+                  </p>
+                )}
+                <p className={cn("text-xs text-muted-foreground", accepted || pending ? "mt-2" : "mt-3")}>
+                  {!accepted && !pending && (
                     <>
                       Teklif {sellerOfferStatusLabel(o.status as OfferStatus)}
                       {" · "}
