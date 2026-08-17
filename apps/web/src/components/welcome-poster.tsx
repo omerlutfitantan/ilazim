@@ -98,7 +98,7 @@ export function WelcomePoster({ show }: { show: boolean }) {
               </span>
               <span className="font-display text-xl leading-none">iLazım</span>
             </p>
-            <p className="mt-6 inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1 text-[11px] font-semibold tracking-wide text-ink uppercase">
+            <p className="mt-6 ml-3 inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1 text-[11px] font-semibold tracking-wide text-ink uppercase md:ml-5">
               <Sparkles className="size-3.5" strokeWidth={2.2} />
               Yeni hizmet verenlere
             </p>
@@ -106,7 +106,8 @@ export function WelcomePoster({ show }: { show: boolean }) {
               İlk 3 teklif tamamen ücretsiz.
             </DialogTitle>
             <p className="mt-4 max-w-sm text-[15px] leading-7 text-white/80">
-              Kaydol, onaylan, ilk üç işe bedava teklif at. Cüzdanına dokunulmaz — iş senin olsun.
+              Kaydol, hesabını onayla ve teklif vermeye başla. Üstelik ilk 3 teklifin bizden! Hemen teklif
+              vermeye başla!
             </p>
             <Button asChild variant="saffron" size="lg" className="mt-8 w-full rounded-2xl">
               <Link href="/kayit?next=/satici/onboarding" onClick={close}>
