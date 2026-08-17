@@ -4,7 +4,20 @@ import { formatTry, maskPersonName } from "@ilazim/shared";
 import { getProfile } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 import { labelOf, listingStatusLabel, offerStatusLabel, formatTrDate } from "@/lib/labels";
+import { cn } from "@/lib/utils";
 import type { ListingStatus, OfferStatus } from "@ilazim/shared";
+
+function sellerOfferStatusLabel(status: OfferStatus) {
+  if (status === "accepted") return "Teklif kabul edildi";
+  return labelOf(offerStatusLabel, status);
+}
+
+function sellerListingStatusLabel(status: ListingStatus | null | undefined, offerAccepted: boolean) {
+  if (offerAccepted && (status === "awarded" || status === "completed")) {
+    return status === "completed" ? "İş tamamlandı" : "Alıcı sizi seçti";
+  }
+  return labelOf(listingStatusLabel, status);
+}
 
 export default async function Page() {
   const profile = await getProfile();
@@ -58,11 +71,17 @@ export default async function Page() {
             : listing
               ? `/ilan/${cat?.slug}/${listing.slug}`
               : "/satici/tekliflerim";
+          const accepted = o.status === "accepted";
           return (
             <li key={o.id}>
               <Link
                 href={href}
-                className="block rounded-2xl border border-border bg-card p-5 transition-colors hover:border-ink/30"
+                className={cn(
+                  "block rounded-2xl border p-5 transition-colors",
+                  accepted
+                    ? "border-emerald-500/70 bg-emerald-50/80 shadow-[inset_0_0_0_1px_rgba(16,185,129,0.15)] hover:border-emerald-600"
+                    : "border-border bg-card hover:border-ink/30",
+                )}
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
@@ -77,12 +96,21 @@ export default async function Page() {
                 </div>
                 {o.message && <p className="mt-3 line-clamp-3 text-sm leading-6">{o.message}</p>}
                 {o.eta_text && <p className="mt-1 text-xs text-muted-foreground">Süre: {o.eta_text}</p>}
-                <p className="mt-3 text-xs text-muted-foreground">
-                  Teklif {labelOf(offerStatusLabel, o.status as OfferStatus)}
+                {accepted && (
+                  <p className="mt-3 inline-flex items-center rounded-full bg-emerald-600 px-2.5 py-1 text-[11px] font-semibold tracking-wide text-white uppercase">
+                    Teklif kabul edildi
+                  </p>
+                )}
+                <p className={cn("text-xs text-muted-foreground", accepted ? "mt-2" : "mt-3")}>
+                  {!accepted && (
+                    <>
+                      Teklif {sellerOfferStatusLabel(o.status as OfferStatus)}
+                      {" · "}
+                    </>
+                  )}
+                  {sellerListingStatusLabel(listing?.status as ListingStatus, accepted)}
                   {" · "}
-                  İlan {labelOf(listingStatusLabel, listing?.status as ListingStatus)}
-                  {" · "}
-                  Kesilen ücret {formatTry(Number(o.fee_charged))}
+                  Teklif ücreti {formatTry(Number(o.fee_charged))}
                 </p>
                 <p className="mt-3 text-xs font-medium">{convId ? "Sohbeti aç →" : "İlanı gör →"}</p>
               </Link>
