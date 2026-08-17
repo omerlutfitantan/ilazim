@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/utils";
-import type { ListingKind, ProfileRow } from "@/lib/database.types";
+import type { ListingKind, LocationRow, ProfileRow } from "@/lib/database.types";
 
 export async function getProfile() {
   if (!isSupabaseConfigured()) return null;
@@ -52,17 +52,34 @@ export async function getCategoryBySlug(kind: ListingKind, slug: string) {
   return data;
 }
 
+async function fetchAllLocations(supabase: Awaited<ReturnType<typeof createClient>>, type: "city" | "district") {
+  const pageSize = 1000;
+  const rows: LocationRow[] = [];
+  let from = 0;
+  while (true) {
+    const { data, error } = await supabase
+      .from("locations")
+      .select("*")
+      .eq("type", type)
+      .order("name")
+      .range(from, from + pageSize - 1);
+    if (error) throw error;
+    if (!data?.length) break;
+    rows.push(...data);
+    if (data.length < pageSize) break;
+    from += pageSize;
+  }
+  return rows;
+}
+
 export async function getLocations() {
   if (!isSupabaseConfigured()) return { cities: [], districts: [] };
   const supabase = await createClient();
-  const [{ data: cities }, { data: districts }] = await Promise.all([
-    supabase.from("locations").select("*").eq("type", "city").order("name").limit(100),
-    supabase.from("locations").select("*").eq("type", "district").order("name").limit(1200),
+  const [cities, districts] = await Promise.all([
+    fetchAllLocations(supabase, "city"),
+    fetchAllLocations(supabase, "district"),
   ]);
-  return {
-    cities: cities ?? [],
-    districts: districts ?? [],
-  };
+  return { cities, districts };
 }
 
 export async function getSettings() {
