@@ -196,7 +196,7 @@ export type NotificationRow = {
 export type PlatformSettingsRow = {
   id: number;
   bid_fee_amount: number;
-  new_seller_credit_amount: number;
+  new_seller_welcome_balance: number;
   new_seller_discount_percent: number;
   new_seller_discounted_offer_count: number;
   currency: string;
@@ -323,7 +323,6 @@ export type Database = {
         Args: {
           p_user_id: string;
           p_amount: number;
-          p_kind: "cash" | "credit";
           p_note?: string | null;
         };
         Returns: undefined;
@@ -333,7 +332,7 @@ export type Database = {
       update_platform_settings: {
         Args: {
           p_bid_fee: number;
-          p_new_credit: number;
+          p_welcome_balance: number;
           p_discount: number;
           p_offer_count: number;
         };

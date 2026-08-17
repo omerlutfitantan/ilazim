@@ -44,20 +44,10 @@ export default async function SaticiHome() {
         </p>
       )}
 
-      <div className="mt-8 grid gap-4 md:grid-cols-3">
-        <div className="rounded-2xl border border-border bg-card p-5">
-          <p className="text-xs text-muted-foreground">Kullanılabilir</p>
-          <p className="font-display text-3xl">
-            {formatTry(Number(wallet?.available_balance ?? 0))}
-          </p>
-        </div>
-        <div className="rounded-2xl border border-border bg-card p-5">
-          <p className="text-xs text-muted-foreground">Nakit</p>
+      <div className="mt-8 grid gap-4 md:grid-cols-2">
+        <div className="rounded-2xl border border-border bg-card p-5 md:col-span-2 md:max-w-sm">
+          <p className="text-xs text-muted-foreground">Cüzdan bakiyesi</p>
           <p className="font-display text-3xl">{formatTry(Number(wallet?.cash_balance ?? 0))}</p>
-        </div>
-        <div className="rounded-2xl border border-border bg-card p-5">
-          <p className="text-xs text-muted-foreground">Kredi</p>
-          <p className="font-display text-3xl">{formatTry(Number(wallet?.credit_balance ?? 0))}</p>
         </div>
       </div>
 

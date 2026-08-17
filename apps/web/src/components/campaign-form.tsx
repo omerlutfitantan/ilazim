@@ -16,7 +16,7 @@ export function CampaignForm() {
         <Input name="name" required placeholder="İlk 100 satıcı" className="mt-1" />
       </div>
       <div>
-        <Label>Ek kredi (TL)</Label>
+        <Label>Ek bakiye (TL)</Label>
         <MoneyInput name="creditAmount" defaultValue={50} className="mt-1" />
       </div>
       <div>

@@ -9,7 +9,6 @@ import { SellerReviewButtons } from "@/components/admin-seller-buttons";
 import { UserAvatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
-  balanceKindLabel,
   formatTrDate,
   labelOf,
   listingKindLabel,
@@ -164,17 +163,11 @@ export default async function AdminUserDetail({ params }: { params: Promise<{ id
 
       <section>
         <h2 className="font-display text-2xl">Cüzdan</h2>
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
-          {[
-            ["Kullanılabilir", wallet?.available_balance],
-            ["Nakit", wallet?.cash_balance],
-            ["Kredi", wallet?.credit_balance],
-          ].map(([k, v]) => (
-            <div key={String(k)} className="rounded-2xl border border-border bg-card p-4">
-              <p className="text-xs text-muted-foreground">{k}</p>
-              <p className="font-display text-2xl">{formatTry(Number(v ?? 0))}</p>
-            </div>
-          ))}
+        <div className="mt-4 grid gap-3 sm:grid-cols-1 md:max-w-xs">
+          <div className="rounded-2xl border border-border bg-card p-4">
+            <p className="text-xs text-muted-foreground">Cüzdan bakiyesi</p>
+            <p className="font-display text-2xl">{formatTry(Number(wallet?.cash_balance ?? 0))}</p>
+          </div>
         </div>
         <div className="mt-4">
           <GrantForm userId={id} />
@@ -184,7 +177,7 @@ export default async function AdminUserDetail({ params }: { params: Promise<{ id
           {(txs ?? []).map((t) => (
             <li key={t.id} className="flex justify-between gap-3 border-b border-border py-2">
               <span>
-                {labelOf(walletTxLabel, t.type as WalletTxType)} · {balanceKindLabel[t.balance_kind] ?? t.balance_kind}
+                {labelOf(walletTxLabel, t.type as WalletTxType)}
                 {t.note ? ` · ${t.note}` : ""}
               </span>
               <span className="shrink-0">

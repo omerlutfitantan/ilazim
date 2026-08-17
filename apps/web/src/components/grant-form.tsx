@@ -19,27 +19,22 @@ export function GrantForm({ userId }: { userId?: string }) {
           <Input name="userId" required className="mt-1" />
         </div>
       )}
-      <div>
-        <Label>Tutar</Label>
+      <div className="md:col-span-2">
+        <Label>Bakiye (TL)</Label>
         <MoneyInput name="amount" required className="mt-1" />
-      </div>
-      <div>
-        <Label>Tür</Label>
-        <select name="kind" className="mt-1 h-11 w-full rounded-xl border border-border bg-card px-3 text-sm">
-          <option value="credit">Kredi</option>
-          <option value="cash">Nakit</option>
-        </select>
       </div>
       <div className="md:col-span-2">
         <Label>Not</Label>
-        <Input name="note" className="mt-1" />
+        <Input name="note" placeholder="Admin yüklemesi" className="mt-1" />
       </div>
       {state && "error" in state && state.error && (
-        <p className="text-sm text-destructive">{state.error}</p>
+        <p className="text-sm text-destructive md:col-span-2">{state.error}</p>
       )}
-      {state && "ok" in state && <p className="text-sm text-primary">Yüklendi.</p>}
-      <Button type="submit" disabled={pending}>
-        Yükle
+      {state && "ok" in state && (
+        <p className="text-sm text-primary md:col-span-2">Nakit bakiyeye yüklendi.</p>
+      )}
+      <Button type="submit" disabled={pending} className="md:col-span-2">
+        Bakiye yükle
       </Button>
     </form>
   );

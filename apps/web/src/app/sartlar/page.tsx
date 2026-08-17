@@ -31,7 +31,7 @@ export default function Page() {
         Satıcı, her teklifte Platform’un duyurduğu sabit ücreti peşinen öder. Bu ücret komisyon yüzdesi
         değildir; teklif hakkının kullanılması karşılığıdır. <strong className="text-foreground">Teklif
         ücreti hiçbir surette iade edilmez:</strong> ilanın kapanması, başka teklifin seçilmesi, işin
-        gerçekleşmemesi, tarafların vazgeçmesi veya hesabın kapatılması iade sebebi değildir. Krediler de
+        gerçekleşmemesi, tarafların vazgeçmesi veya hesabın kapatılması iade sebebi değildir. Cüzdan bakiyesi de
         kullanıldığında iade edilmez.
       </p>
 

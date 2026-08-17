@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import { formatTry, TOPUP_PRESETS } from "@ilazim/shared";
 import { getProfile } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
+import { labelOf, walletTxLabel } from "@/lib/labels";
+import type { WalletTxType } from "@ilazim/shared";
 import { TopupButtons } from "@/components/topup-buttons";
 
 export default async function WalletPage() {
@@ -24,36 +26,20 @@ export default async function WalletPage() {
     .select("*")
     .eq("user_id", profile.id);
 
-  const labels: Record<string, string> = {
-    topup: "Bakiye yükleme",
-    bid_fee: "Teklif ücreti",
-    credit_grant: "Kredi tanımı",
-    credit_spend: "Kredi kullanımı",
-    refund: "İade",
-    adjustment: "Düzeltme",
-  };
-
   return (
     <div>
-      <h1 className="font-display text-4xl">Cüzdan ve hesap hareketleri</h1>
-      <div className="mt-8 grid gap-4 md:grid-cols-3">
-        <div className="rounded-2xl bg-primary p-5 text-primary-foreground">
-          <p className="text-xs opacity-70">Kullanılabilir</p>
-          <p className="font-display text-3xl">{formatTry(Number(wallet?.available_balance ?? 0))}</p>
-        </div>
-        <div className="rounded-2xl border border-border bg-card p-5">
-          <p className="text-xs text-muted-foreground">Nakit</p>
-          <p className="font-display text-3xl">{formatTry(Number(wallet?.cash_balance ?? 0))}</p>
-        </div>
-        <div className="rounded-2xl border border-border bg-card p-5">
-          <p className="text-xs text-muted-foreground">Kredi</p>
-          <p className="font-display text-3xl">{formatTry(Number(wallet?.credit_balance ?? 0))}</p>
+      <h1 className="font-display text-4xl">Cüzdan</h1>
+      <p className="mt-1 text-sm text-muted-foreground">Teklif ücretleri bu bakiyeden düşülür.</p>
+      <div className="mt-8">
+        <div className="rounded-2xl bg-primary p-6 text-primary-foreground md:max-w-sm">
+          <p className="text-xs opacity-70">Kullanılabilir bakiye</p>
+          <p className="font-display text-4xl">{formatTry(Number(wallet?.cash_balance ?? 0))}</p>
         </div>
       </div>
 
       {(promos ?? []).some((p) => p.remaining_discounted_offers > 0) && (
         <p className="mt-6 rounded-2xl bg-teal-soft p-4 text-sm">
-          İlk üye indiriminiz aktif: kalan{" "}
+          İndiriminiz aktif: kalan{" "}
           {promos?.reduce((a, p) => a + p.remaining_discounted_offers, 0)} teklifte yüzde{" "}
           {promos?.[0]?.discount_percent} indirim.
         </p>
@@ -73,9 +59,9 @@ export default async function WalletPage() {
         {(txs ?? []).map((t) => (
           <li key={t.id} className="flex justify-between p-4 text-sm">
             <div>
-              <p>{labels[t.type] ?? t.type}</p>
+              <p>{labelOf(walletTxLabel, t.type as WalletTxType)}</p>
               <p className="text-xs text-muted-foreground">
-                {new Date(t.created_at).toLocaleString("tr-TR")} · {t.balance_kind === "credit" ? "Kredi" : "Nakit"}
+                {new Date(t.created_at).toLocaleString("tr-TR")}
                 {t.note ? ` · ${t.note}` : ""}
               </p>
             </div>

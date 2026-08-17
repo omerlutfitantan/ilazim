@@ -15,7 +15,7 @@ export default async function Page() {
             <div>
               <p className="font-medium">{c.name}</p>
               <p className="text-sm text-muted-foreground">
-                +{c.credit_amount} TL kredi · %{c.bid_fee_discount_percent} indirim · {c.discounted_offer_count} teklif ·
+                +{c.credit_amount} TL bakiye · %{c.bid_fee_discount_percent} indirim · {c.discounted_offer_count} teklif ·
                 kullanılan {c.redeemed_count}/{c.max_redemptions ?? "∞"} · {c.is_active ? "aktif" : "pasif"}
               </p>
               <p className="mt-1 text-xs text-muted-foreground">

@@ -85,7 +85,7 @@ export async function getLocations() {
 export async function getSettings() {
   const fallback = {
     bid_fee_amount: 29.9,
-    new_seller_credit_amount: 100,
+    new_seller_welcome_balance: 100,
     new_seller_discount_percent: 50,
     new_seller_discounted_offer_count: 5,
     currency: "TRY",

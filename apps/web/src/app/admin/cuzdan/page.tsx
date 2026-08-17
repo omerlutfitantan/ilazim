@@ -28,9 +28,7 @@ export default async function Page() {
             <Link href={`/admin/kullanicilar/${w.user_id}`} className="underline">
               {(w.profiles as { display_name?: string } | null)?.display_name}
             </Link>
-            <span>
-              nakit {formatTry(Number(w.cash_balance))} · kredi {formatTry(Number(w.credit_balance))}
-            </span>
+            <span>{formatTry(Number(w.cash_balance))}</span>
           </li>
         ))}
       </ul>

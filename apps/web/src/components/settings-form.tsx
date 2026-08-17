@@ -12,7 +12,7 @@ export function SettingsForm({
 }: {
   settings: {
     bid_fee_amount: number;
-    new_seller_credit_amount: number;
+    new_seller_welcome_balance: number;
     new_seller_discount_percent: number;
     new_seller_discounted_offer_count: number;
   };
@@ -25,14 +25,23 @@ export function SettingsForm({
         <MoneyInput name="bidFeeAmount" defaultValue={settings.bid_fee_amount} className="mt-1" />
       </div>
       <div>
-        <Label>Yeni satıcı kredisi (TL)</Label>
-        <MoneyInput name="newSellerCreditAmount" defaultValue={settings.new_seller_credit_amount} className="mt-1" />
+        <Label>Yeni satıcı hoş geldin bakiyesi (TL)</Label>
+        <MoneyInput
+          name="newSellerWelcomeBalance"
+          defaultValue={settings.new_seller_welcome_balance}
+          className="mt-1"
+        />
+        <p className="mt-1 text-xs text-muted-foreground">
+          Onay sonrası nakit cüzdana eklenir. Ücret 50 TL ise 150 TL = 3 teklif hakkı.
+        </p>
       </div>
       <div>
         <Label>Yeni satıcı teklif indirimi %</Label>
         <Input
           name="newSellerDiscountPercent"
           type="number"
+          min={0}
+          max={100}
           defaultValue={settings.new_seller_discount_percent}
           className="mt-1"
         />
@@ -47,7 +56,7 @@ export function SettingsForm({
           className="mt-1"
         />
         <p className="mt-1 text-xs text-muted-foreground">
-          0 ise yüzde indirimi de 0 yapın; yalnızca kredi modeli kullanılır, kampanya indirimi devreye girmez.
+          0 ise yalnızca hoş geldin bakiyesi uygulanır; yüzde indirim de 0 olmalı.
         </p>
       </div>
       {state && "error" in state && state.error && (

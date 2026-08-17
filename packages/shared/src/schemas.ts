@@ -94,7 +94,7 @@ export const categorySchema = z.object({
 
 export const bidFeeSettingsSchema = z.object({
   bidFeeAmount: z.coerce.number().min(0),
-  newSellerCreditAmount: z.coerce.number().min(0),
+  newSellerWelcomeBalance: z.coerce.number().min(0),
   newSellerDiscountPercent: z.coerce.number().min(0).max(100),
   newSellerDiscountedOfferCount: z.coerce.number().int().min(0),
 });
@@ -102,7 +102,6 @@ export const bidFeeSettingsSchema = z.object({
 export const grantBalanceSchema = z.object({
   userId: z.string().uuid(),
   amount: z.coerce.number().positive(),
-  kind: z.enum(["credit", "cash"]),
   note: z.string().trim().max(300).optional(),
 });
 

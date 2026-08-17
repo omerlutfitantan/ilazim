@@ -435,7 +435,6 @@ export async function grantBalanceAction(_: unknown, formData: FormData) {
   const parsed = grantBalanceSchema.safeParse({
     userId: formData.get("userId"),
     amount: formData.get("amount"),
-    kind: formData.get("kind"),
     note: formData.get("note") || undefined,
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Geçersiz form" };
@@ -443,7 +442,6 @@ export async function grantBalanceAction(_: unknown, formData: FormData) {
   const { error } = await supabase.rpc("grant_balance", {
     p_user_id: parsed.data.userId,
     p_amount: parsed.data.amount,
-    p_kind: parsed.data.kind,
     p_note: parsed.data.note ?? null,
   });
   if (error) return { error: error.message };
@@ -547,7 +545,7 @@ export async function adminUpdateUserAction(_: unknown, formData: FormData) {
 export async function updateSettingsAction(_: unknown, formData: FormData) {
   const parsed = bidFeeSettingsSchema.safeParse({
     bidFeeAmount: formData.get("bidFeeAmount"),
-    newSellerCreditAmount: formData.get("newSellerCreditAmount"),
+    newSellerWelcomeBalance: formData.get("newSellerWelcomeBalance"),
     newSellerDiscountPercent: formData.get("newSellerDiscountPercent"),
     newSellerDiscountedOfferCount: formData.get("newSellerDiscountedOfferCount"),
   });
@@ -555,7 +553,7 @@ export async function updateSettingsAction(_: unknown, formData: FormData) {
   const supabase = await createClient();
   const { error } = await supabase.rpc("update_platform_settings", {
     p_bid_fee: parsed.data.bidFeeAmount,
-    p_new_credit: parsed.data.newSellerCreditAmount,
+    p_welcome_balance: parsed.data.newSellerWelcomeBalance,
     p_discount: parsed.data.newSellerDiscountPercent,
     p_offer_count: parsed.data.newSellerDiscountedOfferCount,
   });

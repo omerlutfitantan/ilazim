@@ -136,23 +136,17 @@ export function computeBidFee(input: {
   return { fee: roundMoney(input.baseFee), usedPromo: false };
 }
 
-export function allocateSpend(
-  creditBalance: number,
-  cashBalance: number,
-  amount: number,
-): { fromCredit: number; fromCash: number } {
+export function allocateSpend(cashBalance: number, amount: number): number {
   const need = roundMoney(amount);
-  const available = roundMoney(creditBalance + cashBalance);
+  const available = roundMoney(cashBalance);
   if (available + 0.001 < need) {
     throw new Error("Yetersiz bakiye");
   }
-  const fromCredit = roundMoney(Math.min(creditBalance, need));
-  const fromCash = roundMoney(need - fromCredit);
-  return { fromCredit, fromCash };
+  return need;
 }
 
-export function availableBalance(credit: number, cash: number): number {
-  return roundMoney(credit + cash);
+export function availableBalance(cash: number): number {
+  return roundMoney(cash);
 }
 
 export * from "./constants";

@@ -58,15 +58,15 @@ export const paymentStatusLabel: Record<PaymentStatus, string> = {
 export const walletTxLabel: Record<WalletTxType, string> = {
   topup: "Yükleme",
   bid_fee: "Teklif ücreti",
-  credit_grant: "Kredi tanımı",
-  credit_spend: "Kredi harcama",
+  credit_grant: "Bakiye tanımı (eski)",
+  credit_spend: "Bakiye kullanımı (eski)",
   refund: "İade",
   adjustment: "Düzeltme",
 };
 
 export const balanceKindLabel: Record<string, string> = {
-  credit: "Kredi",
-  cash: "Nakit",
+  cash: "Bakiye",
+  credit: "Bakiye (eski)",
 };
 
 export function labelOf<T extends string>(map: Record<T, string>, value: string | null | undefined) {

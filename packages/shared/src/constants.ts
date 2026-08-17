@@ -2,7 +2,9 @@ export const APP_NAME = "iLazım";
 export const APP_TAGLINE = "Ne lazımsa, teklif gelsin.";
 export const DEFAULT_CURRENCY = "TRY";
 export const DEFAULT_BID_FEE = 29.9;
-export const DEFAULT_NEW_SELLER_CREDIT = 100;
+export const DEFAULT_NEW_SELLER_WELCOME_BALANCE = 100;
+/** @deprecated use DEFAULT_NEW_SELLER_WELCOME_BALANCE */
+export const DEFAULT_NEW_SELLER_CREDIT = DEFAULT_NEW_SELLER_WELCOME_BALANCE;
 export const DEFAULT_NEW_SELLER_DISCOUNT_PERCENT = 50;
 export const DEFAULT_DISCOUNTED_OFFER_COUNT = 5;
 
