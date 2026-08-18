@@ -614,15 +614,25 @@ export async function upsertCategoryAction(_: unknown, formData: FormData) {
     name: formData.get("name"),
     isFeatured: formData.get("isFeatured") === "on",
     sortOrder: formData.get("sortOrder") || 0,
+    metaTitle: formData.get("metaTitle") || undefined,
+    metaDescription: formData.get("metaDescription") || undefined,
+    h1: formData.get("h1") || undefined,
+    content: formData.get("content") || undefined,
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Geçersiz form" };
-  const seo = buildCategorySeo(parsed.data.name, parsed.data.kind);
+  const generated = buildCategorySeo(parsed.data.name, parsed.data.kind);
   const supabase = await createClient();
   const id = String(formData.get("id") || "");
-  let slug = seo.slug;
+  let slug = generated.slug;
+  let existingFaq: unknown = generated.faq;
   if (id) {
-    const { data: existing } = await supabase.from("categories").select("slug").eq("id", id).maybeSingle();
+    const { data: existing } = await supabase
+      .from("categories")
+      .select("slug, faq")
+      .eq("id", id)
+      .maybeSingle();
     if (existing?.slug) slug = existing.slug;
+    if (existing?.faq) existingFaq = existing.faq;
   } else {
     const { data: clash } = await supabase
       .from("categories")
@@ -636,11 +646,11 @@ export async function upsertCategoryAction(_: unknown, formData: FormData) {
     kind: parsed.data.kind,
     name: parsed.data.name,
     slug,
-    h1: seo.h1,
-    meta_title: seo.metaTitle,
-    meta_description: seo.metaDescription,
-    content: seo.content,
-    faq: seo.faq,
+    h1: parsed.data.h1 || generated.h1,
+    meta_title: parsed.data.metaTitle || generated.metaTitle,
+    meta_description: parsed.data.metaDescription || generated.metaDescription,
+    content: parsed.data.content || generated.content,
+    faq: existingFaq,
     is_featured: parsed.data.isFeatured,
     sort_order: parsed.data.sortOrder,
   };
@@ -652,5 +662,6 @@ export async function upsertCategoryAction(_: unknown, formData: FormData) {
   revalidatePath("/");
   revalidatePath("/hizmetler");
   revalidatePath("/urunler");
+  revalidatePath(`/${parsed.data.kind === "service" ? "hizmetler" : "urunler"}/${slug}`);
   return { ok: true };
 }

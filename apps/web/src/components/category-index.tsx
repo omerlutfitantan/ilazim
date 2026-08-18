@@ -1,8 +1,30 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { buildCategorySeo, KIND_LABELS, KIND_PATHS, type ListingKind } from "@ilazim/shared";
+import { buildCategorySeo, KIND_LABELS, KIND_PATHS, type FaqItem, type ListingKind } from "@ilazim/shared";
 import { getCategories, getCategoryBySlug, getOpenListings, getProfile } from "@/lib/data";
 import { JsonLd } from "@/components/json-ld";
+
+function resolveCategorySeo(cat: {
+  name: string;
+  kind: ListingKind;
+  h1: string | null;
+  meta_title: string | null;
+  meta_description: string | null;
+  content: string | null;
+  faq: unknown;
+}) {
+  const generated = buildCategorySeo(cat.name, cat.kind);
+  const storedFaq = Array.isArray(cat.faq)
+    ? (cat.faq as FaqItem[]).filter((item) => item && typeof item.q === "string" && typeof item.a === "string")
+    : [];
+  return {
+    h1: cat.h1?.trim() || generated.h1,
+    metaTitle: cat.meta_title?.trim() || generated.metaTitle,
+    metaDescription: cat.meta_description?.trim() || generated.metaDescription,
+    content: cat.content?.trim() || generated.content,
+    faq: storedFaq.length > 0 ? storedFaq : generated.faq,
+  };
+}
 
 export const revalidate = 300;
 
@@ -22,7 +44,7 @@ export async function generateMetadata({
   }
   const cat = await getCategoryBySlug(kind, kategori);
   if (!cat) return { title: "Kategori bulunamadı" };
-  const seo = buildCategorySeo(cat.name, kind);
+  const seo = resolveCategorySeo(cat);
   return {
     title: seo.metaTitle,
     description: seo.metaDescription,
@@ -41,7 +63,7 @@ export async function CategoryIndex({
   q?: string;
 }) {
   const cat = kategori ? await getCategoryBySlug(kind, kategori) : null;
-  const seo = cat ? buildCategorySeo(cat.name, kind) : null;
+  const seo = cat ? resolveCategorySeo(cat) : null;
   const categories = await getCategories(kind);
   const profile = await getProfile();
   const canOpenDetails =

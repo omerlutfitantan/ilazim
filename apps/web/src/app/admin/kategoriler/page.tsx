@@ -11,12 +11,12 @@ export default async function Page() {
     <div>
       <h1 className="font-display text-3xl">Kategoriler</h1>
       <p className="mt-1 mb-6 text-sm text-muted-foreground">
-        Yalnızca adı yaz. Başlık, açıklama, slug ve SSS addan üretilir.
+        Ad, kart metni ve SEO alanlarını buradan düzenleyin. Açıklama anasayfa kartında ve Google’da görünür.
       </p>
       <Card>
         <CardHeader>
           <CardTitle>Yeni kategori</CardTitle>
-          <CardDescription>SEO metinleri kaydedince otomatik dolar.</CardDescription>
+          <CardDescription>SEO alanlarını boş bırakırsanız addan üretilir; sonra buradan değiştirebilirsiniz.</CardDescription>
         </CardHeader>
         <CardContent>
           <CategoryAdminForm />

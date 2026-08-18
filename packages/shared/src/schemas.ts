@@ -90,6 +90,10 @@ export const categorySchema = z.object({
   name: z.string().trim().min(2).max(80),
   isFeatured: z.boolean().default(false),
   sortOrder: z.coerce.number().int().default(0),
+  metaTitle: z.string().trim().max(80).optional(),
+  metaDescription: z.string().trim().max(220).optional(),
+  h1: z.string().trim().max(160).optional(),
+  content: z.string().trim().max(2000).optional(),
 });
 
 export const bidFeeSettingsSchema = z.object({
