@@ -5,8 +5,19 @@ set cash_balance = cash_balance + credit_balance,
     credit_balance = 0
 where credit_balance > 0;
 
-alter table public.platform_settings
-  rename column new_seller_credit_amount to new_seller_welcome_balance;
+do $$
+begin
+  if exists (
+    select 1
+    from information_schema.columns
+    where table_schema = 'public'
+      and table_name = 'platform_settings'
+      and column_name = 'new_seller_credit_amount'
+  ) then
+    alter table public.platform_settings
+      rename column new_seller_credit_amount to new_seller_welcome_balance;
+  end if;
+end $$;
 
 create or replace function public.apply_seller_benefits(p_user uuid)
 returns void
