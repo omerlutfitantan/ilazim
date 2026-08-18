@@ -105,9 +105,31 @@ export function SignUpForm({
   return (
     <form action={action} className="space-y-4">
       {next && <input type="hidden" name="next" value={next} />}
-      <div>
-        <Label htmlFor="fullName">Ad soyad</Label>
-        <Input id="fullName" name="fullName" required minLength={2} autoComplete="name" className="mt-1" />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <Label htmlFor="firstName">Ad</Label>
+          <Input
+            id="firstName"
+            name="firstName"
+            required
+            minLength={2}
+            maxLength={40}
+            autoComplete="given-name"
+            className="mt-1"
+          />
+        </div>
+        <div>
+          <Label htmlFor="lastName">Soyad</Label>
+          <Input
+            id="lastName"
+            name="lastName"
+            required
+            minLength={2}
+            maxLength={40}
+            autoComplete="family-name"
+            className="mt-1"
+          />
+        </div>
       </div>
       <div>
         <Label htmlFor="email-up">E-posta</Label>
@@ -118,7 +140,7 @@ export function SignUpForm({
       </div>
       <div>
         <Label htmlFor="phone-up">Telefon</Label>
-        <PhoneInput id="phone-up" className="mt-1" />
+        <PhoneInput id="phone-up" required className="mt-1" />
       </div>
       <CityDistrictFields cities={cities} districts={districts} />
       <PasswordField id="password-up" name="password" label="Şifre (en az 8 karakter)" autoComplete="new-password" />

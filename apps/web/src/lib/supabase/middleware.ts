@@ -38,11 +38,20 @@ export async function updateSession(request: NextRequest) {
     },
   });
 
+  const path = request.nextUrl.pathname;
+  const tokenHash = request.nextUrl.searchParams.get("token_hash");
+  const otpType = request.nextUrl.searchParams.get("type");
+  const authCode = request.nextUrl.searchParams.get("code");
+  if (path !== "/auth/callback" && ((tokenHash && otpType) || authCode)) {
+    const redirect = request.nextUrl.clone();
+    redirect.pathname = "/auth/callback";
+    return NextResponse.redirect(redirect);
+  }
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const path = request.nextUrl.pathname;
   const verified = isVerified(user);
   const isProtected = isProtectedPath(path);
 
@@ -61,7 +70,15 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(redirect);
   }
 
-  if (verified && (path === "/giris" || path === "/kayit" || path.startsWith("/dogrula"))) {
+  if (verified && (path === "/giris" || path === "/kayit")) {
+    const next = request.nextUrl.searchParams.get("next");
+    const redirect = request.nextUrl.clone();
+    redirect.pathname = next?.startsWith("/") && !next.startsWith("//") ? next : "/hesabim";
+    redirect.search = "";
+    return NextResponse.redirect(redirect);
+  }
+
+  if (verified && path.startsWith("/dogrula") && request.nextUrl.searchParams.get("verified") !== "1") {
     const next = request.nextUrl.searchParams.get("next");
     const redirect = request.nextUrl.clone();
     redirect.pathname = next?.startsWith("/") && !next.startsWith("//") ? next : "/hesabim";

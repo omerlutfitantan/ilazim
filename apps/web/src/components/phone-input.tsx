@@ -51,6 +51,9 @@ export function PhoneInput({
         placeholder="05xx xxx xx xx"
         className={className}
         value={stored ? formatTrPhone(stored) : "0"}
+        minLength={required ? 14 : undefined}
+        pattern={required ? "0\\d{3} \\d{3} \\d{2} \\d{2}" : undefined}
+        title={required ? "11 haneli telefon girin" : undefined}
         onFocus={(e) => {
           const el = e.currentTarget;
           const len = el.value.length;

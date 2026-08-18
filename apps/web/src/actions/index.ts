@@ -19,6 +19,7 @@ import {
   buildCategorySeo,
   profileUpdateSchema,
   adminUserUpdateSchema,
+  joinPersonName,
 } from "@ilazim/shared";
 import { createClient } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
@@ -40,11 +41,12 @@ async function persistDeskCookie(desk: "buyer" | "seller") {
 
 export async function signUpAction(_: unknown, formData: FormData) {
   const parsed = signUpSchema.safeParse({
-    fullName: formData.get("fullName"),
+    firstName: formData.get("firstName"),
+    lastName: formData.get("lastName"),
     email: formData.get("email"),
     password: formData.get("password"),
     passwordConfirm: formData.get("passwordConfirm"),
-    phone: formData.get("phone") || null,
+    phone: formData.get("phone"),
     cityId: formData.get("cityId"),
     districtId: formData.get("districtId"),
     acceptTerms: formData.get("acceptTerms") === "on",
@@ -53,18 +55,21 @@ export async function signUpAction(_: unknown, formData: FormData) {
   const site = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   const nextRaw = String(formData.get("next") || "");
   const next = nextRaw.startsWith("/") && !nextRaw.startsWith("//") ? nextRaw : "/hesabim";
+  const fullName = joinPersonName(parsed.data.firstName, parsed.data.lastName);
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
       data: {
-        full_name: parsed.data.fullName,
-        phone: parsed.data.phone ?? "",
+        first_name: parsed.data.firstName,
+        last_name: parsed.data.lastName,
+        full_name: fullName,
+        phone: parsed.data.phone,
         city_id: parsed.data.cityId,
         district_id: parsed.data.districtId,
       },
-      emailRedirectTo: `${site}/auth/callback?next=${encodeURIComponent(next)}`,
+      emailRedirectTo: `${site}/auth/callback?intent=confirm&next=${encodeURIComponent(next)}`,
     },
   });
   if (error) return { error: error.message };
@@ -111,7 +116,7 @@ export async function resendVerificationAction(_: unknown, formData: FormData) {
   const { error } = await supabase.auth.resend({
     type: "signup",
     email: parsed.data.email,
-    options: { emailRedirectTo: `${site}/auth/callback?next=${encodeURIComponent(next)}` },
+    options: { emailRedirectTo: `${site}/auth/callback?intent=confirm&next=${encodeURIComponent(next)}` },
   });
   if (error) return { error: error.message };
   return { ok: true };
@@ -465,7 +470,8 @@ export async function grantBalanceAction(_: unknown, formData: FormData) {
 
 export async function updateProfileAction(_: unknown, formData: FormData) {
   const parsed = profileUpdateSchema.safeParse({
-    fullName: formData.get("fullName"),
+    firstName: formData.get("firstName"),
+    lastName: formData.get("lastName"),
     phone: formData.get("phone"),
     bio: formData.get("bio"),
     cityId: formData.get("cityId"),
@@ -477,12 +483,13 @@ export async function updateProfileAction(_: unknown, formData: FormData) {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { error: "Oturum gerekli" };
+  const fullName = joinPersonName(parsed.data.firstName, parsed.data.lastName);
   const { error } = await supabase
     .from("profiles")
     .update({
-      full_name: parsed.data.fullName,
-      display_name: parsed.data.fullName,
-      phone: parsed.data.phone ?? null,
+      full_name: fullName,
+      display_name: fullName,
+      phone: parsed.data.phone,
       bio: parsed.data.bio ?? null,
       city_id: parsed.data.cityId,
       district_id: parsed.data.districtId,

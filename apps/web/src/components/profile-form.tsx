@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
+import { splitPersonName } from "@ilazim/shared";
 import { updateProfileAction } from "@/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +27,7 @@ export function ProfileForm({
   cities: LocOption[];
   districts: LocOption[];
 }) {
+  const names = splitPersonName(fullName);
   const [state, action, pending] = useActionState(updateProfileAction, null);
   const [selectedCityId, setSelectedCityId] = useState(cityId ?? "");
   const [selectedDistrictId, setSelectedDistrictId] = useState(districtId ?? "");
@@ -37,16 +39,40 @@ export function ProfileForm({
 
   return (
     <form action={action} className="grid gap-4">
-      <div>
-        <Label htmlFor="fullName">Ad soyad</Label>
-        <Input id="fullName" name="fullName" defaultValue={fullName ?? ""} required minLength={2} className="mt-1" />
-        <p className="mt-1 text-xs text-muted-foreground">
-          Tekliflerde yalnızca adınız ve soyadınızın baş harfi görünür.
-        </p>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <Label htmlFor="firstName">Ad</Label>
+          <Input
+            id="firstName"
+            name="firstName"
+            defaultValue={names.firstName}
+            required
+            minLength={2}
+            maxLength={40}
+            autoComplete="given-name"
+            className="mt-1"
+          />
+        </div>
+        <div>
+          <Label htmlFor="lastName">Soyad</Label>
+          <Input
+            id="lastName"
+            name="lastName"
+            defaultValue={names.lastName}
+            required
+            minLength={2}
+            maxLength={40}
+            autoComplete="family-name"
+            className="mt-1"
+          />
+        </div>
       </div>
+      <p className="-mt-2 text-xs text-muted-foreground">
+        Tekliflerde yalnızca adınız ve soyadınızın baş harfi görünür.
+      </p>
       <div>
         <Label htmlFor="phone">Telefon</Label>
-        <PhoneInput id="phone" defaultValue={phone} className="mt-1" />
+        <PhoneInput id="phone" defaultValue={phone} required className="mt-1" />
       </div>
       <input type="hidden" name="cityId" value={selectedCityId} />
       <input type="hidden" name="districtId" value={selectedDistrictId} />

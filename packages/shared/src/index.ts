@@ -33,6 +33,21 @@ export function formatTry(amount: number): string {
   }).format(amount);
 }
 
+export function splitPersonName(fullName: string | null | undefined): {
+  firstName: string;
+  lastName: string;
+} {
+  const clean = (fullName ?? "").trim().replace(/\s+/g, " ");
+  if (!clean) return { firstName: "", lastName: "" };
+  const i = clean.indexOf(" ");
+  if (i === -1) return { firstName: clean, lastName: "" };
+  return { firstName: clean.slice(0, i), lastName: clean.slice(i + 1) };
+}
+
+export function joinPersonName(firstName: string, lastName: string): string {
+  return `${firstName.trim()} ${lastName.trim()}`.replace(/\s+/g, " ").trim();
+}
+
 export function maskPersonName(name: string | null | undefined): string {
   const clean = (name ?? "").trim().replace(/\s+/g, " ");
   if (!clean) return "Kullanıcı";

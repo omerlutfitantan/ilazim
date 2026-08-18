@@ -9,6 +9,7 @@ import { MobileTabBar } from "@/components/mobile-tab-bar";
 import { CookieBanner } from "@/components/cookie-banner";
 import { WelcomePoster } from "@/components/welcome-poster";
 import { AnalyticsScripts } from "@/components/analytics-scripts";
+import { AuthHashHandler } from "@/components/auth-hash-handler";
 import { getProfile } from "@/lib/data";
 import { getDesk, canUseSellerDesk } from "@/lib/desk";
 import { CONSENT_COOKIE, parseConsent } from "@/lib/consent";
@@ -92,6 +93,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           adsId={tags.googleAdsId}
           initialConsent={consent}
         />
+        <AuthHashHandler />
         <Toaster />
       </body>
     </html>

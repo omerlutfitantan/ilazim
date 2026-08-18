@@ -3,17 +3,26 @@ import { preprocessPhone } from "./phone";
 
 const emptyToNull = (v: unknown) => (typeof v === "string" && v.trim() === "" ? null : v);
 const phoneField = z.preprocess(preprocessPhone, z.string().max(16).nullable().optional());
+const requiredPhone = z.preprocess(preprocessPhone, z.string().regex(/^0\d{10}$/, "Geçerli bir telefon girin"));
+const namePart = (label: string) =>
+  z
+    .string()
+    .trim()
+    .min(2, `${label} en az 2 karakter`)
+    .max(40, `${label} en fazla 40 karakter`)
+    .regex(/^[A-Za-zÀ-ÿÇĞİÖŞÜçğıöşü'’\- ]+$/u, `${label} yalnızca harf içermeli`);
 
 export const listingKindSchema = z.enum(["service", "product"]);
 export const sellerTypeSchema = z.enum(["service", "product", "both"]);
 
 export const signUpSchema = z
   .object({
-    fullName: z.string().trim().min(2, "Ad soyad en az 2 karakter").max(80),
+    firstName: namePart("Ad"),
+    lastName: namePart("Soyad"),
     email: z.string().email("Geçerli bir e-posta girin"),
     password: z.string().min(8, "Şifre en az 8 karakter"),
     passwordConfirm: z.string().min(8, "Şifreyi tekrar girin"),
-    phone: phoneField,
+    phone: requiredPhone,
     cityId: z.string().uuid("Şehir seçin"),
     districtId: z.string().uuid("İlçe seçin"),
     acceptTerms: z.boolean().refine((v) => v === true, "Şartları kabul etmelisiniz"),
@@ -132,8 +141,9 @@ export const topupSchema = z.object({
 });
 
 export const profileUpdateSchema = z.object({
-  fullName: z.string().trim().min(2, "Ad soyad en az 2 karakter").max(80),
-  phone: phoneField,
+  firstName: namePart("Ad"),
+  lastName: namePart("Soyad"),
+  phone: requiredPhone,
   bio: z.preprocess(emptyToNull, z.string().trim().max(2000).nullable().optional()),
   cityId: z.string().uuid("Şehir seçin"),
   districtId: z.string().uuid("İlçe seçin"),
