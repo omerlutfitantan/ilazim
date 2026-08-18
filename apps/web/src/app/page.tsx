@@ -20,8 +20,10 @@ import {
 } from "lucide-react";
 import { KIND_PATHS, type ListingKind } from "@ilazim/shared";
 import { getCategories } from "@/lib/data";
+import { createClient } from "@/lib/supabase/server";
 import { SearchHero } from "@/components/search-hero";
 import { Button } from "@/components/ui/button";
+import { isSupabaseConfigured } from "@/lib/utils";
 
 export const revalidate = 300;
 
@@ -60,6 +62,35 @@ export default async function HomePage() {
     getCategories("product", true),
   ]);
 
+  const supabase = isSupabaseConfigured() ? await createClient() : null;
+  const serviceCounts =
+    supabase && serviceCats.length > 0
+      ? await Promise.all(
+          serviceCats.map(async (c) => {
+            const [{ count: openCount }, { count: completedCount }] = await Promise.all([
+              supabase
+                .from("listings")
+                .select("id", { count: "exact" as const })
+                .eq("kind", "service")
+                .eq("category_id", c.id)
+                .eq("status", "open"),
+              supabase
+                .from("listings")
+                .select("id", { count: "exact" as const })
+                .eq("kind", "service")
+                .eq("category_id", c.id)
+                .in("status", ["awarded", "completed"]),
+            ]);
+            return {
+              categoryId: c.id,
+              openCount: openCount ?? 0,
+              completedCount: completedCount ?? 0,
+            };
+          }),
+        )
+      : [];
+  const serviceCountMap = new Map(serviceCounts.map((s) => [s.categoryId, s]));
+
   const services =
     serviceCats.length > 0
       ? serviceCats.map((c) => ({
@@ -67,6 +98,8 @@ export default async function HomePage() {
           slug: c.slug,
           hint: c.meta_description,
           Icon: FALLBACK.service.find((f) => f.slug === c.slug)?.Icon ?? Home,
+          openCount: serviceCountMap.get(c.id)?.openCount ?? 0,
+          completedCount: serviceCountMap.get(c.id)?.completedCount ?? 0,
         }))
       : FALLBACK.service;
   const products =
@@ -241,7 +274,14 @@ function CategoryBand({
   kind: ListingKind;
   title: string;
   kicker: string;
-  items: { name: string; slug: string; hint: string; Icon: LucideIcon }[];
+  items: {
+    name: string;
+    slug: string;
+    hint: string;
+    Icon: LucideIcon;
+    openCount?: number;
+    completedCount?: number;
+  }[];
 }) {
   const href = `/${KIND_PATHS[kind]}`;
   return (
@@ -269,6 +309,11 @@ function CategoryBand({
               <p className="mt-1 line-clamp-2 text-sm text-muted-foreground group-hover:text-white/55">
                 {c.hint}
               </p>
+              {typeof c.openCount === "number" && (
+                <p className="mt-2 text-xs text-white/70 group-hover:text-white/65">
+                  {c.openCount} talep · {c.completedCount ?? 0} tamamlandı
+                </p>
+              )}
             </Link>
           </li>
         ))}

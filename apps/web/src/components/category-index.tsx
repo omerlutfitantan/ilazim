@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { buildCategorySeo, KIND_LABELS, KIND_PATHS, type ListingKind } from "@ilazim/shared";
-import { getCategories, getCategoryBySlug } from "@/lib/data";
+import { getCategories, getCategoryBySlug, getOpenListings, getProfile } from "@/lib/data";
 import { JsonLd } from "@/components/json-ld";
 
 export const revalidate = 300;
@@ -43,11 +43,26 @@ export async function CategoryIndex({
   const cat = kategori ? await getCategoryBySlug(kind, kategori) : null;
   const seo = cat ? buildCategorySeo(cat.name, kind) : null;
   const categories = await getCategories(kind);
+  const profile = await getProfile();
+  const canOpenDetails =
+    Boolean(
+      profile &&
+        profile.role !== "buyer" &&
+        (profile.role === "admin" || profile.seller_status === "approved"),
+    );
   const qn = q?.trim().toLocaleLowerCase("tr");
   const shown = qn
     ? categories.filter((c) => c.name.toLocaleLowerCase("tr").includes(qn))
     : categories;
   const faqs = seo?.faq ?? [];
+  const openListings =
+    cat && kind === "service"
+      ? await getOpenListings({
+          kind,
+          categoryId: cat.id,
+          limit: 8,
+        })
+      : [];
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 md:py-12">
@@ -110,12 +125,58 @@ export async function CategoryIndex({
       </div>
 
       <div className="mt-10 rounded-2xl border border-dashed border-border p-8 text-sm text-muted-foreground">
-        Açık talepler yalnızca onaylı hizmet verenlere gösterilir. İhtiyacınız varsa{" "}
+        Açık talepler herkes tarafından görülebilir. Teklif ve detaylar ise yalnızca onaylı hizmet
+        verenlere açıktır. İhtiyacınız varsa{" "}
         <Link href={`/ilan-ac?kind=${kind}`} className="underline">
           ilan açın
         </Link>
         ; teklifler size gelsin.
       </div>
+
+      {cat && kind === "service" && openListings.length > 0 && (
+        <section className="mt-10">
+          <h2 className="font-display text-2xl">Açık talepler</h2>
+          <ul className="mt-4 space-y-3">
+            {openListings.map((l) => {
+              const href = `/${KIND_PATHS[kind]}/${(l.categories as { slug?: string } | null)?.slug ?? cat.slug}/${l.slug}`;
+              const location =
+                (l.district as { name?: string } | null)?.name ??
+                (l.locations as { name?: string } | null)?.name;
+
+              return (
+                <li
+                  key={l.id}
+                  className="rounded-2xl border border-border bg-card p-4"
+                  aria-disabled={!canOpenDetails}
+                >
+                  {canOpenDetails ? (
+                    <Link href={href} className="block">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-sm font-medium">{l.title}</span>
+                        <span className="text-xs text-muted-foreground">{l.offer_count} teklif</span>
+                      </div>
+                      {location ? (
+                        <p className="mt-1 text-xs text-muted-foreground">{location}</p>
+                      ) : null}
+                    </Link>
+                  ) : (
+                    <div className="select-none">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-sm font-medium">{l.title}</span>
+                        <span className="text-xs text-muted-foreground">{l.offer_count} teklif</span>
+                        <span className="text-xs text-muted-foreground">· detaylar kilitli</span>
+                      </div>
+                      {location ? (
+                        <p className="mt-1 text-xs text-muted-foreground">{location}</p>
+                      ) : null}
+                    </div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
 
       {faqs.length > 0 && (
         <section className="mt-16">
