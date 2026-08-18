@@ -296,6 +296,18 @@ export async function deleteReviewAction(reviewId: string) {
   const { error } = await supabase.rpc("delete_review", { p_review_id: reviewId });
   if (error) return { error: error.message };
   revalidatePath("/admin/yorumlar");
+  revalidatePath("/admin");
+  revalidatePath("/usta", "layout");
+  return { ok: true };
+}
+
+export async function approveReviewAction(reviewId: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("approve_review", { p_review_id: reviewId });
+  if (error) return { error: error.message };
+  revalidatePath("/admin/yorumlar");
+  revalidatePath("/admin");
+  revalidatePath("/usta", "layout");
   return { ok: true };
 }
 
@@ -330,7 +342,8 @@ export async function submitReviewAction(_: unknown, formData: FormData) {
   });
   if (error) return { error: error.message };
   revalidatePath("/hesabim");
-  revalidatePath("/usta");
+  revalidatePath("/admin/yorumlar");
+  revalidatePath("/admin");
   return { ok: true };
 }
 

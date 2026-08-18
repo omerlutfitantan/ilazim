@@ -65,7 +65,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     : null;
 
   const { data: existingReview } = listing?.id
-    ? await supabase.from("reviews").select("id").eq("listing_id", listing.id).maybeSingle()
+    ? await supabase.from("reviews").select("id, status").eq("listing_id", listing.id).maybeSingle()
     : { data: null };
 
   const awardedThis = listing?.status === "awarded" && offer?.id && listing.awarded_offer_id === offer.id;
@@ -114,6 +114,11 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
           ) : null
         }
       />
+      {isBuyer && listing?.status && ["awarded", "completed"].includes(listing.status) && existingReview?.status === "pending" && (
+        <p className="mx-auto max-w-2xl px-4 pb-12 text-sm text-muted-foreground">
+          Yorumunuz admin onayında. Onaylanınca hizmet verenin profilinde görünür.
+        </p>
+      )}
       {isBuyer && listing?.status && ["awarded", "completed"].includes(listing.status) && !existingReview && (
         <div className="mx-auto max-w-2xl px-4 pb-12">
           <ReviewForm listingId={listing.id} />

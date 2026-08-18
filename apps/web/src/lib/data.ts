@@ -186,6 +186,7 @@ export async function getSellerBySlug(slug: string) {
     .from("reviews")
     .select("*, reviewer:reviewer_id(display_name, full_name), listings(title, slug, kind)")
     .eq("seller_id", profile.id)
+    .eq("status", "approved")
     .order("created_at", { ascending: false })
     .limit(20);
   const { data: jobs } = await supabase

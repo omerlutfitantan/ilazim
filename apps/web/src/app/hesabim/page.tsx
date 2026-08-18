@@ -37,9 +37,10 @@ export default async function HesabimPage() {
   const statsMap = new Map((statsRows ?? []).map((s) => [s.seller_id, s]));
 
   const { data: reviews } = listingIds.length
-    ? await supabase.from("reviews").select("listing_id").in("listing_id", listingIds)
+    ? await supabase.from("reviews").select("listing_id, status").in("listing_id", listingIds)
     : { data: [] };
   const reviewed = new Set((reviews ?? []).map((r) => r.listing_id));
+  const pendingReview = new Set((reviews ?? []).filter((r) => r.status === "pending").map((r) => r.listing_id));
   const { data: convs } = listingIds.length
     ? await supabase.from("conversations").select("id, listing_id, seller_id").in("listing_id", listingIds)
     : { data: [] };
@@ -134,6 +135,11 @@ export default async function HesabimPage() {
                   );
                 })}
               </ul>
+              {["awarded", "completed"].includes(l.status) && pendingReview.has(l.id) && (
+                <p className="mt-3 rounded-xl bg-muted px-4 py-3 text-sm text-muted-foreground">
+                  Yorumunuz admin onayında. Onaylanınca hizmet verenin profilinde görünür.
+                </p>
+              )}
               {["awarded", "completed"].includes(l.status) && !reviewed.has(l.id) && l.awarded_offer_id && (
                 <ReviewForm listingId={l.id} />
               )}

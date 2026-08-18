@@ -20,6 +20,9 @@ export function ReviewForm({ listingId }: { listingId: string }) {
       {state && "error" in state && state.error && (
         <p className="text-sm text-destructive">{state.error}</p>
       )}
+      {state && "ok" in state && (
+        <p className="text-sm text-primary">Yorumunuz alındı. Yayınlanmadan önce admin onayı gerekir.</p>
+      )}
       <Button type="submit" size="sm" disabled={pending}>
         Yorumu gönder
       </Button>

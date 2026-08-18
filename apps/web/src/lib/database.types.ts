@@ -100,6 +100,8 @@ export type ReviewRow = {
   seller_id: string;
   rating: number;
   comment: string;
+  status: "pending" | "approved";
+  moderated_at: string | null;
   created_at: string;
 };
 
@@ -290,6 +292,7 @@ export type Database = {
         Args: { p_listing_id: string; p_rating: number; p_comment: string };
         Returns: string;
       };
+      approve_review: { Args: { p_review_id: string }; Returns: undefined };
       request_seller_role: {
         Args: {
           p_seller_type: SellerType;
