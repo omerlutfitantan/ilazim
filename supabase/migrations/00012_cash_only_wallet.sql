@@ -228,6 +228,8 @@ begin
 end;
 $$;
 
+drop function if exists public.update_platform_settings(numeric, numeric, numeric, integer);
+
 create or replace function public.update_platform_settings(
   p_bid_fee numeric,
   p_welcome_balance numeric,

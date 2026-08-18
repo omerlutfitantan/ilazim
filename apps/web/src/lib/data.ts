@@ -82,6 +82,11 @@ export async function getLocations() {
   return { cities, districts };
 }
 
+function moneyOr(value: unknown, fallback: number) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
 export async function getSettings() {
   const fallback = {
     bid_fee_amount: 29.9,
@@ -94,7 +99,25 @@ export async function getSettings() {
   if (!isSupabaseConfigured()) return fallback;
   const supabase = await createClient();
   const { data } = await supabase.from("platform_settings").select("*").eq("id", 1).single();
-  return data ?? fallback;
+  if (!data) return fallback;
+  const row = data as Record<string, unknown>;
+  return {
+    ...fallback,
+    ...data,
+    bid_fee_amount: moneyOr(row.bid_fee_amount, fallback.bid_fee_amount),
+    new_seller_welcome_balance: moneyOr(
+      row.new_seller_welcome_balance ?? row.new_seller_credit_amount,
+      fallback.new_seller_welcome_balance,
+    ),
+    new_seller_discount_percent: moneyOr(
+      row.new_seller_discount_percent,
+      fallback.new_seller_discount_percent,
+    ),
+    new_seller_discounted_offer_count: moneyOr(
+      row.new_seller_discounted_offer_count,
+      fallback.new_seller_discounted_offer_count,
+    ),
+  };
 }
 
 export async function getOpenListings(filters: {

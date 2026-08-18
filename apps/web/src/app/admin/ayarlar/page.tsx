@@ -18,11 +18,10 @@ export default async function Page() {
     new_seller_discount_percent: 50,
     new_seller_discounted_offer_count: 5,
   };
+  const welcome = Number(s.new_seller_welcome_balance);
+  const fee = Number(s.bid_fee_amount);
   const cashOnly = s.new_seller_discount_percent === 0 && s.new_seller_discounted_offer_count === 0;
-  const freeOffers =
-    s.bid_fee_amount > 0
-      ? Math.floor(Number(s.new_seller_welcome_balance) / Number(s.bid_fee_amount))
-      : 0;
+  const freeOffers = Number.isFinite(welcome) && fee > 0 ? Math.floor(welcome / fee) : 0;
 
   return (
     <div>
@@ -33,8 +32,8 @@ export default async function Page() {
       {cashOnly && (
         <p className="mb-4 max-w-xl rounded-2xl border border-accent/40 bg-accent/10 px-4 py-3 text-sm leading-6">
           Hoş geldin bakiyesi: onay sonrası{" "}
-          <strong>{Number(s.new_seller_welcome_balance).toFixed(2)} TL</strong> nakit yüklenir — sabit ücret{" "}
-          <strong>{Number(s.bid_fee_amount).toFixed(2)} TL</strong> ile yaklaşık{" "}
+          <strong>{Number.isFinite(welcome) ? welcome.toFixed(2) : "0.00"} TL</strong> nakit yüklenir — sabit ücret{" "}
+          <strong>{Number.isFinite(fee) ? fee.toFixed(2) : "0.00"} TL</strong> ile yaklaşık{" "}
           <strong>{freeOffers} teklif</strong> karşılanır.
         </p>
       )}

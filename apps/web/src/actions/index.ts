@@ -551,12 +551,24 @@ export async function updateSettingsAction(_: unknown, formData: FormData) {
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Geçersiz form" };
   const supabase = await createClient();
-  const { error } = await supabase.rpc("update_platform_settings", {
+  const args = {
     p_bid_fee: parsed.data.bidFeeAmount,
-    p_welcome_balance: parsed.data.newSellerWelcomeBalance,
     p_discount: parsed.data.newSellerDiscountPercent,
     p_offer_count: parsed.data.newSellerDiscountedOfferCount,
+  };
+  let { error } = await supabase.rpc("update_platform_settings", {
+    ...args,
+    p_welcome_balance: parsed.data.newSellerWelcomeBalance,
   });
+  if (error?.message?.includes("Could not find the function")) {
+    ({ error } = await supabase.rpc(
+      "update_platform_settings",
+      {
+        ...args,
+        p_new_credit: parsed.data.newSellerWelcomeBalance,
+      } as never,
+    ));
+  }
   if (error) return { error: error.message };
   revalidatePath("/admin/ayarlar");
   revalidatePath("/admin");
