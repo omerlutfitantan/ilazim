@@ -111,7 +111,7 @@ export async function getEmailConfig() {
   const row = await getSecretRow();
   return {
     apiKey: firstText(row?.resendApiKey, process.env.RESEND_API_KEY),
-    from: firstText(row?.emailFrom, process.env.EMAIL_FROM) ?? "iLazım <noreply@ilazim.com>",
+    from: firstText(row?.emailFrom, process.env.EMAIL_FROM) ?? "iLazım <noreply@ilazim.online>",
   };
 }
 
