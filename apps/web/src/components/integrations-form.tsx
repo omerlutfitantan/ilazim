@@ -52,8 +52,8 @@ export function IntegrationsForm({
         <CardHeader>
           <CardTitle>E-posta</CardTitle>
           <CardDescription>
-            Resend anahtarı ve gönderen adresi. Boş anahtar, kayıtlı değeri korur. Adres boşsa ortam
-            değişkeni veya varsayılan kullanılır.
+            Resend anahtarı ve gönderen adresi. Tüm mailler (kayıt, şifre, teklif, mesaj) sitedeki iLazım
+            şablonuyla gider. Boş anahtar kayıtlı değeri korur; adres boşsa ortam değişkeni kullanılır.
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">

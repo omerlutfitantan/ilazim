@@ -1,5 +1,5 @@
 import { getEmailConfig } from "@/lib/integrations";
-import { siteUrl } from "@/lib/utils";
+import { authActionEmail as buildAuthEmail, escapeHtml, renderSiteEmail } from "@/lib/email-template";
 
 type SendEmailInput = {
   to: string;
@@ -39,29 +39,16 @@ export function listingAlertEmail(input: {
   href: string;
   kindLabel: string;
 }) {
-  const url = `${siteUrl()}${input.href}`;
   const subject = `Yeni ${input.kindLabel}: ${input.title} — ${input.location}`;
-  const text = [
-    input.title,
-    `Konum: ${input.location}`,
-    "",
-    input.description,
-    "",
-    `İlanı açmak için: ${url}`,
-  ].join("\n");
-  const html = `
-    <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;color:#111">
-      <p style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:#666">iLazım</p>
-      <h1 style="font-size:22px;line-height:1.3">${escapeHtml(input.title)}</h1>
-      <p style="color:#444"><strong>Konum:</strong> ${escapeHtml(input.location)}</p>
-      <p style="white-space:pre-wrap;line-height:1.6">${escapeHtml(input.description)}</p>
-      <p style="margin-top:28px">
-        <a href="${url}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:12px 18px;border-radius:12px">
-          İlana git ve teklif ver
-        </a>
-      </p>
-    </div>
-  `;
+  const { html, text } = renderSiteEmail({
+    preview: subject,
+    eyebrow: `Yeni ${input.kindLabel}`,
+    heading: input.title,
+    lines: [`Konum: ${input.location}`],
+    extraHtml: `<p style="margin:0 0 12px;font-size:15px;line-height:1.65;color:#0c0c0c;white-space:pre-wrap">${escapeHtml(input.description)}</p>`,
+    ctaLabel: "İlana git ve teklif ver",
+    ctaUrl: input.href,
+  });
   return { subject, html, text };
 }
 
@@ -72,17 +59,20 @@ export function offerReceivedEmail(input: {
   message: string;
   href: string;
 }) {
-  return simpleEmail({
-    subject: `İlanınıza yeni teklif: ${input.listingTitle}`,
-    heading: "Yeni teklifiniz var",
+  const subject = `İlanınıza yeni teklif: ${input.listingTitle}`;
+  const { html, text } = renderSiteEmail({
+    preview: subject,
+    eyebrow: "Teklif",
+    heading: "Yeni teklifin var",
     lines: [
-      `${input.sellerName}, “${input.listingTitle}” ilanınıza ${input.amount} teklif verdi.`,
+      `${input.sellerName}, “${input.listingTitle}” ilanına ${input.amount} teklif verdi.`,
       input.message ? `Teklif notu: ${input.message}` : "",
-      "Sohbetten teklifi inceleyip seçebilirsiniz.",
-    ].filter(Boolean),
+      "Sohbetten inceleyip seçebilirsin.",
+    ],
     ctaLabel: "Teklifi ve sohbeti aç",
-    href: input.href,
+    ctaUrl: input.href,
   });
+  return { subject, html, text };
 }
 
 export function newMessageEmail(input: {
@@ -91,48 +81,21 @@ export function newMessageEmail(input: {
   snippet: string;
   href: string;
 }) {
-  return simpleEmail({
-    subject: `Yeni mesajınız var — ${input.listingTitle}`,
-    heading: "Yeni mesajınız var",
+  const subject = `Yeni mesajın var — ${input.listingTitle}`;
+  const { html, text } = renderSiteEmail({
+    preview: subject,
+    eyebrow: "Mesaj",
+    heading: "Yeni mesajın var",
     lines: [
-      `${input.fromLabel}, “${input.listingTitle}” sohbetinde size yazdı.`,
+      `${input.fromLabel}, “${input.listingTitle}” sohbetinde yazdı.`,
       input.snippet,
     ],
     ctaLabel: "Mesajı aç",
-    href: input.href,
+    ctaUrl: input.href,
   });
+  return { subject, html, text };
 }
 
-function simpleEmail(input: {
-  subject: string;
-  heading: string;
-  lines: string[];
-  ctaLabel: string;
-  href: string;
-}) {
-  const url = `${siteUrl()}${input.href}`;
-  const text = [...input.lines, "", `${input.ctaLabel}: ${url}`].join("\n");
-  const html = `
-    <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;color:#111">
-      <p style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:#666">iLazım</p>
-      <h1 style="font-size:22px;line-height:1.3">${escapeHtml(input.heading)}</h1>
-      ${input.lines
-        .map((line) => `<p style="white-space:pre-wrap;line-height:1.6;color:#333">${escapeHtml(line)}</p>`)
-        .join("")}
-      <p style="margin-top:28px">
-        <a href="${url}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:12px 18px;border-radius:12px">
-          ${escapeHtml(input.ctaLabel)}
-        </a>
-      </p>
-    </div>
-  `;
-  return { subject: input.subject, html, text };
-}
-
-function escapeHtml(value: string) {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
+export function authActionEmail(type: string, input: { url: string; token?: string; newEmail?: string }) {
+  return buildAuthEmail(type, input);
 }
