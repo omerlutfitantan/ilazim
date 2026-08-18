@@ -1,3 +1,4 @@
+import { getEmailConfig } from "@/lib/integrations";
 import { siteUrl } from "@/lib/utils";
 
 type SendEmailInput = {
@@ -8,9 +9,8 @@ type SendEmailInput = {
 };
 
 export async function sendEmail(input: SendEmailInput) {
-  const key = process.env.RESEND_API_KEY;
+  const { apiKey: key, from } = await getEmailConfig();
   if (!key) return { skipped: true as const };
-  const from = process.env.EMAIL_FROM ?? "iLazım <noreply@ilazim.com>";
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {

@@ -109,13 +109,22 @@ export const grantBalanceSchema = z.object({
   note: z.string().trim().max(300).optional(),
 });
 
-export const promoCampaignSchema = z.object({
-  name: z.string().trim().min(3).max(120),
-  creditAmount: z.coerce.number().min(0),
-  bidFeeDiscountPercent: z.coerce.number().min(0).max(100),
-  discountedOfferCount: z.coerce.number().int().min(0),
-  maxRedemptions: z.coerce.number().int().min(0).nullable().optional(),
-  isActive: z.boolean().default(true),
+export const siteIntegrationsSchema = z.object({
+  emailFrom: z.string().trim().max(200).optional().default(""),
+  resendApiKey: z.string().trim().max(200).optional().default(""),
+  iyzicoApiKey: z.string().trim().max(200).optional().default(""),
+  iyzicoSecretKey: z.string().trim().max(200).optional().default(""),
+  iyzicoBaseUrl: z
+    .string()
+    .trim()
+    .max(200)
+    .refine((v) => !v || /^https?:\/\//i.test(v), "iyzico adresi https ile başlamalı")
+    .optional()
+    .default(""),
+  gaMeasurementId: z.string().trim().max(40).optional().default(""),
+  gtmContainerId: z.string().trim().max(40).optional().default(""),
+  googleAdsId: z.string().trim().max(40).optional().default(""),
+  googleSiteVerification: z.string().trim().max(120).optional().default(""),
 });
 
 export const topupSchema = z.object({

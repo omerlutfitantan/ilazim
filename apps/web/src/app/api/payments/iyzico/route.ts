@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getPaymentConfig } from "@/lib/integrations";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function POST(request: NextRequest) {
-  const secret = process.env.IYZICO_SECRET_KEY;
+  const { secretKey: secret } = await getPaymentConfig();
   if (!secret) {
     return NextResponse.json({ error: "Sağlayıcı yok" }, { status: 503 });
   }

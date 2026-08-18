@@ -1,9 +1,12 @@
 import { formatTry, maskPersonName } from "@ilazim/shared";
+import { getEmailConfig } from "@/lib/integrations";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { newMessageEmail, offerReceivedEmail, sendEmail } from "@/lib/email";
 
-function canSend() {
-  return Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY && process.env.RESEND_API_KEY);
+async function canSend() {
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return false;
+  const { apiKey } = await getEmailConfig();
+  return Boolean(apiKey);
 }
 
 async function emailOf(userId: string) {
@@ -24,7 +27,7 @@ export async function sendOfferReceivedEmail(input: {
   message: string;
   sellerId: string;
 }) {
-  if (!canSend()) return;
+  if (!(await canSend())) return;
   try {
     const admin = createAdminClient();
     const { data: listing } = await admin
@@ -66,7 +69,7 @@ export async function sendNewMessageEmail(input: {
   senderId: string;
   body: string;
 }) {
-  if (!canSend()) return;
+  if (!(await canSend())) return;
   try {
     const admin = createAdminClient();
     const { data: conv } = await admin

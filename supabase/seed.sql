@@ -236,16 +236,3 @@ insert into public.categories (
 )
 on conflict do nothing;
 
-insert into public.promo_campaigns (
-  id, name, credit_amount, bid_fee_discount_percent, discounted_offer_count,
-  max_redemptions, apply_on, is_active
-) values (
-  '40000000-0000-4000-a000-000000000001',
-  'İlk 100 satıcı',
-  50,
-  50,
-  10,
-  100,
-  'seller_approval',
-  false
-) on conflict do nothing;

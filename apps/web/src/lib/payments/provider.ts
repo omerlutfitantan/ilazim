@@ -1,3 +1,5 @@
+import { getPaymentConfig } from "@/lib/integrations";
+
 export type CheckoutInput = {
   paymentId: string;
   amount: number;
@@ -13,13 +15,14 @@ export type CheckoutResult = {
   message: string;
 };
 
-export function isIyzicoConfigured() {
-  return Boolean(process.env.IYZICO_API_KEY && process.env.IYZICO_SECRET_KEY);
+export async function isIyzicoConfigured() {
+  const cfg = await getPaymentConfig();
+  return Boolean(cfg.apiKey && cfg.secretKey);
 }
 
 /** Anahtar yoksa ödeme kaydı oluşur; bakiyeyi admin yükler. */
 export async function createCheckout(input: CheckoutInput): Promise<CheckoutResult> {
-  if (!isIyzicoConfigured()) {
+  if (!(await isIyzicoConfigured())) {
     return {
       provider: "manual",
       configured: false,

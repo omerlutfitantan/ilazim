@@ -14,7 +14,7 @@ import {
   messageSchema,
   grantBalanceSchema,
   bidFeeSettingsSchema,
-  promoCampaignSchema,
+  siteIntegrationsSchema,
   categorySchema,
   buildCategorySeo,
   profileUpdateSchema,
@@ -583,43 +583,40 @@ export async function updateSettingsAction(_: unknown, formData: FormData) {
     ));
   }
   if (error) return { error: error.message };
-  revalidatePath("/admin/ayarlar");
+  revalidatePath("/admin/kampanyalar");
   revalidatePath("/admin");
   revalidatePath("/satici");
   return { ok: true };
 }
 
-export async function toggleCampaignAction(campaignId: string, active: boolean) {
-  const supabase = await createClient();
-  const { error } = await supabase.from("promo_campaigns").update({ is_active: active }).eq("id", campaignId);
-  if (error) return { error: error.message };
-  revalidatePath("/admin/kampanyalar");
-  revalidatePath("/admin/ayarlar");
-  return { ok: true };
-}
-
-export async function createCampaignAction(_: unknown, formData: FormData) {
-  const parsed = promoCampaignSchema.safeParse({
-    name: formData.get("name"),
-    creditAmount: formData.get("creditAmount"),
-    bidFeeDiscountPercent: formData.get("bidFeeDiscountPercent"),
-    discountedOfferCount: formData.get("discountedOfferCount"),
-    maxRedemptions: formData.get("maxRedemptions") || null,
-    isActive: true,
+export async function updateIntegrationsAction(_: unknown, formData: FormData) {
+  const parsed = siteIntegrationsSchema.safeParse({
+    emailFrom: formData.get("emailFrom"),
+    resendApiKey: formData.get("resendApiKey"),
+    iyzicoApiKey: formData.get("iyzicoApiKey"),
+    iyzicoSecretKey: formData.get("iyzicoSecretKey"),
+    iyzicoBaseUrl: formData.get("iyzicoBaseUrl"),
+    gaMeasurementId: formData.get("gaMeasurementId"),
+    gtmContainerId: formData.get("gtmContainerId"),
+    googleAdsId: formData.get("googleAdsId"),
+    googleSiteVerification: formData.get("googleSiteVerification"),
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Geçersiz form" };
   const supabase = await createClient();
-  const { error } = await supabase.from("promo_campaigns").insert({
-    name: parsed.data.name,
-    credit_amount: parsed.data.creditAmount,
-    bid_fee_discount_percent: parsed.data.bidFeeDiscountPercent,
-    discounted_offer_count: parsed.data.discountedOfferCount,
-    max_redemptions: parsed.data.maxRedemptions ?? null,
-    is_active: true,
-    apply_on: "seller_approval",
+  const { error } = await supabase.rpc("update_site_integrations", {
+    p_email_from: parsed.data.emailFrom,
+    p_resend_api_key: parsed.data.resendApiKey,
+    p_iyzico_api_key: parsed.data.iyzicoApiKey,
+    p_iyzico_secret_key: parsed.data.iyzicoSecretKey,
+    p_iyzico_base_url: parsed.data.iyzicoBaseUrl,
+    p_ga_measurement_id: parsed.data.gaMeasurementId,
+    p_gtm_container_id: parsed.data.gtmContainerId,
+    p_google_ads_id: parsed.data.googleAdsId,
+    p_google_site_verification: parsed.data.googleSiteVerification,
   });
   if (error) return { error: error.message };
-  revalidatePath("/admin/kampanyalar");
+  revalidatePath("/admin/ayarlar");
+  revalidatePath("/", "layout");
   return { ok: true };
 }
 

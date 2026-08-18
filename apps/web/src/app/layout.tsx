@@ -8,9 +8,11 @@ import { SiteFooter } from "@/components/site-footer";
 import { MobileTabBar } from "@/components/mobile-tab-bar";
 import { CookieBanner } from "@/components/cookie-banner";
 import { WelcomePoster } from "@/components/welcome-poster";
+import { AnalyticsScripts } from "@/components/analytics-scripts";
 import { getProfile } from "@/lib/data";
 import { getDesk, canUseSellerDesk } from "@/lib/desk";
 import { CONSENT_COOKIE, parseConsent } from "@/lib/consent";
+import { getPublicSiteTags } from "@/lib/integrations";
 import "./globals.css";
 
 const geist = Geist({
@@ -26,26 +28,34 @@ const syne = localFont({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
-  title: {
-    default: "iLazım — Ne lazımsa, teklif gelsin",
-    template: "%s | iLazım",
-  },
-  description:
-    "Hizmet ve ürün ihtiyaçlarınızı ilan açın. Onaylı hizmet verenler sabit teklif ücretiyle size gelsin. Puanları görün, işi siz seçin.",
-  applicationName: "iLazım",
-  appleWebApp: { capable: true, title: "iLazım", statusBarStyle: "default" },
-  formatDetection: { telephone: false },
-  openGraph: {
-    type: "website",
-    locale: "tr_TR",
-    siteName: "iLazım",
-    title: "iLazım — Ne lazımsa, teklif gelsin",
-    description:
-      "Hizmet veya ürün ihtiyacınızı yayınlayın; teklifler size gelsin.",
-  },
-};
+const SITE_TITLE = "iLazım — Ne lazımsa, teklif gelsin";
+const SITE_DESCRIPTION =
+  "Hizmet ve ürün ihtiyaçlarınızı ilan açın. Onaylı hizmet verenler sabit teklif ücretiyle size gelsin. Puanları görün, işi siz seçin.";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const tags = await getPublicSiteTags();
+  return {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+    title: {
+      default: SITE_TITLE,
+      template: "%s | iLazım",
+    },
+    description: SITE_DESCRIPTION,
+    applicationName: "iLazım",
+    appleWebApp: { capable: true, title: "iLazım", statusBarStyle: "default" },
+    formatDetection: { telephone: false },
+    verification: tags.googleSiteVerification
+      ? { google: tags.googleSiteVerification }
+      : undefined,
+    openGraph: {
+      type: "website",
+      locale: "tr_TR",
+      siteName: "iLazım",
+      title: SITE_TITLE,
+      description: "Hizmet veya ürün ihtiyacınızı yayınlayın; teklifler size gelsin.",
+    },
+  };
+}
 
 export const viewport: Viewport = {
   themeColor: "#0C0C0C",
@@ -61,6 +71,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const jar = await cookies();
   const consent = parseConsent(jar.get(CONSENT_COOKIE)?.value);
   const welcomeSeen = jar.get("ilazim_welcome")?.value === "1";
+  const tags = await getPublicSiteTags();
 
   return (
     <html
@@ -75,6 +86,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <MobileTabBar authed={Boolean(profile)} sellerDesk={sellerDesk} />
         <CookieBanner initial={consent} />
         <WelcomePoster show={Boolean(consent) && !welcomeSeen} />
+        <AnalyticsScripts
+          gtmId={tags.gtmContainerId}
+          gaId={tags.gaMeasurementId}
+          adsId={tags.googleAdsId}
+          initialConsent={consent}
+        />
         <Toaster />
       </body>
     </html>

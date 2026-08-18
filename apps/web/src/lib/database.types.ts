@@ -206,19 +206,18 @@ export type PlatformSettingsRow = {
   updated_at: string;
 };
 
-export type PromoCampaignRow = {
-  id: string;
-  name: string;
-  credit_amount: number;
-  bid_fee_discount_percent: number;
-  discounted_offer_count: number;
-  max_redemptions: number | null;
-  redeemed_count: number;
-  apply_on: string;
-  is_active: boolean;
-  starts_at: string | null;
-  ends_at: string | null;
-  created_at: string;
+export type SiteIntegrationsRow = {
+  id: number;
+  email_from: string | null;
+  resend_api_key: string | null;
+  iyzico_api_key: string | null;
+  iyzico_secret_key: string | null;
+  iyzico_base_url: string;
+  ga_measurement_id: string | null;
+  gtm_container_id: string | null;
+  google_ads_id: string | null;
+  google_site_verification: string | null;
+  updated_at: string;
 };
 
 export type PaymentRow = {
@@ -236,7 +235,6 @@ export type PaymentRow = {
 export type SellerPromoRow = {
   id: string;
   user_id: string;
-  campaign_id: string | null;
   remaining_discounted_offers: number;
   discount_percent: number;
   granted_credit: number;
@@ -269,7 +267,7 @@ export type Database = {
       messages: Table<MessageRow>;
       notifications: Table<NotificationRow>;
       platform_settings: Table<PlatformSettingsRow>;
-      promo_campaigns: Table<PromoCampaignRow>;
+      site_integrations: Table<SiteIntegrationsRow>;
       payments: Table<PaymentRow>;
       seller_promos: Table<SellerPromoRow>;
     };
@@ -338,6 +336,30 @@ export type Database = {
           p_welcome_balance: number;
           p_discount: number;
           p_offer_count: number;
+        };
+        Returns: undefined;
+      };
+      get_public_site_tags: {
+        Args: Record<string, never>;
+        Returns: {
+          ga_measurement_id: string | null;
+          gtm_container_id: string | null;
+          google_ads_id: string | null;
+          google_site_verification: string | null;
+        }[];
+      };
+      get_admin_integrations: { Args: Record<string, never>; Returns: Json };
+      update_site_integrations: {
+        Args: {
+          p_email_from?: string | null;
+          p_resend_api_key?: string | null;
+          p_iyzico_api_key?: string | null;
+          p_iyzico_secret_key?: string | null;
+          p_iyzico_base_url?: string | null;
+          p_ga_measurement_id?: string | null;
+          p_gtm_container_id?: string | null;
+          p_google_ads_id?: string | null;
+          p_google_site_verification?: string | null;
         };
         Returns: undefined;
       };

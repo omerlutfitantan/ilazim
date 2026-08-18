@@ -1,9 +1,12 @@
 import { KIND_LABELS, type ListingKind } from "@ilazim/shared";
+import { getEmailConfig } from "@/lib/integrations";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { listingAlertEmail, sendEmail } from "@/lib/email";
 
 export async function sendListingMatchEmails(listingId: string) {
-  if (!process.env.SUPABASE_SERVICE_ROLE_KEY || !process.env.RESEND_API_KEY) return;
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return;
+  const { apiKey } = await getEmailConfig();
+  if (!apiKey) return;
   const admin = createAdminClient();
   const { data: listing } = await admin
     .from("listings")
