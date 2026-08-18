@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { buildCategorySeo, KIND_LABELS, KIND_PATHS, type ListingKind } from "@ilazim/shared";
 import { getCategories, getCategoryBySlug, getOpenListings, getProfile } from "@/lib/data";
-import { createClient } from "@/lib/supabase/server";
-import { isSupabaseConfigured } from "@/lib/utils";
 import { JsonLd } from "@/components/json-ld";
 
 export const revalidate = 300;
@@ -57,42 +55,6 @@ export async function CategoryIndex({
     ? categories.filter((c) => c.name.toLocaleLowerCase("tr").includes(qn))
     : categories;
   const faqs = seo?.faq ?? [];
-
-  const categoryCounts =
-    kind === "service" && isSupabaseConfigured() && shown.length > 0
-      ? await (async () => {
-          const supabase = await createClient();
-          const ids = shown.map((c) => c.id);
-          const results = await Promise.all(
-            ids.map(async (id) => {
-              const [
-                { count: openCount },
-                { count: completedCount },
-              ] = await Promise.all([
-                supabase
-                  .from("listings")
-                  .select("id", { count: "exact", head: true })
-                  .eq("kind", "service")
-                  .eq("category_id", id)
-                  .eq("status", "open"),
-                supabase
-                  .from("listings")
-                  .select("id", { count: "exact", head: true })
-                  .eq("kind", "service")
-                  .eq("category_id", id)
-                  .in("status", ["awarded", "completed"]),
-              ]);
-              return { id, openCount: openCount ?? 0, completedCount: completedCount ?? 0 };
-            }),
-          );
-          return new Map(results.map((r) => [r.id, r]));
-        })()
-      : null;
-
-  const getCounts = (id: string) => {
-    const row = categoryCounts?.get(id);
-    return row ? { openCount: row.openCount, completedCount: row.completedCount } : null;
-  };
   const openListings =
     cat && kind === "service"
       ? await getOpenListings({
@@ -157,14 +119,7 @@ export async function CategoryIndex({
             href={`/${KIND_PATHS[kind]}/${c.slug}`}
             className="shrink-0 rounded-full border border-border px-3.5 py-2 text-sm hover:border-primary"
           >
-            <span className="flex flex-col gap-0.5">
-              <span className="leading-tight">{c.name}</span>
-              {kind === "service" && getCounts(c.id) && (
-                <span className="text-[11px] text-muted-foreground">
-                  {getCounts(c.id)?.openCount} talep · {getCounts(c.id)?.completedCount} tamamlandı
-                </span>
-              )}
-            </span>
+            {c.name}
           </Link>
         ))}
       </div>

@@ -67,24 +67,17 @@ export default async function HomePage() {
     supabase && serviceCats.length > 0
       ? await Promise.all(
           serviceCats.map(async (c) => {
-            const [{ count: openCount }, { count: completedCount }] = await Promise.all([
+            const [{ count: openCount }] = await Promise.all([
               supabase
                 .from("listings")
                 .select("id", { count: "exact" as const })
                 .eq("kind", "service")
                 .eq("category_id", c.id)
                 .eq("status", "open"),
-              supabase
-                .from("listings")
-                .select("id", { count: "exact" as const })
-                .eq("kind", "service")
-                .eq("category_id", c.id)
-                .in("status", ["awarded", "completed"]),
             ]);
             return {
               categoryId: c.id,
               openCount: openCount ?? 0,
-              completedCount: completedCount ?? 0,
             };
           }),
         )
@@ -99,7 +92,6 @@ export default async function HomePage() {
           hint: c.meta_description,
           Icon: FALLBACK.service.find((f) => f.slug === c.slug)?.Icon ?? Home,
           openCount: serviceCountMap.get(c.id)?.openCount ?? 0,
-          completedCount: serviceCountMap.get(c.id)?.completedCount ?? 0,
         }))
       : FALLBACK.service;
   const products =
@@ -280,7 +272,6 @@ function CategoryBand({
     hint: string;
     Icon: LucideIcon;
     openCount?: number;
-    completedCount?: number;
   }[];
 }) {
   const href = `/${KIND_PATHS[kind]}`;
@@ -311,7 +302,7 @@ function CategoryBand({
               </p>
               {typeof c.openCount === "number" && (
                 <p className="mt-2 text-xs text-white/70 group-hover:text-white/65">
-                  {c.openCount} talep · {c.completedCount ?? 0} tamamlandı
+                  {c.openCount} talep
                 </p>
               )}
             </Link>
