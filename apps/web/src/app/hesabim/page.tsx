@@ -98,7 +98,7 @@ export default async function HesabimPage() {
                       {l.kind === "service" ? "Hizmet" : "Ürün"}
                     </Badge>
                     {isExpired && (
-                      <Badge variant="destructive">Süresi doldu</Badge>
+                      <Badge className="bg-red-100 text-red-700">Süresi doldu</Badge>
                     )}
                   </div>
                   <h2 className="mt-2 font-display text-2xl">
