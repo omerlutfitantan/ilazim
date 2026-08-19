@@ -94,7 +94,7 @@ export async function getSettings() {
     new_seller_discount_percent: 50,
     new_seller_discounted_offer_count: 5,
     currency: "TRY",
-    site_name: "iLazım",
+    site_name: "Talepik",
   };
   if (!isSupabaseConfigured()) return fallback;
   const supabase = await createClient();

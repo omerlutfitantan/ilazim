@@ -114,7 +114,7 @@ export function MobileTabBar({
               <button
                 type="button"
                 aria-expanded={open}
-                aria-label={open ? "Kapat" : "iLazım menüsü"}
+                aria-label={open ? "Kapat" : "Talepik menüsü"}
                 onClick={() => setOpen((v) => !v)}
                 className="flex h-full w-full flex-col items-center justify-center gap-0.5 text-[10px] font-medium"
               >
@@ -126,7 +126,7 @@ export function MobileTabBar({
                 >
                   <Plus className="size-5" strokeWidth={2} />
                 </span>
-                <span className="font-display text-[10px] leading-none tracking-tight">iLazım</span>
+                <span className="font-display text-[10px] leading-none tracking-tight">Talepik</span>
               </button>
             </li>
             {right.map((item) => (

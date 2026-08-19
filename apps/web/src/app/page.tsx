@@ -22,13 +22,14 @@ import { KIND_PATHS, type ListingKind } from "@ilazim/shared";
 import { getCategories } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 import { SearchHero } from "@/components/search-hero";
+import { HeroSlot } from "@/components/hero-slot";
 import { Button } from "@/components/ui/button";
 import { isSupabaseConfigured } from "@/lib/utils";
 
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: "iLazım — Ne lazımsa, teklif gelsin",
+  title: "Talepik — Ne lazımsa, teklif gelsin",
   description:
     "İhtiyacınızı ilan olarak açın. Onaylı hizmet verenler size teklif sunsun; puanları görün, işi siz seçin.",
   alternates: { canonical: "/" },
@@ -107,23 +108,19 @@ export default async function HomePage() {
   return (
     <div>
       <section className="relative overflow-hidden bg-ink text-white">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -top-24 right-[-20%] size-[28rem] rounded-full bg-accent/15 blur-3xl"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -bottom-32 left-[-10%] size-[22rem] rounded-full bg-white/5 blur-3xl"
-        />
+        {/* animated glow orbs */}
+        <div aria-hidden className="orb-a pointer-events-none absolute -top-24 right-[-20%] size-[28rem] rounded-full bg-accent/15 blur-3xl" />
+        <div aria-hidden className="orb-b pointer-events-none absolute -bottom-32 left-[-10%] size-[22rem] rounded-full bg-white/5 blur-3xl" />
+        <div aria-hidden className="pointer-events-none absolute top-1/2 left-1/2 size-[18rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/5 blur-2xl" />
         <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 pt-10 pb-14 md:pt-20 md:pb-24 lg:grid-cols-12">
           <div className="min-w-0 lg:col-span-7">
             <p className="text-[12px] font-medium tracking-[0.2em] text-accent uppercase md:text-[13px]">
               Hizmet ve ürün talepleri
             </p>
             <h1 className="mt-4 font-display text-[clamp(2.35rem,9vw,5.1rem)] leading-[0.92]">
-              Ne lazımsa,
+              <HeroSlot />
               <br />
-              teklif gelsin.
+              talebi, teklif gelsin.
             </h1>
             <p className="mt-5 max-w-lg text-[15px] leading-7 text-white/65 md:text-base">
               İhtiyacınızı ilan olarak açın. Onaylı hizmet verenler fiyat ve süreyle gelsin; puanları

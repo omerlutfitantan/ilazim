@@ -39,7 +39,7 @@ function InkPanel({
           ))}
         </ul>
       </div>
-      <p className="mt-10 text-xs text-white/40">iLazım · teklif gelsin</p>
+      <p className="mt-10 text-xs text-white/40">Talepik · teklif gelsin</p>
     </div>
   );
 }

@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "iLazım",
-    short_name: "iLazım",
+    name: "Talepik",
+    short_name: "Talepik",
     description: "Hizmet ve ürün talepleriniz için teklif alın.",
     start_url: "/",
     display: "standalone",

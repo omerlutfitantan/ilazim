@@ -4,7 +4,7 @@ import { Mail } from "lucide-react";
 import { BrandMark } from "@/components/brand-mark";
 import { ConsentSettingsButton } from "@/components/cookie-banner";
 
-const SUPPORT_EMAIL = "destek@ilazim.com";
+const SUPPORT_EMAIL = "destek@talepik.com";
 
 export function SiteFooter() {
   return (
@@ -14,7 +14,7 @@ export function SiteFooter() {
           <div className="lg:col-span-5">
             <BrandMark wordmarkClassName="text-2xl" />
             <p className="mt-5 max-w-md text-sm leading-7 text-muted-foreground">
-              iLazım, hizmet ve ürün ihtiyaçlarınızı ilan olarak paylaştığınız bir talepler
+              Talepik, hizmet ve ürün ihtiyaçlarınızı ilan olarak paylaştığınız bir talepler
               pazaryeridir. Onaylı hizmet verenler size teklif sunar; puanları ve yorumları
               karşılaştırır, işi siz seçersiniz.
             </p>
@@ -60,7 +60,7 @@ export function SiteFooter() {
         </div>
 
         <p className="mt-14 border-t border-border pt-6 text-xs text-muted-foreground">
-          © {new Date().getFullYear()} iLazım. Tüm hakları saklıdır.
+          © {new Date().getFullYear()} Talepik. Tüm hakları saklıdır.
         </p>
       </div>
     </footer>

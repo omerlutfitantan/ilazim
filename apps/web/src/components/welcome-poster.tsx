@@ -94,9 +94,9 @@ export function WelcomePoster({ show }: { show: boolean }) {
           <div className="relative">
             <p className="inline-flex items-center gap-2">
               <span className="grid size-8 place-items-center rounded-lg bg-accent text-[11px] font-bold text-ink">
-                iL
+                tP
               </span>
-              <span className="font-display text-xl leading-none">iLazım</span>
+              <span className="font-display text-xl leading-none">Talepik</span>
             </p>
             <p className="mt-6 ml-3 inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1 text-[11px] font-semibold tracking-wide text-ink uppercase md:ml-5">
               <Sparkles className="size-3.5" strokeWidth={2.2} />

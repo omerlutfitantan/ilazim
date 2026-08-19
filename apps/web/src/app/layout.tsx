@@ -29,7 +29,7 @@ const syne = localFont({
   display: "swap",
 });
 
-const SITE_TITLE = "iLazım — Ne lazımsa, teklif gelsin";
+const SITE_TITLE = "Talepik — Ne lazımsa, teklif gelsin";
 const SITE_DESCRIPTION =
   "Hizmet ve ürün ihtiyaçlarınızı ilan açın. Onaylı hizmet verenler sabit teklif ücretiyle size gelsin. Puanları görün, işi siz seçin.";
 
@@ -39,11 +39,11 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
     title: {
       default: SITE_TITLE,
-      template: "%s | iLazım",
+      template: "%s | Talepik",
     },
     description: SITE_DESCRIPTION,
-    applicationName: "iLazım",
-    appleWebApp: { capable: true, title: "iLazım", statusBarStyle: "default" },
+    applicationName: "Talepik",
+    appleWebApp: { capable: true, title: "Talepik", statusBarStyle: "default" },
     formatDetection: { telephone: false },
     verification: tags.googleSiteVerification
       ? { google: tags.googleSiteVerification }
@@ -51,7 +51,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       type: "website",
       locale: "tr_TR",
-      siteName: "iLazım",
+      siteName: "Talepik",
       title: SITE_TITLE,
       description: "Hizmet veya ürün ihtiyacınızı yayınlayın; teklifler size gelsin.",
     },

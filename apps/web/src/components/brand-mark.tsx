@@ -16,13 +16,13 @@ export function BrandMark({
     <Link href={href} className={cn("inline-flex items-center gap-2", className)}>
       <span
         className={cn(
-          "grid size-8 place-items-center rounded-lg bg-ink text-[11px] font-bold text-accent",
+          "grid size-8 place-items-center rounded-lg bg-accent text-[11px] font-bold text-ink",
           markClassName,
         )}
       >
-        iL
+        tP
       </span>
-      <span className={cn("font-display text-[1.35rem] leading-none", wordmarkClassName)}>iLazım</span>
+      <span className={cn("font-display text-[1.35rem] leading-none", wordmarkClassName)}>Talepik</span>
     </Link>
   );
 }
