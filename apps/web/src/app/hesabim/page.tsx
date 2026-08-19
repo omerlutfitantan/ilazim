@@ -10,11 +10,10 @@ import { ListingActions } from "@/components/listing-actions";
 import { ReviewForm } from "@/components/review-form";
 import { UserAvatar } from "@/components/ui/avatar";
 import { DeskSwitch } from "@/components/desk-switch";
-import { labelOf, listingStatusLabel } from "@/lib/labels";
+import { labelOf, listingStatusLabel, walletTxLabel } from "@/lib/labels";
 import type { ListingStatus } from "@ilazim/shared";
 import { UpgradeToSellerButton } from "@/components/upgrade-to-seller-button";
 import { TopupButtons } from "@/components/topup-buttons";
-import { labelOf, walletTxLabel } from "@/lib/labels";
 import type { WalletTxType } from "@ilazim/shared";
 
 export default async function HesabimPage() {
