@@ -31,6 +31,28 @@ function firstText(...values: Array<string | null | undefined>) {
   return null;
 }
 
+function normalizeShopSlug(input: string | null) {
+  const v = input?.trim();
+  if (!v) return null;
+
+  // Kullanici "www.shopier.com/talepik" veya "https://www.shopier.com/talepik" gibi girerse
+  // son path segmentini slug olarak kullan.
+  try {
+    // Scheme varsa URL olarak parse etmeyi dene
+    const asUrl = v.includes("://") ? new URL(v) : null;
+    if (asUrl) {
+      const parts = asUrl.pathname.split("/").filter(Boolean);
+      return parts[parts.length - 1] ?? asUrl.hostname;
+    }
+  } catch {
+    // fallthrough
+  }
+
+  const noPrefix = v.replace(/^https?:\/\//i, "").replace(/^www\./i, "");
+  const parts = noPrefix.split("?")[0].split("/").filter(Boolean);
+  return parts[parts.length - 1] ?? noPrefix;
+}
+
 const emptyTags: PublicSiteTags = {
   gaMeasurementId: null,
   gtmContainerId: null,
@@ -121,9 +143,10 @@ export async function getEmailConfig() {
 
 export async function getPaymentConfig() {
   const row = await getSecretRow();
+  const rawShopSlug = firstText(row?.shopierShopSlug, process.env.SHOPIER_SHOP_SLUG);
   return {
     pat: firstText(row?.shopierPat, process.env.SHOPIER_PAT),
-    shopSlug: firstText(row?.shopierShopSlug, process.env.SHOPIER_SHOP_SLUG),
+    shopSlug: normalizeShopSlug(rawShopSlug),
     osbUsername: firstText(row?.shopierOsbUsername, process.env.SHOPIER_OSB_USERNAME),
     osbPassword: firstText(row?.shopierOsbPassword, process.env.SHOPIER_OSB_PASSWORD),
   };

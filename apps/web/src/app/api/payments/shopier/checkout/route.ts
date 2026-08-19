@@ -14,6 +14,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Shopier yapılandırılmadı" }, { status: 503 });
   }
 
+  console.log("[shopier/checkout] using shopSlug:", cfg.shopSlug);
+
   const supabase = await createClient();
   const { data: payment, error: payErr } = await supabase
     .from("payments")
