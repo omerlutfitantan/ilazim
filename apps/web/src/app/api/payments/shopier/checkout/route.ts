@@ -38,12 +38,13 @@ export async function GET(request: NextRequest) {
     const client = new ShopierApiClient({ pat: cfg.pat });
     const flow = new ShopierPaymentFlow({ client });
 
+    // Shopier SVG kabul etmiyor; public/logo.png (200x200 PNG) kullanıyoruz.
+    const logoUrl = `${siteUrl()}/logo.png`;
     const paymentLink = await flow.createPaymentLink({
       title: "Cüzdan yükleme",
-      // Shopier amount string olarak tam lira bekliyor (örn: "100")
       amount: String(Math.round(Number(payment.amount))),
       currency: "TRY",
-      imageUrl: `${siteUrl()}/icon.svg`,
+      media: [{ type: "image" as const, url: logoUrl, placement: 1 }],
       orderId: payment.id,
       hostedCheckout: true,
       shopSlug: cfg.shopSlug,
@@ -54,10 +55,12 @@ export async function GET(request: NextRequest) {
     });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
-    console.error("[shopier/checkout] error:", msg);
-    // Kullanıcıya anlamlı hata göster
+    // ShopierApiError'dan status + body al
+    const status = (err as Record<string, unknown>)?.status;
+    const body = (err as Record<string, unknown>)?.body;
+    console.error("[shopier/checkout] error:", msg, "status:", status, "body:", JSON.stringify(body));
     return NextResponse.json(
-      { error: "Shopier checkout başlatılamadı", detail: msg },
+      { error: "Shopier checkout başlatılamadı", detail: msg, status, body },
       { status: 502 }
     );
   }
