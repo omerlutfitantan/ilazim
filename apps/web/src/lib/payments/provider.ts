@@ -17,7 +17,7 @@ export type CheckoutResult = {
 
 export async function isShopierConfigured() {
   const cfg = await getPaymentConfig();
-  return Boolean(cfg.pat && cfg.shopSlug && cfg.webhookToken);
+  return Boolean(cfg.pat && cfg.shopSlug && cfg.osbUsername && cfg.osbPassword);
 }
 
 /** Anahtar yoksa ödeme kaydı oluşur; bakiyeyi admin yükler. */

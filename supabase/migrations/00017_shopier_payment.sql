@@ -3,7 +3,10 @@
 alter table public.site_integrations
   add column if not exists shopier_pat text,
   add column if not exists shopier_shop_slug text,
-  add column if not exists shopier_webhook_token text;
+  add column if not exists shopier_osb_username text,
+  add column if not exists shopier_osb_password text;
+
+-- Eski webhook_token kolonu varsa koru (zarar vermez), ama artık kullanmıyoruz
 
 -- Provider default'ını güncelle (opsiyonel ama tutarlı olsun)
 alter table public.payments
@@ -34,7 +37,8 @@ begin
     'shopier_pat_set', coalesce(length(trim(v_row.shopier_pat)) > 0, false),
     'shopier_shop_slug_set', coalesce(length(trim(v_row.shopier_shop_slug)) > 0, false),
     'shopier_shop_slug', v_row.shopier_shop_slug,
-    'shopier_webhook_token_set', coalesce(length(trim(v_row.shopier_webhook_token)) > 0, false),
+    'shopier_osb_username_set', coalesce(length(trim(v_row.shopier_osb_username)) > 0, false),
+    'shopier_osb_password_set', coalesce(length(trim(v_row.shopier_osb_password)) > 0, false),
 
     'ga_measurement_id', v_row.ga_measurement_id,
     'gtm_container_id', v_row.gtm_container_id,
@@ -57,12 +61,25 @@ drop function if exists public.update_site_integrations(
   p_google_site_verification text
 );
 
+drop function if exists public.update_site_integrations(
+  p_email_from text,
+  p_resend_api_key text,
+  p_shopier_pat text,
+  p_shopier_shop_slug text,
+  p_shopier_webhook_token text,
+  p_ga_measurement_id text,
+  p_gtm_container_id text,
+  p_google_ads_id text,
+  p_google_site_verification text
+);
+
 create or replace function public.update_site_integrations(
   p_email_from text default null,
   p_resend_api_key text default null,
   p_shopier_pat text default null,
   p_shopier_shop_slug text default null,
-  p_shopier_webhook_token text default null,
+  p_shopier_osb_username text default null,
+  p_shopier_osb_password text default null,
   p_ga_measurement_id text default null,
   p_gtm_container_id text default null,
   p_google_ads_id text default null,
@@ -85,7 +102,8 @@ begin
 
       shopier_pat = coalesce(nullif(trim(coalesce(p_shopier_pat, '')), ''), shopier_pat),
       shopier_shop_slug = coalesce(nullif(trim(coalesce(p_shopier_shop_slug, '')), ''), shopier_shop_slug),
-      shopier_webhook_token = coalesce(nullif(trim(coalesce(p_shopier_webhook_token, '')), ''), shopier_webhook_token),
+      shopier_osb_username = coalesce(nullif(trim(coalesce(p_shopier_osb_username, '')), ''), shopier_osb_username),
+      shopier_osb_password = coalesce(nullif(trim(coalesce(p_shopier_osb_password, '')), ''), shopier_osb_password),
 
       ga_measurement_id = nullif(trim(coalesce(p_ga_measurement_id, '')), ''),
       gtm_container_id = nullif(trim(coalesce(p_gtm_container_id, '')), ''),
@@ -98,7 +116,7 @@ $$;
 
 grant execute on function public.get_admin_integrations() to authenticated;
 grant execute on function public.update_site_integrations(
-  text, text, text, text, text, text, text, text, text
+  text, text, text, text, text, text, text, text, text, text
 ) to authenticated;
 
 notify pgrst, 'reload schema';
@@ -134,4 +152,3 @@ begin
   return v_id;
 end;
 $$;
-

@@ -19,7 +19,8 @@ type IntegrationSecrets = {
   resendApiKey: string | null;
   shopierPat: string | null;
   shopierShopSlug: string | null;
-  shopierWebhookToken: string | null;
+  shopierOsbUsername: string | null;
+  shopierOsbPassword: string | null;
 };
 
 function firstText(...values: Array<string | null | undefined>) {
@@ -75,7 +76,8 @@ export const getAdminIntegrations = cache(async (): Promise<AdminIntegrations | 
       shopier_pat_set: Boolean(row.shopier_pat_set),
       shopier_shop_slug_set: Boolean(row.shopier_shop_slug_set),
       shopier_shop_slug: (row as any).shopier_shop_slug ?? null,
-      shopier_webhook_token_set: Boolean(row.shopier_webhook_token_set),
+      shopier_osb_username_set: Boolean((row as any).shopier_osb_username_set),
+      shopier_osb_password_set: Boolean((row as any).shopier_osb_password_set),
       ga_measurement_id: row.ga_measurement_id ?? null,
       gtm_container_id: row.gtm_container_id ?? null,
       google_ads_id: row.google_ads_id ?? null,
@@ -92,7 +94,7 @@ const getSecretRow = cache(async (): Promise<IntegrationSecrets | null> => {
     const admin = createAdminClient();
     const { data, error } = await admin
       .from("site_integrations")
-      .select("email_from, resend_api_key, shopier_pat, shopier_shop_slug, shopier_webhook_token")
+      .select("email_from, resend_api_key, shopier_pat, shopier_shop_slug, shopier_osb_username, shopier_osb_password")
       .eq("id", 1)
       .maybeSingle();
     if (error || !data) return null;
@@ -101,7 +103,8 @@ const getSecretRow = cache(async (): Promise<IntegrationSecrets | null> => {
       resendApiKey: data.resend_api_key,
       shopierPat: data.shopier_pat,
       shopierShopSlug: data.shopier_shop_slug,
-      shopierWebhookToken: data.shopier_webhook_token,
+      shopierOsbUsername: data.shopier_osb_username,
+      shopierOsbPassword: data.shopier_osb_password,
     };
   } catch {
     return null;
@@ -121,6 +124,7 @@ export async function getPaymentConfig() {
   return {
     pat: firstText(row?.shopierPat, process.env.SHOPIER_PAT),
     shopSlug: firstText(row?.shopierShopSlug, process.env.SHOPIER_SHOP_SLUG),
-    webhookToken: firstText(row?.shopierWebhookToken, process.env.SHOPIER_WEBHOOK_TOKEN),
+    osbUsername: firstText(row?.shopierOsbUsername, process.env.SHOPIER_OSB_USERNAME),
+    osbPassword: firstText(row?.shopierOsbPassword, process.env.SHOPIER_OSB_PASSWORD),
   };
 }

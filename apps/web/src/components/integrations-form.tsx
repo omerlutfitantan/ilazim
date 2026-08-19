@@ -52,7 +52,7 @@ export function IntegrationsForm({
         <CardHeader>
           <CardTitle>E-posta</CardTitle>
           <CardDescription>
-            Resend anahtarı ve gönderen adresi. Tüm mailler (kayıt, şifre, teklif, mesaj) sitedeki iLazım
+            Resend anahtarı ve gönderen adresi. Tüm mailler (kayıt, şifre, teklif, mesaj) Talepik
             şablonuyla gider. Boş anahtar kayıtlı değeri korur; adres boşsa ortam değişkeni kullanılır.
           </CardDescription>
         </CardHeader>
@@ -62,7 +62,7 @@ export function IntegrationsForm({
             <Input
               name="emailFrom"
               defaultValue={saved.email_from ?? ""}
-              placeholder={env.emailFrom || "iLazım <noreply@ilazim.online>"}
+              placeholder={env.emailFrom || "Talepik <noreply@ilazim.online>"}
               className="mt-1"
             />
           </div>
@@ -79,14 +79,14 @@ export function IntegrationsForm({
         <CardHeader>
           <CardTitle>Ödeme (Shopier)</CardTitle>
           <CardDescription>
-            Kartla bakiye yükleme için Shopier PAT + Webhook. Boş bırakılan gizli alanlar mevcut kaydı
-            silmez.
+            Kartla bakiye yükleme için Shopier PAT + OSB (Otomatik Sipariş Bildirimi). Boş bırakılan
+            gizli alanlar mevcut kaydı silmez.
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
           <SecretField
             name="shopierPat"
-            label="Shopier PAT"
+            label="Shopier Kişisel Erişim Anahtarı (PAT)"
             saved={saved.shopier_pat_set}
             envFallback={env.shopier}
           />
@@ -95,19 +95,30 @@ export function IntegrationsForm({
             <Input
               name="shopierShopSlug"
               defaultValue={saved.shopier_shop_slug ?? ""}
-              placeholder={env.shopier ? "(ortam değişkeninden geliyor)" : "örn: ilazimshop"}
+              placeholder={env.shopier ? "(ortam değişkeninden geliyor)" : "örn: talepik"}
               className="mt-1"
             />
             <p className="mt-1 text-xs text-muted-foreground">
-              Shopier panelinde “mağaza/URL” kısmından bulunur.
+              Dükkan linkinizin son kısmı — www.shopier.com/<strong>talepik</strong>
             </p>
           </div>
           <SecretField
-            name="shopierWebhookToken"
-            label="Shopier Webhook token"
-            saved={saved.shopier_webhook_token_set}
+            name="shopierOsbUsername"
+            label="OSB Kullanıcı Adı"
+            saved={saved.shopier_osb_username_set}
             envFallback={env.shopier}
           />
+          <SecretField
+            name="shopierOsbPassword"
+            label="OSB Şifresi"
+            saved={saved.shopier_osb_password_set}
+            envFallback={env.shopier}
+          />
+          <p className="text-xs text-muted-foreground rounded-md border p-3">
+            OSB bilgilerini Shopier panelinde <strong>Ek Özellikler → Sipariş Bildirimi</strong>{" "}
+            bölümünden alın. Bildirim URL olarak sitenizin adresi +{" "}
+            <code>/api/payments/shopier/webhook</code> yazın.
+          </p>
         </CardContent>
       </Card>
 
@@ -116,7 +127,7 @@ export function IntegrationsForm({
           <CardTitle>Google servisleri</CardTitle>
           <CardDescription>
             Search Console doğrulama her zaman meta etikete yazılır. Analytics / GTM / Ads yalnızca
-            ziyaretçi çerezlerde “Tümünü kabul et” dedikten sonra yüklenir.
+            ziyaretçi çerezlerde "Tümünü kabul et" dedikten sonra yüklenir.
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
@@ -138,7 +149,7 @@ export function IntegrationsForm({
               className="mt-1"
             />
             <p className="mt-1 text-xs text-muted-foreground">
-              GTM doluysa Analytics buradan ayrıca yüklenmez; GA’yı GTM içinden yayınlayın.
+              GTM doluysa Analytics buradan ayrıca yüklenmez; GA'yı GTM içinden yayınlayın.
             </p>
           </div>
           <div>
