@@ -17,9 +17,9 @@ export type PublicSiteTags = {
 type IntegrationSecrets = {
   emailFrom: string | null;
   resendApiKey: string | null;
-  iyzicoApiKey: string | null;
-  iyzicoSecretKey: string | null;
-  iyzicoBaseUrl: string | null;
+  shopierPat: string | null;
+  shopierShopSlug: string | null;
+  shopierWebhookToken: string | null;
 };
 
 function firstText(...values: Array<string | null | undefined>) {
@@ -72,9 +72,10 @@ export const getAdminIntegrations = cache(async (): Promise<AdminIntegrations | 
     return {
       email_from: row.email_from ?? null,
       resend_api_key_set: Boolean(row.resend_api_key_set),
-      iyzico_api_key_set: Boolean(row.iyzico_api_key_set),
-      iyzico_secret_key_set: Boolean(row.iyzico_secret_key_set),
-      iyzico_base_url: row.iyzico_base_url ?? null,
+      shopier_pat_set: Boolean(row.shopier_pat_set),
+      shopier_shop_slug_set: Boolean(row.shopier_shop_slug_set),
+      shopier_shop_slug: (row as any).shopier_shop_slug ?? null,
+      shopier_webhook_token_set: Boolean(row.shopier_webhook_token_set),
       ga_measurement_id: row.ga_measurement_id ?? null,
       gtm_container_id: row.gtm_container_id ?? null,
       google_ads_id: row.google_ads_id ?? null,
@@ -91,16 +92,16 @@ const getSecretRow = cache(async (): Promise<IntegrationSecrets | null> => {
     const admin = createAdminClient();
     const { data, error } = await admin
       .from("site_integrations")
-      .select("email_from, resend_api_key, iyzico_api_key, iyzico_secret_key, iyzico_base_url")
+      .select("email_from, resend_api_key, shopier_pat, shopier_shop_slug, shopier_webhook_token")
       .eq("id", 1)
       .maybeSingle();
     if (error || !data) return null;
     return {
       emailFrom: data.email_from,
       resendApiKey: data.resend_api_key,
-      iyzicoApiKey: data.iyzico_api_key,
-      iyzicoSecretKey: data.iyzico_secret_key,
-      iyzicoBaseUrl: data.iyzico_base_url,
+      shopierPat: data.shopier_pat,
+      shopierShopSlug: data.shopier_shop_slug,
+      shopierWebhookToken: data.shopier_webhook_token,
     };
   } catch {
     return null;
@@ -118,9 +119,8 @@ export async function getEmailConfig() {
 export async function getPaymentConfig() {
   const row = await getSecretRow();
   return {
-    apiKey: firstText(row?.iyzicoApiKey, process.env.IYZICO_API_KEY),
-    secretKey: firstText(row?.iyzicoSecretKey, process.env.IYZICO_SECRET_KEY),
-    baseUrl:
-      firstText(row?.iyzicoBaseUrl, process.env.IYZICO_BASE_URL) ?? "https://api.iyzipay.com",
+    pat: firstText(row?.shopierPat, process.env.SHOPIER_PAT),
+    shopSlug: firstText(row?.shopierShopSlug, process.env.SHOPIER_SHOP_SLUG),
+    webhookToken: firstText(row?.shopierWebhookToken, process.env.SHOPIER_WEBHOOK_TOKEN),
   };
 }

@@ -47,7 +47,7 @@ export default async function WalletPage() {
 
       <h2 className="mt-10 font-display text-2xl">Bakiye yükle</h2>
       <p className="mt-1 text-sm text-muted-foreground">
-        iyzico anahtarları tanımlı değilse ödeme kaydı oluşur; bakiyeyi admin onaylar / yükler.
+        Shopier yapılandırılmazsa ödeme kaydı oluşur; bakiyeyi admin onaylar / yükler.
       </p>
       <TopupButtons amounts={[...TOPUP_PRESETS]} />
 

@@ -40,7 +40,7 @@ export function IntegrationsForm({
   saved: AdminIntegrations;
   env: {
     resend: boolean;
-    iyzico: boolean;
+    shopier: boolean;
     emailFrom: string;
   };
 }) {
@@ -77,35 +77,37 @@ export function IntegrationsForm({
 
       <Card>
         <CardHeader>
-          <CardTitle>Ödeme (iyzico)</CardTitle>
+          <CardTitle>Ödeme (Shopier)</CardTitle>
           <CardDescription>
-            Kart ödemesi için API anahtarları. Boş bırakılan gizli alanlar mevcut kaydı silmez.
+            Kartla bakiye yükleme için Shopier PAT + Webhook. Boş bırakılan gizli alanlar mevcut kaydı
+            silmez.
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
           <SecretField
-            name="iyzicoApiKey"
-            label="iyzico API key"
-            saved={saved.iyzico_api_key_set}
-            envFallback={env.iyzico}
-          />
-          <SecretField
-            name="iyzicoSecretKey"
-            label="iyzico secret key"
-            saved={saved.iyzico_secret_key_set}
-            envFallback={env.iyzico}
+            name="shopierPat"
+            label="Shopier PAT"
+            saved={saved.shopier_pat_set}
+            envFallback={env.shopier}
           />
           <div>
-            <Label>iyzico API adresi</Label>
+            <Label>Shopier shop slug</Label>
             <Input
-              name="iyzicoBaseUrl"
-              defaultValue={saved.iyzico_base_url ?? "https://api.iyzipay.com"}
+              name="shopierShopSlug"
+              defaultValue={saved.shopier_shop_slug ?? ""}
+              placeholder={env.shopier ? "(ortam değişkeninden geliyor)" : "örn: ilazimshop"}
               className="mt-1"
             />
             <p className="mt-1 text-xs text-muted-foreground">
-              Canlı: https://api.iyzipay.com · Sandbox: https://sandbox-api.iyzipay.com
+              Shopier panelinde “mağaza/URL” kısmından bulunur.
             </p>
           </div>
+          <SecretField
+            name="shopierWebhookToken"
+            label="Shopier Webhook token"
+            saved={saved.shopier_webhook_token_set}
+            envFallback={env.shopier}
+          />
         </CardContent>
       </Card>
 

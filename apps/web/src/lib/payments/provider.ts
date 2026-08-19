@@ -8,21 +8,21 @@ export type CheckoutInput = {
 };
 
 export type CheckoutResult = {
-  provider: "iyzico" | "manual";
+  provider: "shopier" | "manual";
   redirectUrl?: string;
   token?: string;
   configured: boolean;
   message: string;
 };
 
-export async function isIyzicoConfigured() {
+export async function isShopierConfigured() {
   const cfg = await getPaymentConfig();
-  return Boolean(cfg.apiKey && cfg.secretKey);
+  return Boolean(cfg.pat && cfg.shopSlug && cfg.webhookToken);
 }
 
 /** Anahtar yoksa ödeme kaydı oluşur; bakiyeyi admin yükler. */
 export async function createCheckout(input: CheckoutInput): Promise<CheckoutResult> {
-  if (!(await isIyzicoConfigured())) {
+  if (!(await isShopierConfigured())) {
     return {
       provider: "manual",
       configured: false,
@@ -31,8 +31,9 @@ export async function createCheckout(input: CheckoutInput): Promise<CheckoutResu
     };
   }
   return {
-    provider: "iyzico",
+    provider: "shopier",
     configured: true,
-    message: `Ödeme hazırlanıyor (${input.paymentId}).`,
+    redirectUrl: `/api/payments/shopier/checkout?paymentId=${encodeURIComponent(input.paymentId)}`,
+    message: `Shopier ile ödeme hazırlanıyor (${input.paymentId}).`,
   };
 }

@@ -28,6 +28,7 @@ import { getProfile } from "@/lib/data";
 import { DESK_COOKIE } from "@/lib/desk";
 import { allowsPreferences, CONSENT_COOKIE, parseConsent } from "@/lib/consent";
 import { sendNewMessageEmail, sendOfferReceivedEmail } from "@/lib/notify-emails";
+import { createCheckout } from "@/lib/payments/provider";
 
 async function persistDeskCookie(desk: "buyer" | "seller") {
   const jar = await cookies();
@@ -600,9 +601,9 @@ export async function updateIntegrationsAction(_: unknown, formData: FormData) {
   const parsed = siteIntegrationsSchema.safeParse({
     emailFrom: formData.get("emailFrom"),
     resendApiKey: formData.get("resendApiKey"),
-    iyzicoApiKey: formData.get("iyzicoApiKey"),
-    iyzicoSecretKey: formData.get("iyzicoSecretKey"),
-    iyzicoBaseUrl: formData.get("iyzicoBaseUrl"),
+    shopierPat: formData.get("shopierPat"),
+    shopierShopSlug: formData.get("shopierShopSlug"),
+    shopierWebhookToken: formData.get("shopierWebhookToken"),
     gaMeasurementId: formData.get("gaMeasurementId"),
     gtmContainerId: formData.get("gtmContainerId"),
     googleAdsId: formData.get("googleAdsId"),
@@ -613,9 +614,9 @@ export async function updateIntegrationsAction(_: unknown, formData: FormData) {
   const { error } = await supabase.rpc("update_site_integrations", {
     p_email_from: parsed.data.emailFrom,
     p_resend_api_key: parsed.data.resendApiKey,
-    p_iyzico_api_key: parsed.data.iyzicoApiKey,
-    p_iyzico_secret_key: parsed.data.iyzicoSecretKey,
-    p_iyzico_base_url: parsed.data.iyzicoBaseUrl,
+    p_shopier_pat: parsed.data.shopierPat,
+    p_shopier_shop_slug: parsed.data.shopierShopSlug,
+    p_shopier_webhook_token: parsed.data.shopierWebhookToken,
     p_ga_measurement_id: parsed.data.gaMeasurementId,
     p_gtm_container_id: parsed.data.gtmContainerId,
     p_google_ads_id: parsed.data.googleAdsId,
@@ -631,10 +632,20 @@ export async function createTopupAction(amount: number) {
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("create_topup_payment", { p_amount: amount });
   if (error) return { error: error.message };
-  return {
-    error: `Ödeme kaydı oluşturuldu (${data}). iyzico anahtarları yok: bakiyeyi admin panelinden yükleyin veya IYZICO_API_KEY ekleyin.`,
-    paymentId: data,
-  };
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const paymentId = String(data);
+  const checkout = await createCheckout({
+    paymentId,
+    amount,
+    userId: user?.id ?? "",
+    email: user?.email ?? undefined,
+  });
+  if (!checkout.configured) {
+    return { error: checkout.message, paymentId };
+  }
+  return { paymentId, redirectUrl: checkout.redirectUrl };
 }
 
 export async function upsertCategoryAction(_: unknown, formData: FormData) {

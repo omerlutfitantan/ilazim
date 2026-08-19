@@ -19,6 +19,10 @@ export function TopupButtons({ amounts }: { amounts: number[] }) {
           onClick={() =>
             start(async () => {
               const r = await createTopupAction(a);
+              if (r.redirectUrl) {
+                window.location.href = r.redirectUrl;
+                return;
+              }
               if (r.error) toast.message(r.error);
             })
           }

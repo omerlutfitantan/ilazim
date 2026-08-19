@@ -5,7 +5,7 @@ export default async function Page() {
   const saved = await getAdminIntegrations();
   const env = {
     resend: Boolean(process.env.RESEND_API_KEY),
-    iyzico: Boolean(process.env.IYZICO_API_KEY && process.env.IYZICO_SECRET_KEY),
+    shopier: Boolean(process.env.SHOPIER_PAT && process.env.SHOPIER_SHOP_SLUG && process.env.SHOPIER_WEBHOOK_TOKEN),
     emailFrom: process.env.EMAIL_FROM ?? "",
   };
 

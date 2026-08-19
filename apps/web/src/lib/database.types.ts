@@ -353,9 +353,9 @@ export type Database = {
         Args: {
           p_email_from?: string | null;
           p_resend_api_key?: string | null;
-          p_iyzico_api_key?: string | null;
-          p_iyzico_secret_key?: string | null;
-          p_iyzico_base_url?: string | null;
+          p_shopier_pat?: string | null;
+          p_shopier_shop_slug?: string | null;
+          p_shopier_webhook_token?: string | null;
           p_ga_measurement_id?: string | null;
           p_gtm_container_id?: string | null;
           p_google_ads_id?: string | null;
