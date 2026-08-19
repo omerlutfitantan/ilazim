@@ -1,4 +1,4 @@
-import { siteUrl } from "@/lib/utils";
+﻿import { siteUrl } from "@/lib/utils";
 
 const INK = "#0c0c0c";
 const CREAM = "#f3f3ef";
@@ -40,13 +40,14 @@ export function renderSiteEmail(input: SiteEmailInput) {
         `<p style="margin:0 0 12px;font-size:15px;line-height:1.65;color:${INK}">${escapeHtml(line)}</p>`,
     )
     .join("");
-  const button = input.ctaLabel && ctaHref
-    ? `<p style="margin:28px 0 0">
+  const button =
+    input.ctaLabel && ctaHref
+      ? `<p style="margin:28px 0 0">
         <a href="${ctaHref}" style="display:inline-block;background:${INK};color:${ACCENT};text-decoration:none;padding:14px 22px;border-radius:12px;font-weight:700;font-size:14px;letter-spacing:0.01em">
           ${escapeHtml(input.ctaLabel)}
         </a>
       </p>`
-    : "";
+      : "";
   const html = `<!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -93,7 +94,7 @@ export function renderSiteEmail(input: SiteEmailInput) {
           </tr>
           <tr>
             <td style="padding:18px 8px 0;font-family:Arial,sans-serif;font-size:12px;line-height:1.6;color:${MUTED};text-align:center">
-              Ne lazÄ±msa, teklif gelsin.<br />
+              Ne lazimsa, teklif gelsin.<br />
               <a href="${escapeHtml(siteUrl())}" style="color:${INK};text-decoration:none">${escapeHtml(siteUrl().replace(/^https?:\/\//, ""))}</a>
             </td>
           </tr>
@@ -125,66 +126,66 @@ export function authEmailCopy(type: string, input: { url: string; token?: string
   switch (type) {
     case "recovery":
       return {
-        subject: "Åifreni yenile â€” Talepik",
-        preview: "Åifre sÄ±fÄ±rlama baÄŸlantÄ±n hazÄ±r.",
+        subject: "Sifreni yenile - Talepik",
+        preview: "Sifre sifirlama baglantIn hazIr.",
         eyebrow: "Hesap",
-        heading: "Åifreni yenile",
+        heading: "Sifreni yenile",
         lines: [
-          "Bu isteÄŸi sen yaptÄ±ysan aÅŸaÄŸÄ±daki dÃ¼ÄŸmeyle yeni ÅŸifre belirle.",
-          "Ä°stemezsen bu maili yok say; ÅŸifren deÄŸiÅŸmez.",
+          "Bu istegi sen yaptIysan asagIdaki dugmeyle yeni sifre belirle.",
+          "Istemezsen bu maili yok say; sifren degismez.",
         ],
-        ctaLabel: "Yeni ÅŸifre belirle",
+        ctaLabel: "Yeni sifre belirle",
         ctaUrl: input.url,
         footnote: input.token ? `Kod: ${input.token}` : undefined,
       };
     case "magiclink":
       return {
-        subject: "GiriÅŸ baÄŸlantÄ±n â€” iLazÄ±m",
-        preview: "Tek tÄ±kla iLazÄ±mâ€™a gir.",
+        subject: "Giris baglantIn - Talepik",
+        preview: "Tek tikla Talepik'e gir.",
         eyebrow: "Hesap",
-        heading: "GiriÅŸ baÄŸlantÄ±n hazÄ±r",
-        lines: ["Bu baÄŸlantÄ± kÄ±sa sÃ¼re geÃ§erli ve bir kez kullanÄ±lÄ±r."],
-        ctaLabel: "iLazÄ±mâ€™a gir",
+        heading: "Giris baglantIn hazIr",
+        lines: ["Bu baglantI kIsa sure gecerli ve bir kez kullanIlIr."],
+        ctaLabel: "Talepik'e gir",
         ctaUrl: input.url,
       };
     case "invite":
       return {
-        subject: "iLazÄ±mâ€™a davet edildin",
-        preview: "HesabÄ±nÄ± oluÅŸturmak iÃ§in davetini aÃ§.",
+        subject: "Talepik'e davet edildin",
+        preview: "HesabInI olusturmak icin davetini ac.",
         eyebrow: "Davet",
         heading: "Seni bekliyoruz",
-        lines: ["HesabÄ±nÄ± oluÅŸturmak iÃ§in daveti kabul et."],
+        lines: ["HesabInI olusturmak icin daveti kabul et."],
         ctaLabel: "Daveti kabul et",
         ctaUrl: input.url,
       };
     case "email_change":
       return {
-        subject: "Yeni e-postanÄ± doÄŸrula â€” Talepik",
-        preview: "E-posta deÄŸiÅŸikliÄŸini onayla.",
+        subject: "Yeni e-postanI dogrula - Talepik",
+        preview: "E-posta degisikligini onayla.",
         eyebrow: "Hesap",
-        heading: "Yeni adresini doÄŸrula",
+        heading: "Yeni adresini dogrula",
         lines: [
           input.newEmail
             ? `Yeni adres: ${input.newEmail}`
-            : "E-posta deÄŸiÅŸikliÄŸini onaylamak iÃ§in aÅŸaÄŸÄ±daki dÃ¼ÄŸmeyi kullan.",
+            : "E-posta degisikligini onaylamak icin asagIdaki dugmeyi kullan.",
         ],
-        ctaLabel: "Adresi doÄŸrula",
+        ctaLabel: "Adresi dogrula",
         ctaUrl: input.url,
-        footnote: "Bu isteÄŸi sen yapmadÄ±ysan maili yok say.",
+        footnote: "Bu istegi sen yapmadIysan maili yok say.",
       };
     case "signup":
     case "email":
     default:
       return {
-        subject: "E-postanÄ± doÄŸrula â€” Talepik",
-        preview: "HesabÄ±nÄ± aÃ§mak iÃ§in e-postanÄ± doÄŸrula.",
-        eyebrow: "HoÅŸ geldin",
-        heading: "E-postanÄ± doÄŸrula",
+        subject: "E-postanI dogrula - Talepik",
+        preview: "HesabInI acmak icin e-postanI dogrula.",
+        eyebrow: "Hos geldin",
+        heading: "E-postanI dogrula",
         lines: [
-          "iLazÄ±mâ€™a kayÄ±t oldun. HesabÄ±n aÃ§Ä±lsÄ±n diye bu adresi doÄŸrula.",
-          "BaÄŸlantÄ± bir sÃ¼re sonra geÃ§ersiz olur.",
+          "Talepik'e kayIt oldun. HesabIn acIlsIn diye bu adresi dogrula.",
+          "Baglantl bir sure sonra gecersiz olur.",
         ],
-        ctaLabel: "E-postamÄ± doÄŸrula",
+        ctaLabel: "E-postamI dogrula",
         ctaUrl: input.url,
         footnote: input.token ? `Kod: ${input.token}` : undefined,
       };
