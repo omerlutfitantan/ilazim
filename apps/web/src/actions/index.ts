@@ -57,6 +57,7 @@ export async function signUpAction(_: unknown, formData: FormData) {
   const nextRaw = String(formData.get("next") || "");
   const next = nextRaw.startsWith("/") && !nextRaw.startsWith("//") ? nextRaw : "/hesabim";
   const fullName = joinPersonName(parsed.data.firstName, parsed.data.lastName);
+  const isSeller = formData.get("isSeller") === "on";
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
@@ -69,6 +70,7 @@ export async function signUpAction(_: unknown, formData: FormData) {
         phone: parsed.data.phone,
         city_id: parsed.data.cityId,
         district_id: parsed.data.districtId,
+        role: isSeller ? "seller" : "buyer",
       },
       emailRedirectTo: `${site}/auth/callback?intent=confirm&next=${encodeURIComponent(next)}`,
     },
@@ -627,6 +629,15 @@ export async function updateIntegrationsAction(_: unknown, formData: FormData) {
   if (error) return { error: error.message };
   revalidatePath("/admin/ayarlar");
   revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function upgradeToSellerAction() {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("upgrade_to_seller");
+  if (error) return { error: error.message };
+  revalidatePath("/hesabim");
+  revalidatePath("/satici", "layout");
   return { ok: true };
 }
 

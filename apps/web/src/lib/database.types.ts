@@ -330,6 +330,7 @@ export type Database = {
       };
       create_topup_payment: { Args: { p_amount: number }; Returns: string };
       apply_topup: { Args: { p_payment_id: string }; Returns: undefined };
+      upgrade_to_seller: { Args: Record<string, never>; Returns: undefined };
       update_platform_settings: {
         Args: {
           p_bid_fee: number;

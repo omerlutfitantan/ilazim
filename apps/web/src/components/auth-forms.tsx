@@ -150,6 +150,15 @@ export function SignUpForm({
         label="Şifre tekrar"
         autoComplete="new-password"
       />
+      <label className="flex items-start gap-3 rounded-xl border border-border bg-muted/40 p-3 text-sm leading-6 cursor-pointer hover:bg-muted/70 transition-colors">
+        <input type="checkbox" name="isSeller" className="mt-0.5 size-4 accent-primary" />
+        <span>
+          <span className="font-medium">Hizmet veren / satıcı hesabı olarak kayıt olmak istiyorum</span>
+          <span className="block mt-0.5 text-xs text-muted-foreground">
+            İşaretlenmezse alıcı hesabı açılır. Sonradan satıcıya geçiş yapılabilir.
+          </span>
+        </span>
+      </label>
       <label className="flex items-start gap-3 text-sm leading-6">
         <input type="checkbox" name="acceptTerms" required className="mt-1 size-4" />
         <span>

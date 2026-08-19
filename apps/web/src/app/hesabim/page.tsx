@@ -12,6 +12,7 @@ import { UserAvatar } from "@/components/ui/avatar";
 import { DeskSwitch } from "@/components/desk-switch";
 import { labelOf, listingStatusLabel } from "@/lib/labels";
 import type { ListingStatus } from "@ilazim/shared";
+import { UpgradeToSellerButton } from "@/components/upgrade-to-seller-button";
 
 export default async function HesabimPage() {
   const profile = await getProfile();
@@ -69,6 +70,8 @@ export default async function HesabimPage() {
           </Button>
         </div>
       </div>
+
+      {profile.role === "buyer" && <UpgradeToSellerButton />}
 
       <ul className="mt-10 space-y-6">
         {(listings ?? []).length === 0 && (
