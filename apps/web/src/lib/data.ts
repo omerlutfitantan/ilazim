@@ -87,6 +87,8 @@ function moneyOr(value: unknown, fallback: number) {
   return Number.isFinite(n) ? n : fallback;
 }
 
+export const DEFAULT_TOPUP_PRESETS = [100, 250, 500, 1000];
+
 export async function getSettings() {
   const fallback = {
     bid_fee_amount: 29.9,
@@ -95,6 +97,7 @@ export async function getSettings() {
     new_seller_discounted_offer_count: 5,
     currency: "TRY",
     site_name: "Talepik",
+    topup_presets: DEFAULT_TOPUP_PRESETS,
   };
   if (!isSupabaseConfigured()) return fallback;
   const supabase = await createClient();
@@ -117,6 +120,9 @@ export async function getSettings() {
       row.new_seller_discounted_offer_count,
       fallback.new_seller_discounted_offer_count,
     ),
+    topup_presets: Array.isArray(row.topup_presets)
+      ? (row.topup_presets as number[]).filter((n) => typeof n === "number" && n > 0)
+      : fallback.topup_presets,
   };
 }
 

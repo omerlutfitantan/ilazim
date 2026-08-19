@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { formatTry } from "@ilazim/shared";
-import { getProfile } from "@/lib/data";
+import { getProfile, getSettings, DEFAULT_TOPUP_PRESETS } from "@/lib/data";
 import { getDesk, canUseSellerDesk } from "@/lib/desk";
 import { createClient } from "@/lib/supabase/server";
 import { Badge } from "@/components/ui/badge";
@@ -13,12 +13,16 @@ import { DeskSwitch } from "@/components/desk-switch";
 import { labelOf, listingStatusLabel } from "@/lib/labels";
 import type { ListingStatus } from "@ilazim/shared";
 import { UpgradeToSellerButton } from "@/components/upgrade-to-seller-button";
+import { TopupButtons } from "@/components/topup-buttons";
+import { labelOf, walletTxLabel } from "@/lib/labels";
+import type { WalletTxType } from "@ilazim/shared";
 
 export default async function HesabimPage() {
   const profile = await getProfile();
   if (!profile) redirect("/giris");
   const desk = await getDesk(profile);
   const supabase = await createClient();
+  const isSeller = profile.role === "seller" || profile.role === "admin";
   const { data: listings } = await supabase
     .from("listings")
     .select("*, categories(name, slug)")
@@ -33,6 +37,25 @@ export default async function HesabimPage() {
         .in("listing_id", listingIds)
         .order("created_at", { ascending: false })
     : { data: [] };
+
+  // Satıcı: cüzdan + hareketler + preset miktarlar
+  const [walletRes, txsRes, settingsData] = isSeller
+    ? await Promise.all([
+        supabase.from("wallets").select("*").eq("user_id", profile.id).maybeSingle(),
+        supabase
+          .from("wallet_transactions")
+          .select("*")
+          .eq("user_id", profile.id)
+          .order("created_at", { ascending: false })
+          .limit(10),
+        getSettings(),
+      ])
+    : [{ data: null }, { data: [] }, null];
+  const wallet = walletRes.data;
+  const recentTxs = txsRes.data ?? [];
+  const topupAmounts = settingsData?.topup_presets?.length
+    ? settingsData.topup_presets
+    : DEFAULT_TOPUP_PRESETS;
 
   const { data: statsRows } = await supabase.from("seller_stats").select("*");
   const statsMap = new Map((statsRows ?? []).map((s) => [s.seller_id, s]));
@@ -72,6 +95,51 @@ export default async function HesabimPage() {
       </div>
 
       {profile.role === "buyer" && <UpgradeToSellerButton />}
+
+      {isSeller && (
+        <div className="mt-10 space-y-8">
+          {/* Bakiye kartı */}
+          <div className="rounded-2xl bg-primary p-6 text-primary-foreground md:max-w-sm">
+            <p className="text-xs opacity-70">Cüzdan bakiyesi</p>
+            <p className="font-display text-4xl">{formatTry(Number(wallet?.cash_balance ?? 0))}</p>
+          </div>
+
+          {/* Bakiye yükleme */}
+          <div>
+            <h2 className="font-display text-2xl">Bakiye yükle</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Teklif ücretleri bu bakiyeden düşülür.
+            </p>
+            <TopupButtons amounts={topupAmounts} />
+          </div>
+
+          {/* Son hareketler */}
+          {recentTxs.length > 0 && (
+            <div>
+              <div className="flex items-center justify-between">
+                <h2 className="font-display text-2xl">Son hareketler</h2>
+                <Link href="/satici/cuzdan" className="text-sm text-muted-foreground underline underline-offset-4">
+                  Tümünü gör
+                </Link>
+              </div>
+              <ul className="mt-4 divide-y divide-border rounded-2xl border border-border bg-card">
+                {recentTxs.map((t) => (
+                  <li key={t.id} className="flex justify-between p-4 text-sm">
+                    <div>
+                      <p>{labelOf(walletTxLabel, t.type as WalletTxType)}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {new Date(t.created_at).toLocaleString("tr-TR")}
+                        {t.note ? ` · ${t.note}` : ""}
+                      </p>
+                    </div>
+                    <p className="font-medium">{formatTry(Number(t.amount))}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
 
       <ul className="mt-10 space-y-6">
         {(listings ?? []).length === 0 && (

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { formatTry, TOPUP_PRESETS } from "@ilazim/shared";
-import { getProfile } from "@/lib/data";
+import { formatTry } from "@ilazim/shared";
+import { getProfile, getSettings, DEFAULT_TOPUP_PRESETS } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 import { labelOf, walletTxLabel } from "@/lib/labels";
 import type { WalletTxType } from "@ilazim/shared";
@@ -10,6 +10,8 @@ export default async function WalletPage() {
   const profile = await getProfile();
   if (!profile) redirect("/giris");
   const supabase = await createClient();
+  const settings = await getSettings();
+  const topupAmounts = settings.topup_presets?.length ? settings.topup_presets : DEFAULT_TOPUP_PRESETS;
   const { data: wallet } = await supabase
     .from("wallets")
     .select("*")
@@ -49,7 +51,7 @@ export default async function WalletPage() {
       <p className="mt-1 text-sm text-muted-foreground">
         Shopier yapılandırılmazsa ödeme kaydı oluşur; bakiyeyi admin onaylar / yükler.
       </p>
-      <TopupButtons amounts={[...TOPUP_PRESETS]} />
+      <TopupButtons amounts={topupAmounts} />
 
       <h2 className="mt-10 font-display text-2xl">Hareketler</h2>
       <ul className="mt-4 divide-y divide-border rounded-2xl border border-border bg-card">

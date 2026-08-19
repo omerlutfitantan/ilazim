@@ -15,6 +15,7 @@ export function SettingsForm({
     new_seller_welcome_balance: number;
     new_seller_discount_percent: number;
     new_seller_discounted_offer_count: number;
+    topup_presets?: number[];
   };
 }) {
   const [state, action, pending] = useActionState(updateSettingsAction, null);
@@ -57,6 +58,18 @@ export function SettingsForm({
         />
         <p className="mt-1 text-xs text-muted-foreground">
           0 ise yalnızca hoş geldin bakiyesi uygulanır; yüzde indirim de 0 olmalı.
+        </p>
+      </div>
+      <div>
+        <Label>Bakiye yükleme seçenekleri (TL, virgülle ayır)</Label>
+        <Input
+          name="topupPresets"
+          defaultValue={(settings.topup_presets ?? [100, 250, 500, 1000]).join(", ")}
+          placeholder="100, 250, 500, 1000"
+          className="mt-1"
+        />
+        <p className="mt-1 text-xs text-muted-foreground">
+          Cüzdan yükleme sayfasında görünecek hazır tutar butonları.
         </p>
       </div>
       {state && "error" in state && state.error && (

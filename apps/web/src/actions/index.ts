@@ -573,29 +573,32 @@ export async function updateSettingsAction(_: unknown, formData: FormData) {
     newSellerDiscountedOfferCount: formData.get("newSellerDiscountedOfferCount"),
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Geçersiz form" };
+
+  // topup_presets: virgülle ayrılmış sayılar -> JSON array
+  const presetsRaw = String(formData.get("topupPresets") ?? "");
+  let topupPresets: number[] | null = null;
+  if (presetsRaw.trim()) {
+    const nums = presetsRaw
+      .split(",")
+      .map((s) => Number(s.trim()))
+      .filter((n) => Number.isFinite(n) && n > 0);
+    if (nums.length > 0) topupPresets = nums;
+  }
+
   const supabase = await createClient();
   const args = {
     p_bid_fee: parsed.data.bidFeeAmount,
     p_discount: parsed.data.newSellerDiscountPercent,
     p_offer_count: parsed.data.newSellerDiscountedOfferCount,
+    p_new_credit: parsed.data.newSellerWelcomeBalance,
+    p_topup_presets: topupPresets ? JSON.stringify(topupPresets) : null,
   };
-  let { error } = await supabase.rpc("update_platform_settings", {
-    ...args,
-    p_welcome_balance: parsed.data.newSellerWelcomeBalance,
-  });
-  if (error?.message?.includes("Could not find the function")) {
-    ({ error } = await supabase.rpc(
-      "update_platform_settings",
-      {
-        ...args,
-        p_new_credit: parsed.data.newSellerWelcomeBalance,
-      } as never,
-    ));
-  }
+  const { error } = await supabase.rpc("update_platform_settings", args as never);
   if (error) return { error: error.message };
   revalidatePath("/admin/kampanyalar");
   revalidatePath("/admin");
   revalidatePath("/satici");
+  revalidatePath("/satici/cuzdan");
   return { ok: true };
 }
 
