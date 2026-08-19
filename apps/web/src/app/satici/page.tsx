@@ -48,6 +48,11 @@ export default async function SaticiHome() {
         <div className="rounded-2xl border border-border bg-card p-5 md:col-span-2 md:max-w-sm">
           <p className="text-xs text-muted-foreground">Cüzdan bakiyesi</p>
           <p className="font-display text-3xl">{formatTry(Number(wallet?.cash_balance ?? 0))}</p>
+          <div className="mt-4">
+            <Button asChild variant="outline" size="sm">
+              <Link href="/satici/cuzdan">Cüzdanı aç &amp; bakiye yükle</Link>
+            </Button>
+          </div>
         </div>
       </div>
 

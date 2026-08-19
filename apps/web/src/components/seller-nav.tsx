@@ -5,11 +5,11 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const LINKS = [
+  { href: "/satici", label: "Özet", match: (p: string) => p === "/satici" },
+  { href: "/satici/cuzdan", label: "Cüzdan", match: (p: string) => p.startsWith("/satici/cuzdan") },
   { href: "/satici/tekliflerim", label: "Tekliflerim", match: (p: string) => p.startsWith("/satici/tekliflerim") },
   { href: "/satici/ilanlar", label: "Açık işler", match: (p: string) => p.startsWith("/satici/ilanlar") },
   { href: "/satici/hizmetlerim", label: "Hizmetlerim", match: (p: string) => p.startsWith("/satici/hizmetlerim") },
-  { href: "/satici", label: "Özet", match: (p: string) => p === "/satici" },
-  { href: "/satici/cuzdan", label: "Cüzdan", match: (p: string) => p.startsWith("/satici/cuzdan") },
 ];
 
 export function SellerNav() {
