@@ -1,6 +1,6 @@
 export type UserRole = "buyer" | "seller" | "admin";
 export type ListingKind = "service" | "product";
-export type ListingStatus = "draft" | "open" | "awarded" | "completed" | "cancelled";
+export type ListingStatus = "draft" | "open" | "awarded" | "completed" | "cancelled" | "expired";
 export type OfferStatus = "pending" | "accepted" | "rejected" | "withdrawn";
 export type SellerStatus = "pending" | "approved" | "rejected" | "suspended";
 export type SellerType = "service" | "product" | "both";

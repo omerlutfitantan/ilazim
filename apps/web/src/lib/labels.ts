@@ -26,6 +26,7 @@ export const listingStatusLabel: Record<ListingStatus, string> = {
   awarded: "Teklif seçildi",
   completed: "Tamamlandı",
   cancelled: "İptal",
+  expired: "Süresi doldu",
 };
 
 export const offerStatusLabel: Record<OfferStatus, string> = {

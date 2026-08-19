@@ -78,27 +78,56 @@ export default async function HesabimPage() {
         )}
         {(listings ?? []).map((l) => {
           const mine = (offers ?? []).filter((o) => o.listing_id === l.id);
+          const isExpired = l.status === "expired";
+          const expiresAt = l.expires_at ? new Date(l.expires_at) : null;
+          const now = new Date();
+          const daysLeft = expiresAt ? Math.ceil((expiresAt.getTime() - now.getTime()) / 86400000) : null;
           return (
-            <li key={l.id} className="rounded-2xl border border-border bg-card p-6">
+            <li
+              key={l.id}
+              className={`rounded-2xl border p-6 ${
+                isExpired
+                  ? "border-destructive/40 bg-destructive/5"
+                  : "border-border bg-card"
+              }`}
+            >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <Badge variant={l.kind === "service" ? "service" : "product"}>
-                    {l.kind === "service" ? "Hizmet" : "Ürün"}
-                  </Badge>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge variant={l.kind === "service" ? "service" : "product"}>
+                      {l.kind === "service" ? "Hizmet" : "Ürün"}
+                    </Badge>
+                    {isExpired && (
+                      <Badge variant="destructive">Süresi doldu</Badge>
+                    )}
+                  </div>
                   <h2 className="mt-2 font-display text-2xl">
-                    <Link href={`/ilan/${(l.categories as { slug?: string } | null)?.slug}/${l.slug}`}>
-                      {l.title}
-                    </Link>
+                    {isExpired ? (
+                      <span className="text-muted-foreground">{l.title}</span>
+                    ) : (
+                      <Link href={`/ilan/${(l.categories as { slug?: string } | null)?.slug}/${l.slug}`}>
+                        {l.title}
+                      </Link>
+                    )}
                   </h2>
                   <p className="text-xs text-muted-foreground">
-                    {l.status === "open"
-                      ? mine.length
-                        ? `${mine.length} teklif · sohbet edip teklifi seçin`
-                        : "Teklif bekleniyor"
-                      : labelOf(listingStatusLabel, l.status as ListingStatus)}
+                    {isExpired
+                      ? "Bu ilan süresi dolduğu için yayından kalktı. Teklif verenlerin ücretleri iade edildi."
+                      : l.status === "open"
+                        ? mine.length
+                          ? `${mine.length} teklif · sohbet edip teklifi seçin${daysLeft !== null && daysLeft > 0 ? ` · ${daysLeft} gün kaldı` : ""}`
+                          : `Teklif bekleniyor${daysLeft !== null && daysLeft > 0 ? ` · ${daysLeft} gün kaldı` : ""}`
+                        : labelOf(listingStatusLabel, l.status as ListingStatus)}
                   </p>
+                  {isExpired && (
+                    <div className="mt-3">
+                      <Button asChild size="sm">
+                        <Link href="/ilan-ac">Yeni ilan aç</Link>
+                      </Button>
+                    </div>
+                  )}
                 </div>
-                <ListingActions listingId={l.id} status={l.status} />
+                {!isExpired && <ListingActions listingId={l.id} status={l.status} />}
               </div>
               <ul className="mt-4 space-y-3">
                 {mine.map((o) => {
