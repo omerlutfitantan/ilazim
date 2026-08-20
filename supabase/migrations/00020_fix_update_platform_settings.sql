@@ -1,8 +1,5 @@
--- Bakiye yükleme preset miktarlarını platform_settings'e ekle
-alter table public.platform_settings
-  add column if not exists topup_presets jsonb not null default '[100, 250, 500, 1000]'::jsonb;
-
--- update_platform_settings'e yeni parametreyi ekle
+-- update_platform_settings fonksiyonunu dogru kolon adiyla guncelle
+-- (DB’de yeni satir kredisi alan adi: new_seller_welcome_balance)
 create or replace function public.update_platform_settings(
   p_bid_fee numeric,
   p_new_credit numeric,
@@ -19,6 +16,7 @@ begin
   if not public.is_admin() then
     raise exception 'Yetkisiz';
   end if;
+
   update public.platform_settings
   set bid_fee_amount = p_bid_fee,
       new_seller_welcome_balance = p_new_credit,
@@ -30,3 +28,4 @@ end;
 $$;
 
 notify pgrst, 'reload schema';
+
