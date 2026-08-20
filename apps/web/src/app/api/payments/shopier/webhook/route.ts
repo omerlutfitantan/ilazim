@@ -16,13 +16,16 @@ function looksLikeUuid(id: string) {
  * Doğrulama:
  *   expectedHash = HMAC-SHA256(res + osbUsername, osbPassword)
  *
- * JSON payload içindeki `productid` alanı bizim ödeme kaydı UUID'imiz.
+ * Eşleme:
+ *   - productid UUID ise → doğrudan payments.id
+ *   - değilse (Shopier ürün id) → payments.provider_ref
+ *   - yoksa customer_note / custom note içindeki UUID
+ *
  * Başarıda tam olarak "success" metni dönmemiz gerekiyor.
  */
 export async function POST(request: NextRequest) {
   const cfg = await getPaymentConfig();
   if (!cfg.osbUsername || !cfg.osbPassword) {
-    // Credentials henüz tanımlı değil; isteği reddet
     return new NextResponse("missing config", { status: 503 });
   }
 
@@ -41,7 +44,6 @@ export async function POST(request: NextRequest) {
     return new NextResponse("missing parameter", { status: 400 });
   }
 
-  // HMAC-SHA256(res + username, password)
   const expectedHash = createHmac("sha256", cfg.osbPassword)
     .update(res + cfg.osbUsername)
     .digest("hex");
@@ -58,24 +60,43 @@ export async function POST(request: NextRequest) {
     return new NextResponse("bad payload", { status: 400 });
   }
 
-  // Test siparişlerini atla
   if (payload.istest === 1 || payload.istest === "1") {
     return new NextResponse("success");
   }
 
-  // productid = ödeme kaydı UUID'imiz
-  const orderId = String(payload.productid ?? "");
-  if (!orderId || !looksLikeUuid(orderId)) {
-    // Bizim dışımızdaki siparişler — yoksay ama success döndür
+  const admin = createAdminClient();
+  const productId = String(payload.productid ?? payload.product_id ?? "").trim();
+  const note = String(
+    payload.customer_note ?? payload.customernote ?? payload.note ?? "",
+  ).trim();
+
+  let paymentId: string | null = null;
+
+  if (productId && looksLikeUuid(productId)) {
+    paymentId = productId;
+  } else if (note && looksLikeUuid(note)) {
+    paymentId = note;
+  } else if (productId) {
+    const { data: pay } = await admin
+      .from("payments")
+      .select("id")
+      .eq("provider_ref", productId)
+      .eq("status", "pending")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    paymentId = pay?.id ?? null;
+  }
+
+  if (!paymentId) {
+    // Bizim dışımızdaki siparişler — Shopier retry etmesin
     return new NextResponse("success");
   }
 
-  const admin = createAdminClient();
   try {
-    // apply_topup idempotent: aynı payment_id tekrar gelirse zaten tamamlandı döner
-    await admin.rpc("apply_topup", { p_payment_id: orderId });
-  } catch {
-    // Loglama yapılabilir; Shopier retry edeceği için success dönmeye devam ediyoruz
+    await admin.rpc("apply_topup", { p_payment_id: paymentId });
+  } catch (err) {
+    console.error("[shopier/webhook] apply_topup failed:", err);
   }
 
   return new NextResponse("success");
