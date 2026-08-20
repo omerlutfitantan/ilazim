@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createHmac } from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getPaymentConfig } from "@/lib/integrations";
+import { reconcileShopierTopupsForUser } from "@/lib/payments/shopier-reconcile";
 
 function looksLikeUuid(id: string) {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
@@ -93,10 +94,19 @@ export async function POST(request: NextRequest) {
     return new NextResponse("success");
   }
 
+  const { data: paymentRow } = await admin
+    .from("payments")
+    .select("user_id")
+    .eq("id", paymentId)
+    .maybeSingle();
+
   try {
     await admin.rpc("apply_topup", { p_payment_id: paymentId });
   } catch (err) {
     console.error("[shopier/webhook] apply_topup failed:", err);
+    if (paymentRow?.user_id) {
+      await reconcileShopierTopupsForUser(paymentRow.user_id);
+    }
   }
 
   return new NextResponse("success");

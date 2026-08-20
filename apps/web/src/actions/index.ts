@@ -29,6 +29,7 @@ import { DESK_COOKIE } from "@/lib/desk";
 import { allowsPreferences, CONSENT_COOKIE, parseConsent } from "@/lib/consent";
 import { sendNewMessageEmail, sendOfferReceivedEmail } from "@/lib/notify-emails";
 import { createCheckout } from "@/lib/payments/provider";
+import { reconcileShopierTopupsForUser } from "@/lib/payments/shopier-reconcile";
 
 async function persistDeskCookie(desk: "buyer" | "seller") {
   const jar = await cookies();
@@ -447,8 +448,11 @@ export async function reviewSellerAction(userId: string, approve: boolean) {
     p_approve: approve,
   });
   if (error) return { error: error.message };
+  if (approve) await reconcileShopierTopupsForUser(userId);
   revalidatePath("/admin/kullanicilar");
   revalidatePath(`/admin/kullanicilar/${userId}`);
+  revalidatePath("/hesabim");
+  revalidatePath("/satici/cuzdan");
   return { ok: true };
 }
 
@@ -646,11 +650,29 @@ export async function upgradeToSellerAction() {
 
 export async function createTopupAction(amount: number) {
   const supabase = await createClient();
-  const { data, error } = await supabase.rpc("create_topup_payment", { p_amount: amount });
-  if (error) return { error: error.message };
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  if (!user) return { error: "Oturum gerekli" };
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role, seller_status")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (
+    profile?.role !== "admin" &&
+    (profile?.role !== "seller" || profile.seller_status !== "approved")
+  ) {
+    return {
+      error:
+        "Satıcı hesabınız henüz onaylanmadı. Bakiye yüklemek için admin onayı bekleyin.",
+    };
+  }
+
+  const { data, error } = await supabase.rpc("create_topup_payment", { p_amount: amount });
+  if (error) return { error: error.message };
   const paymentId = String(data);
   const checkout = await createCheckout({
     paymentId,

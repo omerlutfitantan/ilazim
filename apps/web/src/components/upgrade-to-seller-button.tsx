@@ -14,8 +14,8 @@ export function UpgradeToSellerButton() {
     <div className="mt-10 rounded-2xl border border-border bg-muted/40 p-6">
       <h2 className="font-display text-xl">Hizmet vermeye başla</h2>
       <p className="mt-1 text-sm text-muted-foreground">
-        Hesabınızı satıcıya yükseltin, ilan tekliflerini görebilin ve teklif verin. Cüzdanınız
-        otomatik oluşturulur.
+        Hesabınızı satıcıya yükseltin; admin onayından sonra ilanlara teklif verebilir ve bakiye
+        yükleyebilirsiniz.
       </p>
       <Button
         className="mt-4"
@@ -26,7 +26,7 @@ export function UpgradeToSellerButton() {
             if (r.error) {
               toast.error(r.error);
             } else {
-              toast.success("Satıcı hesabınız aktif edildi!");
+              toast.success("Satıcı başvurunuz alındı. Onay sonrası teklif verebilir ve bakiye yükleyebilirsiniz.");
               router.refresh();
             }
           })

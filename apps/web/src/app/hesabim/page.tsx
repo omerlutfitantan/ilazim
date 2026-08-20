@@ -14,7 +14,9 @@ import { labelOf, listingStatusLabel, walletTxLabel } from "@/lib/labels";
 import type { ListingStatus } from "@ilazim/shared";
 import { UpgradeToSellerButton } from "@/components/upgrade-to-seller-button";
 import { TopupButtons } from "@/components/topup-buttons";
+import { WalletReconcilePoller } from "@/components/wallet-reconcile-poller";
 import type { WalletTxType } from "@ilazim/shared";
+import { reconcileShopierTopupsForUser } from "@/lib/payments/shopier-reconcile";
 
 export default async function HesabimPage() {
   const profile = await getProfile();
@@ -22,6 +24,7 @@ export default async function HesabimPage() {
   const desk = await getDesk(profile);
   const supabase = await createClient();
   const isSeller = profile.role === "seller" || profile.role === "admin";
+  const canTopup = profile.role === "admin" || profile.seller_status === "approved";
   const { data: listings } = await supabase
     .from("listings")
     .select("*, categories(name, slug)")
@@ -36,6 +39,8 @@ export default async function HesabimPage() {
         .in("listing_id", listingIds)
         .order("created_at", { ascending: false })
     : { data: [] };
+
+  if (isSeller) await reconcileShopierTopupsForUser(profile.id);
 
   // Satıcı: cüzdan + hareketler + preset miktarlar
   const [walletRes, txsRes, settingsData] = isSeller
@@ -97,6 +102,15 @@ export default async function HesabimPage() {
 
       {isSeller && (
         <div className="mt-10 space-y-8">
+          <WalletReconcilePoller />
+
+          {!canTopup && (
+            <p className="rounded-2xl bg-saffron/20 p-4 text-sm">
+              Satıcı hesabınız inceleniyor. Onaylandıktan sonra bakiye yükleyebilir ve teklif
+              verebilirsiniz.
+            </p>
+          )}
+
           {/* Bakiye kartı */}
           <div className="rounded-2xl bg-primary p-6 text-primary-foreground md:max-w-sm">
             <p className="text-xs opacity-70">Cüzdan bakiyesi</p>
@@ -104,13 +118,16 @@ export default async function HesabimPage() {
           </div>
 
           {/* Bakiye yükleme */}
-          <div>
-            <h2 className="font-display text-2xl">Bakiye yükle</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Teklif ücretleri bu bakiyeden düşülür.
-            </p>
-            <TopupButtons amounts={topupAmounts} />
-          </div>
+          {canTopup && (
+            <div>
+              <h2 className="font-display text-2xl">Bakiye yükle</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Teklif ücretleri bu bakiyeden düşülür. Ödeme sonrası bakiye birkaç saniye içinde
+                yansır.
+              </p>
+              <TopupButtons amounts={topupAmounts} />
+            </div>
+          )}
 
           {/* Son hareketler */}
           {recentTxs.length > 0 && (

@@ -5,10 +5,14 @@ import { createClient } from "@/lib/supabase/server";
 import { labelOf, walletTxLabel } from "@/lib/labels";
 import type { WalletTxType } from "@ilazim/shared";
 import { TopupButtons } from "@/components/topup-buttons";
+import { WalletReconcilePoller } from "@/components/wallet-reconcile-poller";
+import { reconcileShopierTopupsForUser } from "@/lib/payments/shopier-reconcile";
 
 export default async function WalletPage() {
   const profile = await getProfile();
   if (!profile) redirect("/giris");
+  await reconcileShopierTopupsForUser(profile.id);
+  const canTopup = profile.role === "admin" || profile.seller_status === "approved";
   const supabase = await createClient();
   const settings = await getSettings();
   const topupAmounts = settings.topup_presets?.length ? settings.topup_presets : DEFAULT_TOPUP_PRESETS;
@@ -30,8 +34,15 @@ export default async function WalletPage() {
 
   return (
     <div>
+      <WalletReconcilePoller />
       <h1 className="font-display text-4xl">Cüzdan</h1>
       <p className="mt-1 text-sm text-muted-foreground">Teklif ücretleri bu bakiyeden düşülür.</p>
+
+      {!canTopup && (
+        <p className="mt-6 rounded-2xl bg-saffron/20 p-4 text-sm">
+          Satıcı hesabınız inceleniyor. Onaylandıktan sonra bakiye yükleyebilirsiniz.
+        </p>
+      )}
       <div className="mt-8">
         <div className="rounded-2xl bg-primary p-6 text-primary-foreground md:max-w-sm">
           <p className="text-xs opacity-70">Kullanılabilir bakiye</p>
@@ -47,11 +58,15 @@ export default async function WalletPage() {
         </p>
       )}
 
-      <h2 className="mt-10 font-display text-2xl">Bakiye yükle</h2>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Shopier yapılandırılmazsa ödeme kaydı oluşur; bakiyeyi admin onaylar / yükler.
-      </p>
-      <TopupButtons amounts={topupAmounts} />
+      {canTopup && (
+        <>
+          <h2 className="mt-10 font-display text-2xl">Bakiye yükle</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Ödeme sonrası bakiye birkaç saniye içinde yansır. Görünmüyorsa sayfayı yenileyin.
+          </p>
+          <TopupButtons amounts={topupAmounts} />
+        </>
+      )}
 
       <h2 className="mt-10 font-display text-2xl">Hareketler</h2>
       <ul className="mt-4 divide-y divide-border rounded-2xl border border-border bg-card">
