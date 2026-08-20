@@ -31,7 +31,7 @@ begin
   v_min_int := coalesce(round(v_min), 50)::int;
 
   if p_amount is null or p_amount < v_min_int then
-    raise exception format('En az %s TL yükleyebilirsiniz', v_min_int);
+    raise exception 'En az %s TL yükleyebilirsiniz', v_min_int;
   end if;
 
   perform public.ensure_wallet(v_uid);
