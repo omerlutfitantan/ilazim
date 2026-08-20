@@ -133,7 +133,10 @@ export const siteIntegrationsSchema = z.object({
 });
 
 export const topupSchema = z.object({
-  amount: z.coerce.number().min(50, "En az 50 TL yükleyebilirsiniz"),
+  // Minimum tutar sunucu tarafinda (create_topup_payment) platform_settings.topup_presets
+  // icindeki en dusuk degerden dinamik hesaplanir.
+  // Burada sadece temel pozitif kontrol yapıyoruz.
+  amount: z.coerce.number().min(1, "Geçersiz tutar"),
 });
 
 export const profileUpdateSchema = z.object({
