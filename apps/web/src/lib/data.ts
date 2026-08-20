@@ -87,7 +87,9 @@ function moneyOr(value: unknown, fallback: number) {
   return Number.isFinite(n) ? n : fallback;
 }
 
-export const DEFAULT_TOPUP_PRESETS = [100, 250, 500, 1000];
+import { DEFAULT_TOPUP_PRESETS, parseTopupPresets } from "@/lib/topup-presets";
+
+export { DEFAULT_TOPUP_PRESETS };
 
 export async function getSettings() {
   const fallback = {
@@ -120,9 +122,7 @@ export async function getSettings() {
       row.new_seller_discounted_offer_count,
       fallback.new_seller_discounted_offer_count,
     ),
-    topup_presets: Array.isArray(row.topup_presets)
-      ? (row.topup_presets as number[]).filter((n) => typeof n === "number" && n > 0)
-      : fallback.topup_presets,
+    topup_presets: parseTopupPresets(row.topup_presets),
   };
 }
 

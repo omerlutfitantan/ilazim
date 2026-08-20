@@ -591,7 +591,7 @@ export async function updateSettingsAction(_: unknown, formData: FormData) {
     p_discount: parsed.data.newSellerDiscountPercent,
     p_offer_count: parsed.data.newSellerDiscountedOfferCount,
     p_new_credit: parsed.data.newSellerWelcomeBalance,
-    p_topup_presets: topupPresets ? JSON.stringify(topupPresets) : null,
+    p_topup_presets: topupPresets,
   };
   const { error } = await supabase.rpc("update_platform_settings", args as never);
   if (error) return { error: error.message };

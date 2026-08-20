@@ -1,11 +1,14 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { updateSettingsAction } from "@/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MoneyInput } from "@/components/money-input";
+import { TopupPresetsField } from "@/components/topup-presets-field";
+import { DEFAULT_TOPUP_PRESETS } from "@/lib/topup-presets";
 
 export function SettingsForm({
   settings,
@@ -18,7 +21,15 @@ export function SettingsForm({
     topup_presets?: number[];
   };
 }) {
+  const router = useRouter();
   const [state, action, pending] = useActionState(updateSettingsAction, null);
+
+  useEffect(() => {
+    if (state && "ok" in state) {
+      router.refresh();
+    }
+  }, [state, router]);
+
   return (
     <form action={action} className="grid max-w-lg gap-4">
       <div>
@@ -60,18 +71,10 @@ export function SettingsForm({
           0 ise yalnızca hoş geldin bakiyesi uygulanır; yüzde indirim de 0 olmalı.
         </p>
       </div>
-      <div>
-        <Label>Bakiye yükleme seçenekleri (TL, virgülle ayır)</Label>
-        <Input
-          name="topupPresets"
-          defaultValue={(settings.topup_presets ?? [100, 250, 500, 1000]).join(", ")}
-          placeholder="100, 250, 500, 1000"
-          className="mt-1"
-        />
-        <p className="mt-1 text-xs text-muted-foreground">
-          Cüzdan yükleme sayfasında görünecek hazır tutar butonları.
-        </p>
-      </div>
+      <TopupPresetsField
+        key={(settings.topup_presets ?? DEFAULT_TOPUP_PRESETS).join("-")}
+        presets={settings.topup_presets ?? DEFAULT_TOPUP_PRESETS}
+      />
       {state && "error" in state && state.error && (
         <p className="text-sm text-destructive">{state.error}</p>
       )}
