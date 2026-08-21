@@ -126,66 +126,66 @@ export function authEmailCopy(type: string, input: { url: string; token?: string
   switch (type) {
     case "recovery":
       return {
-        subject: "Sifreni yenile - Talepik",
-        preview: "Sifre sifirlama baglantIn hazIr.",
+        subject: "Şifreni yenile — Talepik",
+        preview: "Şifre sıfırlama bağlantın hazır.",
         eyebrow: "Hesap",
-        heading: "Sifreni yenile",
+        heading: "Şifreni yenile",
         lines: [
-          "Bu istegi sen yaptIysan asagIdaki dugmeyle yeni sifre belirle.",
-          "Istemezsen bu maili yok say; sifren degismez.",
+          "Bu isteği sen yaptıysan aşağıdaki düğmeyle yeni şifre belirle.",
+          "İstemezsen bu maili yok say; şifren değişmez.",
         ],
-        ctaLabel: "Yeni sifre belirle",
+        ctaLabel: "Yeni şifre belirle",
         ctaUrl: input.url,
         footnote: input.token ? `Kod: ${input.token}` : undefined,
       };
     case "magiclink":
       return {
-        subject: "Giris baglantIn - Talepik",
-        preview: "Tek tikla Talepik'e gir.",
+        subject: "Giriş bağlantın — Talepik",
+        preview: "Tek tıkla Talepik’e gir.",
         eyebrow: "Hesap",
-        heading: "Giris baglantIn hazIr",
-        lines: ["Bu baglantI kIsa sure gecerli ve bir kez kullanIlIr."],
-        ctaLabel: "Talepik'e gir",
+        heading: "Giriş bağlantın hazır",
+        lines: ["Bu bağlantı kısa süre geçerli ve bir kez kullanılır."],
+        ctaLabel: "Talepik’e gir",
         ctaUrl: input.url,
       };
     case "invite":
       return {
-        subject: "Talepik'e davet edildin",
-        preview: "HesabInI olusturmak icin davetini ac.",
+        subject: "Talepik’e davet edildin",
+        preview: "Hesabını oluşturmak için davetini aç.",
         eyebrow: "Davet",
         heading: "Seni bekliyoruz",
-        lines: ["HesabInI olusturmak icin daveti kabul et."],
+        lines: ["Hesabını oluşturmak için daveti kabul et."],
         ctaLabel: "Daveti kabul et",
         ctaUrl: input.url,
       };
     case "email_change":
       return {
-        subject: "Yeni e-postanI dogrula - Talepik",
-        preview: "E-posta degisikligini onayla.",
+        subject: "Yeni e-postanı doğrula — Talepik",
+        preview: "E-posta değişikliğini onayla.",
         eyebrow: "Hesap",
-        heading: "Yeni adresini dogrula",
+        heading: "Yeni adresini doğrula",
         lines: [
           input.newEmail
             ? `Yeni adres: ${input.newEmail}`
-            : "E-posta degisikligini onaylamak icin asagIdaki dugmeyi kullan.",
+            : "E-posta değişikliğini onaylamak için aşağıdaki düğmeyi kullan.",
         ],
-        ctaLabel: "Adresi dogrula",
+        ctaLabel: "Adresi doğrula",
         ctaUrl: input.url,
-        footnote: "Bu istegi sen yapmadIysan maili yok say.",
+        footnote: "Bu isteği sen yapmadıysan maili yok say.",
       };
     case "signup":
     case "email":
     default:
       return {
-        subject: "E-postanI dogrula - Talepik",
-        preview: "HesabInI acmak icin e-postanI dogrula.",
-        eyebrow: "Hos geldin",
-        heading: "E-postanI dogrula",
+        subject: "E-postanı doğrula — Talepik",
+        preview: "Hesabını açmak için e-postanı doğrula.",
+        eyebrow: "Hoş geldin",
+        heading: "E-postanı doğrula",
         lines: [
-          "Talepik'e kayIt oldun. HesabIn acIlsIn diye bu adresi dogrula.",
-          "Baglantl bir sure sonra gecersiz olur.",
+          "Talepik’e kayıt oldun. Hesabın açılsın diye bu adresi doğrula.",
+          "Bağlantı bir süre sonra geçersiz olur.",
         ],
-        ctaLabel: "E-postamI dogrula",
+        ctaLabel: "E-postamı doğrula",
         ctaUrl: input.url,
         footnote: input.token ? `Kod: ${input.token}` : undefined,
       };

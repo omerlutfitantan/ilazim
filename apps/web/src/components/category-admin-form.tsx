@@ -42,7 +42,7 @@ export function CategoryAdminForm({ initial }: { initial?: CategoryRow }) {
           name="metaTitle"
           defaultValue={initial?.meta_title}
           maxLength={80}
-          placeholder="Temizlik | iLazım ile teklif toplayın"
+          placeholder="Temizlik | Talepik ile teklif toplayın"
           className="mt-1"
         />
         <p className="mt-1 text-xs text-muted-foreground">Google ve tarayıcı sekmesi. Boş bırakılırsa addan üretilir.</p>

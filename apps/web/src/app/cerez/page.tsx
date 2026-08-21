@@ -14,7 +14,7 @@ export default function Page() {
 
       <h2 className="mt-10 font-display text-2xl">1. Nedir?</h2>
       <p className="mt-3 text-muted-foreground">
-        Çerez, tarayıcınıza bırakılan küçük bir metin dosyasıdır. iLazım; oturumu açık tutmak, güvenliği
+        Çerez, tarayıcınıza bırakılan küçük bir metin dosyasıdır. Talepik; oturumu açık tutmak, güvenliği
         sağlamak ve (onayınız varsa) tercihlerinizi hatırlamak için çerez kullanır. Reklam ağı veya üçüncü
         taraf izleme çerezi şu an kullanılmaz.
       </p>

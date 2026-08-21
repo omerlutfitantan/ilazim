@@ -1,4 +1,4 @@
-# iLazım
+# Talepik
 
 Hizmet ve ürün taleplerinin ilan açıldığı, satıcıların sabit ücretle teklif verdiği pazar yeri.
 

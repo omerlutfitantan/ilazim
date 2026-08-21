@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!data) return { title: "Satıcı bulunamadı" };
   return {
     title: `${data.profile.display_name} — puanlar ve yorumlar`,
-    description: data.profile.seller_headline ?? data.profile.bio ?? "iLazım satıcı profili",
+    description: data.profile.seller_headline ?? data.profile.bio ?? "Talepik satıcı profili",
   };
 }
 

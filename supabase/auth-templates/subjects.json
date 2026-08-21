@@ -1,7 +1,7 @@
 {
-  "signup": "E-postanı doğrula — iLazım",
-  "recovery": "Şifreni yenile — iLazım",
-  "magiclink": "Giriş bağlantın — iLazım",
-  "invite": "iLazım’a davet edildin",
-  "email_change": "Yeni e-postanı doğrula — iLazım"
+  "signup": "E-postanı doğrula — Talepik",
+  "recovery": "Şifreni yenile — Talepik",
+  "magiclink": "Giriş bağlantın — Talepik",
+  "invite": "Talepik’e davet edildin",
+  "email_change": "Yeni e-postanı doğrula — Talepik"
 }

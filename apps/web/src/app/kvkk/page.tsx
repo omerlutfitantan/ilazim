@@ -10,7 +10,7 @@ export default function Page() {
 
       <h2 className="mt-10 font-display text-2xl">1. Veri sorumlusu</h2>
       <p className="mt-3 text-muted-foreground">
-        iLazım platformu (“Platform”) kişisel verilerinizi 6698 sayılı Kişisel Verilerin Korunması Kanunu
+        Talepik platformu (“Platform”) kişisel verilerinizi 6698 sayılı Kişisel Verilerin Korunması Kanunu
         (“KVKK”) kapsamında veri sorumlusu sıfatıyla işler. Başvurularınız için:{" "}
         <a className="underline" href="mailto:kvkk@ilazim.com">
           kvkk@ilazim.com

@@ -1,4 +1,4 @@
-export const APP_NAME = "iLazım";
+export const APP_NAME = "Talepik";
 export const APP_TAGLINE = "Ne lazımsa, teklif gelsin.";
 export const DEFAULT_CURRENCY = "TRY";
 export const DEFAULT_BID_FEE = 29.9;

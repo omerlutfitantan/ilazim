@@ -88,14 +88,14 @@ export function buildCategorySeo(name: string, kind: ListingKind) {
   const h1 = isService
     ? `${trimmed} hizmeti alın, ustalar teklif versin`
     : `${trimmed} ilanı açın, satıcılar teklif versin`;
-  const metaTitle = clipSeo(`${trimmed} | iLazım ile teklif toplayın`, 70);
+  const metaTitle = clipSeo(`${trimmed} | Talepik ile teklif toplayın`, 70);
   const metaDescription = clipSeo(
     isService
       ? `${trimmed} ilanı açın. Onaylı ${who} sabit teklif ücretiyle size fiyat versin. Puanları karşılaştırın, işi bitirin.`
       : `${trimmed} talebi açın. Onaylı ${who} sabit teklif ücretiyle size fiyat versin. Puanları karşılaştırın, işi bitirin.`,
     155,
   );
-  const content = `iLazım üzerinden ${lower} ${
+  const content = `Talepik üzerinden ${lower} ${
     isService ? "talebi" : "ilanı"
   } oluşturduğunuzda bölgenizdeki onaylı ${who} size teklif gönderir. İlanınız açık kaldığı sürece teklifler gelir. Kazananı siz seçersiniz; iş tamamlanınca puanlarsınız.`;
   const faq: FaqItem[] = [
