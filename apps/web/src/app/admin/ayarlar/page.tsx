@@ -5,7 +5,7 @@ export default async function Page() {
   const saved = await getAdminIntegrations();
   const env = {
     resend: Boolean(process.env.RESEND_API_KEY),
-    shopier: Boolean(process.env.SHOPIER_PAT && process.env.SHOPIER_SHOP_SLUG && process.env.SHOPIER_WEBHOOK_TOKEN),
+    whop: Boolean(process.env.WHOP_API_KEY && process.env.WHOP_COMPANY_ID),
     emailFrom: process.env.EMAIL_FROM ?? "",
   };
 

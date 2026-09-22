@@ -5,13 +5,17 @@ import { createClient } from "@/lib/supabase/server";
 import { labelOf, walletTxLabel } from "@/lib/labels";
 import type { WalletTxType } from "@ilazim/shared";
 import { TopupButtons } from "@/components/topup-buttons";
-import { WalletReconcilePoller } from "@/components/wallet-reconcile-poller";
-import { reconcileShopierTopupsForUser } from "@/lib/payments/shopier-reconcile";
+import { WalletPaidRefresh } from "@/components/wallet-paid-refresh";
 
-export default async function WalletPage() {
+export default async function WalletPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ paid?: string }>;
+}) {
   const profile = await getProfile();
   if (!profile) redirect("/giris");
-  await reconcileShopierTopupsForUser(profile.id);
+  const params = searchParams ? await searchParams : {};
+  const paid = params.paid === "1";
   const canTopup = profile.role === "admin" || profile.seller_status === "approved";
   const supabase = await createClient();
   const settings = await getSettings();
@@ -34,7 +38,7 @@ export default async function WalletPage() {
 
   return (
     <div>
-      <WalletReconcilePoller />
+      <WalletPaidRefresh paid={paid} />
       <h1 className="font-display text-4xl">Cüzdan</h1>
       <p className="mt-1 text-sm text-muted-foreground">Teklif ücretleri bu bakiyeden düşülür.</p>
 

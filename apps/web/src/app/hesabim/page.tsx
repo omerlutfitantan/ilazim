@@ -14,9 +14,7 @@ import { labelOf, listingStatusLabel, walletTxLabel } from "@/lib/labels";
 import type { ListingStatus } from "@ilazim/shared";
 import { UpgradeToSellerButton } from "@/components/upgrade-to-seller-button";
 import { TopupButtons } from "@/components/topup-buttons";
-import { WalletReconcilePoller } from "@/components/wallet-reconcile-poller";
 import type { WalletTxType } from "@ilazim/shared";
-import { reconcileShopierTopupsForUser } from "@/lib/payments/shopier-reconcile";
 
 export default async function HesabimPage() {
   const profile = await getProfile();
@@ -39,8 +37,6 @@ export default async function HesabimPage() {
         .in("listing_id", listingIds)
         .order("created_at", { ascending: false })
     : { data: [] };
-
-  if (isSeller) await reconcileShopierTopupsForUser(profile.id);
 
   // Satıcı: cüzdan + hareketler + preset miktarlar
   const [walletRes, txsRes, settingsData] = isSeller
@@ -102,8 +98,6 @@ export default async function HesabimPage() {
 
       {isSeller && (
         <div className="mt-10 space-y-8">
-          <WalletReconcilePoller />
-
           {!canTopup && (
             <p className="rounded-2xl bg-saffron/20 p-4 text-sm">
               Satıcı hesabınız inceleniyor. Onaylandıktan sonra bakiye yükleyebilir ve teklif

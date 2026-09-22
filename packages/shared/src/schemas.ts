@@ -121,11 +121,11 @@ export const grantBalanceSchema = z.object({
 export const siteIntegrationsSchema = z.object({
   emailFrom: z.string().trim().max(200).optional().default(""),
   resendApiKey: z.string().trim().max(200).optional().default(""),
-  // Shopier PAT-based checkout + OSB bildirim doğrulaması
-  shopierPat: z.string().trim().max(2000).optional().default(""),
-  shopierShopSlug: z.string().trim().max(120).optional().default(""),
-  shopierOsbUsername: z.string().trim().max(200).optional().default(""),
-  shopierOsbPassword: z.string().trim().max(200).optional().default(""),
+  // Whop checkout + webhook
+  whopApiKey: z.string().trim().max(2000).optional().default(""),
+  whopCompanyId: z.string().trim().max(120).optional().default(""),
+  whopWebhookSecret: z.string().trim().max(500).optional().default(""),
+  whopProductId: z.string().trim().max(120).optional().default(""),
   gaMeasurementId: z.string().trim().max(40).optional().default(""),
   gtmContainerId: z.string().trim().max(40).optional().default(""),
   googleAdsId: z.string().trim().max(40).optional().default(""),

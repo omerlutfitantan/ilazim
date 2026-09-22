@@ -17,10 +17,10 @@ export type PublicSiteTags = {
 type IntegrationSecrets = {
   emailFrom: string | null;
   resendApiKey: string | null;
-  shopierPat: string | null;
-  shopierShopSlug: string | null;
-  shopierOsbUsername: string | null;
-  shopierOsbPassword: string | null;
+  whopApiKey: string | null;
+  whopCompanyId: string | null;
+  whopWebhookSecret: string | null;
+  whopProductId: string | null;
 };
 
 function firstText(...values: Array<string | null | undefined>) {
@@ -29,28 +29,6 @@ function firstText(...values: Array<string | null | undefined>) {
     if (trimmed) return trimmed;
   }
   return null;
-}
-
-function normalizeShopSlug(input: string | null) {
-  const v = input?.trim();
-  if (!v) return null;
-
-  // Kullanici "www.shopier.com/talepik" veya "https://www.shopier.com/talepik" gibi girerse
-  // son path segmentini slug olarak kullan.
-  try {
-    // Scheme varsa URL olarak parse etmeyi dene
-    const asUrl = v.includes("://") ? new URL(v) : null;
-    if (asUrl) {
-      const parts = asUrl.pathname.split("/").filter(Boolean);
-      return parts[parts.length - 1] ?? asUrl.hostname;
-    }
-  } catch {
-    // fallthrough
-  }
-
-  const noPrefix = v.replace(/^https?:\/\//i, "").replace(/^www\./i, "");
-  const parts = noPrefix.split("?")[0].split("/").filter(Boolean);
-  return parts[parts.length - 1] ?? noPrefix;
 }
 
 const emptyTags: PublicSiteTags = {
@@ -95,11 +73,10 @@ export const getAdminIntegrations = cache(async (): Promise<AdminIntegrations | 
     return {
       email_from: row.email_from ?? null,
       resend_api_key_set: Boolean(row.resend_api_key_set),
-      shopier_pat_set: Boolean(row.shopier_pat_set),
-      shopier_shop_slug_set: Boolean(row.shopier_shop_slug_set),
-      shopier_shop_slug: (row as any).shopier_shop_slug ?? null,
-      shopier_osb_username_set: Boolean((row as any).shopier_osb_username_set),
-      shopier_osb_password_set: Boolean((row as any).shopier_osb_password_set),
+      whop_api_key_set: Boolean(row.whop_api_key_set),
+      whop_company_id: row.whop_company_id ?? null,
+      whop_webhook_secret_set: Boolean(row.whop_webhook_secret_set),
+      whop_product_id: row.whop_product_id ?? null,
       ga_measurement_id: row.ga_measurement_id ?? null,
       gtm_container_id: row.gtm_container_id ?? null,
       google_ads_id: row.google_ads_id ?? null,
@@ -116,17 +93,20 @@ const getSecretRow = cache(async (): Promise<IntegrationSecrets | null> => {
     const admin = createAdminClient();
     const { data, error } = await admin
       .from("site_integrations")
-      .select("email_from, resend_api_key, shopier_pat, shopier_shop_slug, shopier_osb_username, shopier_osb_password")
+      .select(
+        "email_from, resend_api_key, whop_api_key, whop_company_id, whop_webhook_secret, whop_product_id",
+      )
       .eq("id", 1)
       .maybeSingle();
     if (error || !data) return null;
     return {
       emailFrom: data.email_from,
       resendApiKey: data.resend_api_key,
-      shopierPat: data.shopier_pat,
-      shopierShopSlug: data.shopier_shop_slug,
-      shopierOsbUsername: data.shopier_osb_username,
-      shopierOsbPassword: data.shopier_osb_password,
+      whopApiKey: (data as { whop_api_key?: string | null }).whop_api_key ?? null,
+      whopCompanyId: (data as { whop_company_id?: string | null }).whop_company_id ?? null,
+      whopWebhookSecret:
+        (data as { whop_webhook_secret?: string | null }).whop_webhook_secret ?? null,
+      whopProductId: (data as { whop_product_id?: string | null }).whop_product_id ?? null,
     };
   } catch {
     return null;
@@ -143,11 +123,10 @@ export async function getEmailConfig() {
 
 export async function getPaymentConfig() {
   const row = await getSecretRow();
-  const rawShopSlug = firstText(row?.shopierShopSlug, process.env.SHOPIER_SHOP_SLUG);
   return {
-    pat: firstText(row?.shopierPat, process.env.SHOPIER_PAT),
-    shopSlug: normalizeShopSlug(rawShopSlug),
-    osbUsername: firstText(row?.shopierOsbUsername, process.env.SHOPIER_OSB_USERNAME),
-    osbPassword: firstText(row?.shopierOsbPassword, process.env.SHOPIER_OSB_PASSWORD),
+    apiKey: firstText(row?.whopApiKey, process.env.WHOP_API_KEY),
+    companyId: firstText(row?.whopCompanyId, process.env.WHOP_COMPANY_ID),
+    webhookSecret: firstText(row?.whopWebhookSecret, process.env.WHOP_WEBHOOK_SECRET),
+    productId: firstText(row?.whopProductId, process.env.WHOP_PRODUCT_ID),
   };
 }

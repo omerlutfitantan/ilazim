@@ -29,7 +29,6 @@ import { DESK_COOKIE } from "@/lib/desk";
 import { allowsPreferences, CONSENT_COOKIE, parseConsent } from "@/lib/consent";
 import { sendNewMessageEmail, sendOfferReceivedEmail } from "@/lib/notify-emails";
 import { createCheckout } from "@/lib/payments/provider";
-import { reconcileShopierTopupsForUser } from "@/lib/payments/shopier-reconcile";
 
 async function persistDeskCookie(desk: "buyer" | "seller") {
   const jar = await cookies();
@@ -448,7 +447,6 @@ export async function reviewSellerAction(userId: string, approve: boolean) {
     p_approve: approve,
   });
   if (error) return { error: error.message };
-  if (approve) await reconcileShopierTopupsForUser(userId);
   revalidatePath("/admin/kullanicilar");
   revalidatePath(`/admin/kullanicilar/${userId}`);
   revalidatePath("/hesabim");
@@ -610,10 +608,10 @@ export async function updateIntegrationsAction(_: unknown, formData: FormData) {
   const parsed = siteIntegrationsSchema.safeParse({
     emailFrom: formData.get("emailFrom"),
     resendApiKey: formData.get("resendApiKey"),
-    shopierPat: formData.get("shopierPat"),
-    shopierShopSlug: formData.get("shopierShopSlug"),
-    shopierOsbUsername: formData.get("shopierOsbUsername"),
-    shopierOsbPassword: formData.get("shopierOsbPassword"),
+    whopApiKey: formData.get("whopApiKey"),
+    whopCompanyId: formData.get("whopCompanyId"),
+    whopWebhookSecret: formData.get("whopWebhookSecret"),
+    whopProductId: formData.get("whopProductId"),
     gaMeasurementId: formData.get("gaMeasurementId"),
     gtmContainerId: formData.get("gtmContainerId"),
     googleAdsId: formData.get("googleAdsId"),
@@ -624,10 +622,10 @@ export async function updateIntegrationsAction(_: unknown, formData: FormData) {
   const { error } = await supabase.rpc("update_site_integrations", {
     p_email_from: parsed.data.emailFrom,
     p_resend_api_key: parsed.data.resendApiKey,
-    p_shopier_pat: parsed.data.shopierPat,
-    p_shopier_shop_slug: parsed.data.shopierShopSlug,
-    p_shopier_osb_username: parsed.data.shopierOsbUsername,
-    p_shopier_osb_password: parsed.data.shopierOsbPassword,
+    p_whop_api_key: parsed.data.whopApiKey,
+    p_whop_company_id: parsed.data.whopCompanyId,
+    p_whop_webhook_secret: parsed.data.whopWebhookSecret,
+    p_whop_product_id: parsed.data.whopProductId,
     p_ga_measurement_id: parsed.data.gaMeasurementId,
     p_gtm_container_id: parsed.data.gtmContainerId,
     p_google_ads_id: parsed.data.googleAdsId,

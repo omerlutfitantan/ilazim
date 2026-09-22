@@ -11,7 +11,6 @@
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
     "@ilazim/shared": "*",
-    "@nopeion/shopier": "^2.2.0",
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-checkbox": "^1.3.3",
     "@radix-ui/react-dialog": "^1.1.15",
@@ -29,6 +28,7 @@
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.57.4",
     "@tanstack/react-query": "^5.85.5",
+    "@whop/sdk": "^1.1.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",

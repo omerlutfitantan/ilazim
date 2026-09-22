@@ -40,7 +40,7 @@ export function IntegrationsForm({
   saved: AdminIntegrations;
   env: {
     resend: boolean;
-    shopier: boolean;
+    whop: boolean;
     emailFrom: string;
   };
 }) {
@@ -77,47 +77,54 @@ export function IntegrationsForm({
 
       <Card>
         <CardHeader>
-          <CardTitle>Ödeme (Shopier)</CardTitle>
+          <CardTitle>Ödeme (Whop)</CardTitle>
           <CardDescription>
-            Kartla bakiye yükleme için Shopier PAT + OSB (Otomatik Sipariş Bildirimi). Boş bırakılan
+            Kartla bakiye yükleme için Whop Company API Key + Account ID (biz_…). Boş bırakılan
             gizli alanlar mevcut kaydı silmez.
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
           <SecretField
-            name="shopierPat"
-            label="Shopier Kişisel Erişim Anahtarı (PAT)"
-            saved={saved.shopier_pat_set}
-            envFallback={env.shopier}
+            name="whopApiKey"
+            label="Whop API Key"
+            saved={saved.whop_api_key_set}
+            envFallback={env.whop}
           />
           <div>
-            <Label>Shopier shop slug</Label>
+            <Label>Whop Company / Account ID</Label>
             <Input
-              name="shopierShopSlug"
-              defaultValue={saved.shopier_shop_slug ?? ""}
-              placeholder={env.shopier ? "(ortam değişkeninden geliyor)" : "örn: talepik"}
+              name="whopCompanyId"
+              defaultValue={saved.whop_company_id ?? ""}
+              placeholder={env.whop ? "(ortam değişkeninden geliyor)" : "biz_xxxxxxxxxxxxx"}
               className="mt-1"
             />
             <p className="mt-1 text-xs text-muted-foreground">
-              Dükkan linkinizin son kısmı — www.shopier.com/<strong>talepik</strong>
+              Whop Dashboard → Settings içinde <code>biz_</code> ile başlayan hesap kimliği.
             </p>
           </div>
           <SecretField
-            name="shopierOsbUsername"
-            label="OSB Kullanıcı Adı"
-            saved={saved.shopier_osb_username_set}
-            envFallback={env.shopier}
+            name="whopWebhookSecret"
+            label="Whop Webhook Secret (ws_…)"
+            saved={saved.whop_webhook_secret_set}
+            envFallback={env.whop}
           />
-          <SecretField
-            name="shopierOsbPassword"
-            label="OSB Şifresi"
-            saved={saved.shopier_osb_password_set}
-            envFallback={env.shopier}
-          />
+          <div>
+            <Label>Whop Product ID (opsiyonel)</Label>
+            <Input
+              name="whopProductId"
+              defaultValue={saved.whop_product_id ?? ""}
+              placeholder="prod_xxxxxxxxxxxxx"
+              className="mt-1"
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              Boş bırakılırsa Whop checkout sırasında ürün/plan oluşturur. Sabit ürün kullanmak
+              isterseniz Dashboard → Products’tan bir ID yapıştırın.
+            </p>
+          </div>
           <p className="text-xs text-muted-foreground rounded-md border p-3">
-            OSB bilgilerini Shopier panelinde <strong>Ek Özellikler → Sipariş Bildirimi</strong>{" "}
-            bölümünden alın. Bildirim URL olarak sitenizin adresi +{" "}
-            <code>/api/payments/shopier/webhook</code> yazın.
+            Whop Dashboard → <strong>Developer → Webhooks</strong> içinde bildirim URL olarak{" "}
+            <code>https://ilazim.online/api/payments/whop/webhook</code> ekleyin. Event:{" "}
+            <code>payment.succeeded</code>, API version <code>v1</code>. Secret’ı buraya kaydedin.
           </p>
         </CardContent>
       </Card>
@@ -127,7 +134,7 @@ export function IntegrationsForm({
           <CardTitle>Google servisleri</CardTitle>
           <CardDescription>
             Search Console doğrulama her zaman meta etikete yazılır. Analytics / GTM / Ads yalnızca
-            ziyaretçi çerezlerde "Tümünü kabul et" dedikten sonra yüklenir.
+            ziyaretçi çerezlerde &quot;Tümünü kabul et&quot; dedikten sonra yüklenir.
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
@@ -149,7 +156,7 @@ export function IntegrationsForm({
               className="mt-1"
             />
             <p className="mt-1 text-xs text-muted-foreground">
-              GTM doluysa Analytics buradan ayrıca yüklenmez; GA'yı GTM içinden yayınlayın.
+              GTM doluysa Analytics buradan ayrıca yüklenmez; GA&apos;yı GTM içinden yayınlayın.
             </p>
           </div>
           <div>
